@@ -103,6 +103,12 @@ module TSOS {
                                   "Validates the user code in the HTML5 text area.");
             this.commandList[this.commandList.length] = sc;
 
+            // seppuku
+            sc = new ShellCommand(this.shellSeppuku,
+                                  "seppuku",
+                                  "Commit seppuku (trigger the BSOD message)");
+            this.commandList[this.commandList.length] = sc;
+
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
 
@@ -308,6 +314,9 @@ module TSOS {
                     case "load":
                         _StdOut.putText("Load validates the user code in the HTML5 text area.");
                         break;
+                    case "seppuku":
+                        _StdOut.putText("Seppuku commits seppuku. Loads the BSOD message.");
+                        break;
                     // TODO: Make descriptive MANual page entries for the the rest of the shell commands here.
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
@@ -375,6 +384,10 @@ module TSOS {
 
         public shellLoad() {
 
+        }
+
+        public shellSeppuku() {
+            
         }
 
     }

@@ -61,6 +61,9 @@ var TSOS;
             // load
             sc = new TSOS.ShellCommand(this.shellLoad, "load", "Validates the user code in the HTML5 text area.");
             this.commandList[this.commandList.length] = sc;
+            // seppuku
+            sc = new TSOS.ShellCommand(this.shellSeppuku, "seppuku", "Commit seppuku (trigger the BSOD message)");
+            this.commandList[this.commandList.length] = sc;
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
             //
