@@ -9,7 +9,7 @@
      ------------ */
 var TSOS;
 (function (TSOS) {
-    var Console = (function () {
+    var Console = /** @class */ (function () {
         function Console(currentFont, currentFontSize, currentXPosition, currentYPosition, buffer) {
             if (currentFont === void 0) { currentFont = _DefaultFontFamily; }
             if (currentFontSize === void 0) { currentFontSize = _DefaultFontSize; }
@@ -52,6 +52,7 @@ var TSOS;
                     // ... and add it to our buffer.
                     this.buffer += chr;
                 }
+                // TODO: Write a case for Ctrl-C.
             }
         };
         Console.prototype.putText = function (text) {
@@ -84,6 +85,6 @@ var TSOS;
             // TODO: Handle scrolling. (iProject 1)
         };
         return Console;
-    })();
+    }());
     TSOS.Console = Console;
 })(TSOS || (TSOS = {}));

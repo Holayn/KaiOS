@@ -13,7 +13,7 @@
      ------------ */
 var TSOS;
 (function (TSOS) {
-    var Kernel = (function () {
+    var Kernel = /** @class */ (function () {
         function Kernel() {
         }
         //
@@ -158,6 +158,6 @@ var TSOS;
             this.krnShutdown();
         };
         return Kernel;
-    })();
+    }());
     TSOS.Kernel = Kernel;
 })(TSOS || (TSOS = {}));
