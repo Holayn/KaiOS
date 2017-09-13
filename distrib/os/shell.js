@@ -32,7 +32,7 @@ var TSOS;
             sc = new TSOS.ShellCommand(this.shellHelp, "help", "- This is the help command. Seek help.");
             this.commandList[this.commandList.length] = sc;
             // shutdown
-            sc = new TSOS.ShellCommand(this.shellShutdown, "shutdown", "- Shuts down the virtual OS but leaves the underlying host / hardware simulation running.");
+            sc = new TSOS.ShellCommand(this.shellShutdown, "shutdown", "- Shuts down only the virtual OS.");
             this.commandList[this.commandList.length] = sc;
             // cls
             sc = new TSOS.ShellCommand(this.shellCls, "cls", "- Clears the screen and resets the cursor position.");
@@ -50,19 +50,19 @@ var TSOS;
             sc = new TSOS.ShellCommand(this.shellPrompt, "prompt", "<string> - Sets the prompt.");
             this.commandList[this.commandList.length] = sc;
             // date
-            sc = new TSOS.ShellCommand(this.shellDate, "date", "Displays the current date and time.");
+            sc = new TSOS.ShellCommand(this.shellDate, "date", "- Displays the current date and time.");
             this.commandList[this.commandList.length] = sc;
             // whereami
-            sc = new TSOS.ShellCommand(this.shellWhereAmI, "whereami", "Shows where the user currently is.");
+            sc = new TSOS.ShellCommand(this.shellWhereAmI, "whereami", "- Shows where the user currently is.");
             this.commandList[this.commandList.length] = sc;
             // piano
-            sc = new TSOS.ShellCommand(this.shellPiano, "piano", "Your key presses now make piano notes!");
+            sc = new TSOS.ShellCommand(this.shellPiano, "piano", "- Your key presses now make piano notes!");
             this.commandList[this.commandList.length] = sc;
             // load
-            sc = new TSOS.ShellCommand(this.shellLoad, "load", "Validates the user code in the HTML5 text area.");
+            sc = new TSOS.ShellCommand(this.shellLoad, "load", "- Validates the user code in the HTML5 text area.");
             this.commandList[this.commandList.length] = sc;
             // seppuku
-            sc = new TSOS.ShellCommand(this.shellSeppuku, "seppuku", "Commit seppuku (trigger the BSOD message)");
+            sc = new TSOS.ShellCommand(this.shellSeppuku, "seppuku", "- Commit seppuku (trigger the BSOD message)");
             this.commandList[this.commandList.length] = sc;
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.

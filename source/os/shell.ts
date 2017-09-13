@@ -46,7 +46,7 @@ module TSOS {
             // shutdown
             sc = new ShellCommand(this.shellShutdown,
                                   "shutdown",
-                                  "- Shuts down the virtual OS but leaves the underlying host / hardware simulation running.");
+                                  "- Shuts down only the virtual OS.");
             this.commandList[this.commandList.length] = sc;
 
             // cls
@@ -82,31 +82,31 @@ module TSOS {
             // date
             sc = new ShellCommand(this.shellDate,
                                   "date",
-                                  "Displays the current date and time.");
+                                  "- Displays the current date and time.");
             this.commandList[this.commandList.length] = sc;
 
             // whereami
             sc = new ShellCommand(this.shellWhereAmI,
                                   "whereami",
-                                  "Shows where the user currently is.");
+                                  "- Shows where the user currently is.");
             this.commandList[this.commandList.length] = sc;
 
             // piano
             sc = new ShellCommand(this.shellPiano,
                                   "piano",
-                                  "Your key presses now make piano notes!");
+                                  "- Your key presses now make piano notes!");
             this.commandList[this.commandList.length] = sc;
 
             // load
             sc = new ShellCommand(this.shellLoad,
                                   "load",
-                                  "Validates the user code in the HTML5 text area.");
+                                  "- Validates the user code in the HTML5 text area.");
             this.commandList[this.commandList.length] = sc;
 
             // seppuku
             sc = new ShellCommand(this.shellSeppuku,
                                   "seppuku",
-                                  "Commit seppuku (trigger the BSOD message)");
+                                  "- Commit seppuku (trigger the BSOD message)");
             this.commandList[this.commandList.length] = sc;
 
             // ps  - list the running processes and their IDs
