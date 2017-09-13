@@ -46,7 +46,7 @@ module TSOS {
             // shutdown
             sc = new ShellCommand(this.shellShutdown,
                                   "shutdown",
-                                  "- Shuts down the virtual OS but leaves the underlying host / hardware simulation running.");
+                                  "- Shuts down only the virtual OS.");
             this.commandList[this.commandList.length] = sc;
 
             // cls
@@ -77,6 +77,36 @@ module TSOS {
             sc = new ShellCommand(this.shellPrompt,
                                   "prompt",
                                   "<string> - Sets the prompt.");
+            this.commandList[this.commandList.length] = sc;
+
+            // date
+            sc = new ShellCommand(this.shellDate,
+                                  "date",
+                                  "- Displays the current date and time.");
+            this.commandList[this.commandList.length] = sc;
+
+            // whereami
+            sc = new ShellCommand(this.shellWhereAmI,
+                                  "whereami",
+                                  "- Shows where the user currently is.");
+            this.commandList[this.commandList.length] = sc;
+
+            // piano
+            sc = new ShellCommand(this.shellPiano,
+                                  "piano",
+                                  "- Your key presses now make piano notes!");
+            this.commandList[this.commandList.length] = sc;
+
+            // load
+            sc = new ShellCommand(this.shellLoad,
+                                  "load",
+                                  "- Validates the user code in the HTML5 text area.");
+            this.commandList[this.commandList.length] = sc;
+
+            // seppuku
+            sc = new ShellCommand(this.shellSeppuku,
+                                  "seppuku",
+                                  "- Commit seppuku (trigger the BSOD message)");
             this.commandList[this.commandList.length] = sc;
 
             // ps  - list the running processes and their IDs
@@ -207,7 +237,7 @@ module TSOS {
         }
 
         public shellVer(args) {
-            _StdOut.putText(APP_NAME + " version " + APP_VERSION);
+            _StdOut.putText(APP_NAME + " version " + APP_VERSION + ". Kai is a very sexy man.");
         }
 
         public shellHelp(args) {
@@ -236,6 +266,56 @@ module TSOS {
                 switch (topic) {
                     case "help":
                         _StdOut.putText("Help displays a list of (hopefully) valid commands.");
+                        break;
+                    case "ver":
+                        _StdOut.putText("Ver displays the name and the version of the operating");
+                        _StdOut.advanceLine();
+                        _StdOut.putText("system.");
+                        break;
+                    case "shutdown":
+                        _StdOut.putText("Shutdown calls the kernel shutdown routine, shutting down");
+                        _StdOut.advanceLine();
+                        _StdOut.putText("the virtual OS but leaving the underlying host / hardware");
+                        _StdOut.advanceLine();
+                        _StdOut.putText("simulation running.");
+                        break;
+                    case "cls":
+                        _StdOut.putText("Cls clears the screen by clearing the console rectangle");
+                        _StdOut.advanceLine();
+                        _StdOut.putText("and resets the XY position of the cursor.");
+                        break;
+                    case "man":
+                        _StdOut.putText("Man takes a command as an argument and outputs what");
+                        _StdOut.advanceLine();
+                        _StdOut.putText("the command does. You should already know this, silly.");
+                        break;
+                    case "trace":
+                        _StdOut.putText("Trace takes either yes or no as an argument, turning");
+                        _StdOut.advanceLine();
+                        _StdOut.putText("the OS' trace feature on or off.");
+                        break;
+                    case "rot13":
+                        _StdOut.putText("Rot13 rotates each character in a string by 13 characters.");
+                        break;
+                    case "prompt":
+                        _StdOut.putText("Prompt takes a string as an argument and sets the shell");
+                        _StdOut.advanceLine();
+                        _StdOut.putText("prompt to that string.");
+                        break;
+                    case "date":
+                        _StdOut.putText("Date displays the current date and time.");
+                        break;
+                    case "whereami":
+                        _StdOut.putText("Whereami displays your location in a friendly manner");
+                        break;
+                    case "piano":
+                        _StdOut.putText("Piano plays a piano note for different key presses.");
+                        break;
+                    case "load":
+                        _StdOut.putText("Load validates the user code in the HTML5 text area.");
+                        break;
+                    case "seppuku":
+                        _StdOut.putText("Seppuku commits seppuku. Loads the BSOD message.");
                         break;
                     // TODO: Make descriptive MANual page entries for the the rest of the shell commands here.
                     default:
@@ -285,6 +365,30 @@ module TSOS {
             } else {
                 _StdOut.putText("Usage: prompt <string>  Please supply a string.");
             }
+        }
+
+        public shellDate() {
+            var dateTime = new Date().toLocaleString();
+            _StdOut.putText("Current date and time: " + dateTime);
+        }
+
+        public shellWhereAmI() {
+            _StdOut.putText("Open the window and look outside.");
+        }
+
+        public shellPiano() {
+            if(!_PianoTime) _StdOut.putText("Your keyboard is now a piano!");
+            else _StdOut.putText("Your keyboard is not a piano anymore.");
+            _PianoTime = !_PianoTime;
+        }
+
+        public shellLoad() {
+
+        }
+
+        public shellSeppuku() {
+            //This simulates an interrupt that the kernel doesn't know how to handle
+            _KernelInterruptQueue.enqueue(99);
         }
 
     }
