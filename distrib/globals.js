@@ -40,6 +40,8 @@ var _StdOut;
 // UI
 var _Console;
 var _OsShell;
+// Extra piano sounds
+var _PianoTime = false;
 // At least this OS is not trying to kill you. (Yet.)
 var _SarcasticMode = false;
 // Global Device Driver Objects - page 12

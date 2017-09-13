@@ -246,7 +246,7 @@ var TSOS;
                         _StdOut.putText("Displays a helpful hint to finding out where you are.");
                         break;
                     case "piano":
-                        _StdOut.putText("Rot13 rotates each character in a string by 13 characters.");
+                        _StdOut.putText("Plays a piano note for each different key pressed.");
                         break;
                     // TODO: Make descriptive MANual page entries for the the rest of the shell commands here.
                     default:
@@ -307,6 +307,11 @@ var TSOS;
             _StdOut.putText("Open the window and look outside.");
         };
         Shell.prototype.shellPiano = function () {
+            if (!_PianoTime)
+                _StdOut.putText("Your keyboard is now a piano!");
+            else
+                _StdOut.putText("Your keyboard is not a piano anymore.");
+            _PianoTime = !_PianoTime;
         };
         return Shell;
     }());

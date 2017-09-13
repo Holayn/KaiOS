@@ -53,6 +53,9 @@ var _StdOut;
 var _Console: TSOS.Console;
 var _OsShell: TSOS.Shell;
 
+// Extra piano sounds
+var _PianoTime: boolean = false;
+
 // At least this OS is not trying to kill you. (Yet.)
 var _SarcasticMode: boolean = false;
 
