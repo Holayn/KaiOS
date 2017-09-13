@@ -23,7 +23,7 @@
 //
 var TSOS;
 (function (TSOS) {
-    var Control = (function () {
+    var Control = /** @class */ (function () {
         function Control() {
         }
         Control.hostInit = function () {
@@ -99,6 +99,6 @@ var TSOS;
             // page from its cache, which is not what we want.
         };
         return Control;
-    })();
+    }());
     TSOS.Control = Control;
 })(TSOS || (TSOS = {}));

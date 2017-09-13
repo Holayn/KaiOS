@@ -9,7 +9,7 @@
    ------------ */
 var TSOS;
 (function (TSOS) {
-    var Queue = (function () {
+    var Queue = /** @class */ (function () {
         function Queue(q) {
             if (q === void 0) { q = new Array(); }
             this.q = q;
@@ -38,6 +38,6 @@ var TSOS;
             return retVal;
         };
         return Queue;
-    })();
+    }());
     TSOS.Queue = Queue;
 })(TSOS || (TSOS = {}));

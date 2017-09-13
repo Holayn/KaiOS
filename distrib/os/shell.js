@@ -13,7 +13,7 @@
 // TODO: Write a base class / prototype for system services and let Shell inherit from it.
 var TSOS;
 (function (TSOS) {
-    var Shell = (function () {
+    var Shell = /** @class */ (function () {
         function Shell() {
             // Properties
             this.promptStr = ">";
@@ -247,6 +247,6 @@ var TSOS;
             }
         };
         return Shell;
-    })();
+    }());
     TSOS.Shell = Shell;
 })(TSOS || (TSOS = {}));
