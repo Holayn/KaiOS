@@ -196,25 +196,39 @@ var TSOS;
                         _StdOut.putText("Help displays a list of (hopefully) valid commands.");
                         break;
                     case "ver":
-                        _StdOut.putText("Ver displays the name and the version of the operating system.");
+                        _StdOut.putText("Ver displays the name and the version of the operating");
+                        _StdOut.advanceLine();
+                        _StdOut.putText("system.");
                         break;
                     case "shutdown":
-                        _StdOut.putText("Shutdown calls the kernel shutdown routine, shutting down the virtual OS but leaving the underlying host / hardware simulation running.");
+                        _StdOut.putText("Shutdown calls the kernel shutdown routine, shutting down");
+                        _StdOut.advanceLine();
+                        _StdOut.putText("the virtual OS but leaving the underlying host / hardware");
+                        _StdOut.advanceLine();
+                        _StdOut.putText("simulation running.");
                         break;
                     case "cls":
-                        _StdOut.putText("Cls clears the screen by clearing the console rectangle and resets the XY position of the cursor.");
+                        _StdOut.putText("Cls clears the screen by clearing the console rectangle");
+                        _StdOut.advanceLine();
+                        _StdOut.putText("and resets the XY position of the cursor.");
                         break;
                     case "man":
-                        _StdOut.putText("Man takes a command as an argument and outputs what the command does. You should already know this, silly.");
+                        _StdOut.putText("Man takes a command as an argument and outputs what");
+                        _StdOut.advanceLine();
+                        _StdOut.putText("the command does. You should already know this, silly.");
                         break;
                     case "trace":
-                        _StdOut.putText("Trace takes either yes or no as an argument, turning the OS' trace feature on or off.");
+                        _StdOut.putText("Trace takes either yes or no as an argument, turning");
+                        _StdOut.advanceLine();
+                        _StdOut.putText("the OS' trace feature on or off.");
                         break;
                     case "rot13":
                         _StdOut.putText("Rot13 rotates each character in a string by 13 characters.");
                         break;
                     case "prompt":
-                        _StdOut.putText("Prompt takes a string as an argument and sets the shell prompt to that string.");
+                        _StdOut.putText("Prompt takes a string as an argument and sets the shell");
+                        _StdOut.advanceLine();
+                        _StdOut.putText("prompt to that string.");
                         break;
                     // TODO: Make descriptive MANual page entries for the the rest of the shell commands here.
                     default:
