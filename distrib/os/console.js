@@ -34,6 +34,7 @@ var TSOS;
             this.currentYPosition = this.currentFontSize;
         };
         Console.prototype.handleInput = function () {
+            var audio;
             while (_KernelInputQueue.getSize() > 0) {
                 // Get the next character from the kernel input queue.
                 var chr = _KernelInputQueue.dequeue();
@@ -44,12 +45,11 @@ var TSOS;
                     _OsShell.handleInput(this.buffer);
                     //If PianoTime is enabled, play a chord
                     if (_PianoTime) {
-                        var audio;
-                        audio = new Audio('source/assets/40.wav');
+                        audio = new Audio('distrib/sound/40.wav');
                         audio.play();
-                        audio = new Audio('source/assets/44.wav');
+                        audio = new Audio('distrib/sound/44.wav');
                         audio.play();
-                        audio = new Audio('source/assets/47.wav');
+                        audio = new Audio('distrib/sound/47.wav');
                         audio.play();
                     }
                     // ... and reset our buffer.
@@ -65,7 +65,7 @@ var TSOS;
                     if (_PianoTime) {
                         var characterToNote = { "a": "64", "b": "63", "c": "62", "d": "61", "e": "60", "f": "59", "g": "58", "h": "57", "i": "56", "j": "55", "k": "54", "l": "53", "m": "52", "n": "51", "o": "50", "p": "49", "q": "48", "r": "47", "s": "46", "t": "45", "u": "44", "v": "43", "w": "42", "x": "41", "y": "40", "z": "39" };
                         if (characterToNote[chr] != null) {
-                            var audio = new Audio('source/assets/' + characterToNote[chr] + '.wav');
+                            audio = new Audio('distrib/sound/' + characterToNote[chr] + '.wav');
                             audio.play();
                         }
                     }
