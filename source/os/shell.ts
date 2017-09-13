@@ -297,13 +297,16 @@ module TSOS {
                         _StdOut.putText("prompt to that string.");
                         break;
                     case "date":
-                        _StdOut.putText("Displays the current date and time.");
+                        _StdOut.putText("Date displays the current date and time.");
                         break;
                     case "whereami":
-                        _StdOut.putText("Displays a helpful hint to finding out where you are.");
+                        _StdOut.putText("Whereami displays your location in a friendly manner");
                         break;
                     case "piano":
-                        _StdOut.putText("Plays a piano note for each different key pressed.");
+                        _StdOut.putText("Piano plays a piano note for different key presses.");
+                        break;
+                    case "load":
+                        _StdOut.putText("Load validates the user code in the HTML5 text area.");
                         break;
                     // TODO: Make descriptive MANual page entries for the the rest of the shell commands here.
                     default:
@@ -371,7 +374,7 @@ module TSOS {
         }
 
         public shellLoad() {
-            
+
         }
 
     }

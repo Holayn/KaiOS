@@ -58,6 +58,9 @@ var TSOS;
             // piano
             sc = new TSOS.ShellCommand(this.shellPiano, "piano", "Your key presses now make piano notes!");
             this.commandList[this.commandList.length] = sc;
+            // load
+            sc = new TSOS.ShellCommand(this.shellLoad, "load", "Validates the user code in the HTML5 text area.");
+            this.commandList[this.commandList.length] = sc;
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
             //
@@ -240,13 +243,16 @@ var TSOS;
                         _StdOut.putText("prompt to that string.");
                         break;
                     case "date":
-                        _StdOut.putText("Displays the current date and time.");
+                        _StdOut.putText("Date displays the current date and time.");
                         break;
                     case "whereami":
-                        _StdOut.putText("Displays a helpful hint to finding out where you are.");
+                        _StdOut.putText("Whereami displays your location in a friendly manner");
                         break;
                     case "piano":
-                        _StdOut.putText("Plays a piano note for each different key pressed.");
+                        _StdOut.putText("Piano plays a piano note for different key presses.");
+                        break;
+                    case "load":
+                        _StdOut.putText("Load validates the user code in the HTML5 text area.");
                         break;
                     // TODO: Make descriptive MANual page entries for the the rest of the shell commands here.
                     default:
@@ -312,6 +318,8 @@ var TSOS;
             else
                 _StdOut.putText("Your keyboard is not a piano anymore.");
             _PianoTime = !_PianoTime;
+        };
+        Shell.prototype.shellLoad = function () {
         };
         return Shell;
     }());
