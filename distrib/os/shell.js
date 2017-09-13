@@ -239,6 +239,15 @@ var TSOS;
                         _StdOut.advanceLine();
                         _StdOut.putText("prompt to that string.");
                         break;
+                    case "date":
+                        _StdOut.putText("Displays the current date and time.");
+                        break;
+                    case "whereami":
+                        _StdOut.putText("Displays a helpful hint to finding out where you are.");
+                        break;
+                    case "piano":
+                        _StdOut.putText("Rot13 rotates each character in a string by 13 characters.");
+                        break;
                     // TODO: Make descriptive MANual page entries for the the rest of the shell commands here.
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
