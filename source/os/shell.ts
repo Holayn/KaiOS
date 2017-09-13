@@ -91,6 +91,12 @@ module TSOS {
                                   "Shows where the user currently is.");
             this.commandList[this.commandList.length] = sc;
 
+            // piano
+            sc = new ShellCommand(this.shellPiano,
+                                  "piano",
+                                  "Your key presses now make piano notes!");
+            this.commandList[this.commandList.length] = sc;
+
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
 
@@ -341,6 +347,9 @@ module TSOS {
 
         public shellWhereAmI() {
             _StdOut.putText("Open the window and look outside.");
+        }
+
+        public shellPiano() {
         }
 
     }
