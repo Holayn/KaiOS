@@ -383,7 +383,7 @@ module TSOS {
         }
 
         public shellLoad() {
-
+            var userArr = document.getElementById("taProgramInput").value.split(" ");
         }
 
         public shellSeppuku() {
