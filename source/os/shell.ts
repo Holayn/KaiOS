@@ -329,6 +329,8 @@ module TSOS {
         }
 
         public shellDate() {
+            var dateTime = new Date().toLocaleString();
+            _StdOut.putText("Current date and time: " + dateTime);
         }
 
     }

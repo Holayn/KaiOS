@@ -285,6 +285,8 @@ var TSOS;
             }
         };
         Shell.prototype.shellDate = function () {
+            var dateTime = new Date().toLocaleString();
+            _StdOut.putText("Current date and time: " + dateTime);
         };
         return Shell;
     }());
