@@ -387,6 +387,8 @@ module TSOS {
         }
 
         public shellSeppuku() {
+            //This simulates an interrupt that the kernel doesn't know how to handle
+            _KernelInterruptQueue.enqueue(99);
         }
 
     }
