@@ -257,6 +257,9 @@ var TSOS;
                     case "load":
                         _StdOut.putText("Load validates the user code in the HTML5 text area.");
                         break;
+                    case "seppuku":
+                        _StdOut.putText("Seppuku commits seppuku. Loads the BSOD message.");
+                        break;
                     // TODO: Make descriptive MANual page entries for the the rest of the shell commands here.
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
@@ -323,6 +326,8 @@ var TSOS;
             _PianoTime = !_PianoTime;
         };
         Shell.prototype.shellLoad = function () {
+        };
+        Shell.prototype.shellSeppuku = function () {
         };
         return Shell;
     }());
