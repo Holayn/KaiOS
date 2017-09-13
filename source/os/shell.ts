@@ -207,7 +207,7 @@ module TSOS {
         }
 
         public shellVer(args) {
-            _StdOut.putText(APP_NAME + " version " + APP_VERSION);
+            _StdOut.putText(APP_NAME + " version " + APP_VERSION + ". Kai is a very sexy man.");
         }
 
         public shellHelp(args) {
