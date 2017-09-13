@@ -387,7 +387,6 @@ module TSOS {
         }
 
         public shellSeppuku() {
-            
         }
 
     }
