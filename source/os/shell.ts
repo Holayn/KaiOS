@@ -97,6 +97,12 @@ module TSOS {
                                   "Your key presses now make piano notes!");
             this.commandList[this.commandList.length] = sc;
 
+            // load
+            sc = new ShellCommand(this.shellLoad,
+                                  "load",
+                                  "Validates the user code in the HTML5 text area.");
+            this.commandList[this.commandList.length] = sc;
+
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
 
@@ -362,6 +368,10 @@ module TSOS {
             if(!_PianoTime) _StdOut.putText("Your keyboard is now a piano!");
             else _StdOut.putText("Your keyboard is not a piano anymore.");
             _PianoTime = !_PianoTime;
+        }
+
+        public shellLoad() {
+            
         }
 
     }
