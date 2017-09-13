@@ -340,7 +340,7 @@ module TSOS {
         }
 
         public shellWhereAmI() {
-            
+            _StdOut.putText("Open the window and look outside.");
         }
 
     }
