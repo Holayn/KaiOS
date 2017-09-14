@@ -328,9 +328,9 @@ var TSOS;
         Shell.prototype.shellLoad = function () {
             var re = /[0-9A-Fa-f]{2}/i;
             var userArr = document.getElementById("taProgramInput").value.split(" ");
-            console.log(userArr);
             for (var _i = 0, userArr_1 = userArr; _i < userArr_1.length; _i++) {
                 var opCode = userArr_1[_i];
+                opCode = opCode.replace(/\r?\n|\r/g, "");
                 if ((userArr[0] != "") && (opCode.length != 2 || !re.test(opCode))) {
                     _StdOut.putText("Syntax error in user program!");
                     break;
