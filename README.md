@@ -1,4 +1,5 @@
 # Kai's Operating Systems Repo. :^) :^) :^)
+## Please note that earlier commits have the issue number they address in its comment
 
 Browser-based Operating System in TypeScript
 ============================================
