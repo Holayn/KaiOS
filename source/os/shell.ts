@@ -383,7 +383,14 @@ module TSOS {
         }
 
         public shellLoad() {
-            var userArr = document.getElementById("taProgramInput").value.split(" ");
+            let re = /[0-9A-Fa-f]{2}/i;
+            let userArr = document.getElementById("taProgramInput").value.split(" ");
+            for(let opCode of userArr){
+                if(opCode.length != 2 || !re.test(opCode)){
+                    _StdOut.putText("Syntax error in user program!");
+                    break;
+                }
+            }
         }
 
         public shellSeppuku() {
