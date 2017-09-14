@@ -94,7 +94,7 @@ module TSOS {
             // piano
             sc = new ShellCommand(this.shellPiano,
                                   "piano",
-                                  "- Your key presses now make piano notes!");
+                                  "- Your key presses now play piano notes!");
             this.commandList[this.commandList.length] = sc;
 
             // load

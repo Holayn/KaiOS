@@ -56,7 +56,7 @@ var TSOS;
             sc = new TSOS.ShellCommand(this.shellWhereAmI, "whereami", "- Shows where the user currently is.");
             this.commandList[this.commandList.length] = sc;
             // piano
-            sc = new TSOS.ShellCommand(this.shellPiano, "piano", "- Your key presses now make piano notes!");
+            sc = new TSOS.ShellCommand(this.shellPiano, "piano", "- Your key presses now play piano notes!");
             this.commandList[this.commandList.length] = sc;
             // load
             sc = new TSOS.ShellCommand(this.shellLoad, "load", "- Validates the user code in the HTML5 text area.");
