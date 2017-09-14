@@ -385,8 +385,9 @@ module TSOS {
         public shellLoad() {
             let re = /[0-9A-Fa-f]{2}/i;
             let userArr = document.getElementById("taProgramInput").value.split(" ");
+            console.log(userArr);
             for(let opCode of userArr){
-                if(opCode.length != 2 || !re.test(opCode)){
+                if((userArr[0] != "") && (opCode.length != 2 || !re.test(opCode))){
                     _StdOut.putText("Syntax error in user program!");
                     break;
                 }
