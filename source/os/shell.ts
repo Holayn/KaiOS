@@ -382,13 +382,16 @@ module TSOS {
             _PianoTime = !_PianoTime;
         }
 
+        //Validates by making sure the op codes are valid (hex, 2 long each)
+        //Handles the case where the user enters newlines.
         public shellLoad() {
             let re = /[0-9A-Fa-f]{2}/i;
             let foundError = false;
-            let userArr = (<HTMLInputElement>document.getElementById("taProgramInput")).value.split(" ");
+            let userInput = (<HTMLInputElement>document.getElementById("taProgramInput")).value;
+            userInput = userInput.replace(/\r?\n|\r/g, " ");
+            let userArr = userInput.split(" ");
             for(let opCode of userArr){
-                opCode = opCode.replace(/\r?\n|\r/g, "");
-                if((userArr[0] != "") && (opCode.length != 2 || !re.test(opCode))){
+                if((opCode != "") && (opCode.length != 2 || !re.test(opCode))){
                     _StdOut.putText("Syntax error in user program!");
                     foundError = true;
                     break;

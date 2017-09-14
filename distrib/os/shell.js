@@ -325,14 +325,17 @@ var TSOS;
                 _StdOut.putText("Your keyboard is not a piano anymore.");
             _PianoTime = !_PianoTime;
         };
+        //Validates by making sure the op codes are valid (hex, 2 long each)
+        //Handles the case where the user enters newlines.
         Shell.prototype.shellLoad = function () {
             var re = /[0-9A-Fa-f]{2}/i;
             var foundError = false;
-            var userArr = document.getElementById("taProgramInput").value.split(" ");
+            var userInput = document.getElementById("taProgramInput").value;
+            userInput = userInput.replace(/\r?\n|\r/g, " ");
+            var userArr = userInput.split(" ");
             for (var _i = 0, userArr_1 = userArr; _i < userArr_1.length; _i++) {
                 var opCode = userArr_1[_i];
-                opCode = opCode.replace(/\r?\n|\r/g, "");
-                if ((userArr[0] != "") && (opCode.length != 2 || !re.test(opCode))) {
+                if ((opCode != "") && (opCode.length != 2 || !re.test(opCode))) {
                     _StdOut.putText("Syntax error in user program!");
                     foundError = true;
                     break;
