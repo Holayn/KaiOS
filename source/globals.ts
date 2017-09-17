@@ -57,7 +57,7 @@ var _OsShell: TSOS.Shell;
 var _PianoTime: boolean = false;
 
 // User status
-var _UserStatus: String = null;
+var _UserStatus: String = "Welcome to KaiOS!";
 
 // At least this OS is not trying to kill you. (Yet.)
 var _SarcasticMode: boolean = false;
