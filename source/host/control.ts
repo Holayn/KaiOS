@@ -71,7 +71,7 @@ module TSOS {
             var taLog = <HTMLInputElement> document.getElementById("taHostLog");
             taLog.value = str + taLog.value;
             
-            //Update the time on the taskbar
+            //Updating the taskbar
             var dateTime = new Date().toLocaleString();
             document.getElementById("taskBar").innerHTML = "<h2>" + dateTime + " | " + _UserStatus + "</h2>";
 
