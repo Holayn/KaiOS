@@ -42,6 +42,8 @@ var _Console;
 var _OsShell;
 // Extra piano sounds
 var _PianoTime = false;
+// User status
+var _UserStatus = null;
 // At least this OS is not trying to kill you. (Yet.)
 var _SarcasticMode = false;
 // Global Device Driver Objects - page 12

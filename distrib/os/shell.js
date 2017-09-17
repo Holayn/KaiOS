@@ -64,6 +64,9 @@ var TSOS;
             // seppuku
             sc = new TSOS.ShellCommand(this.shellSeppuku, "seppuku", "- Commit seppuku (trigger the BSOD message)");
             this.commandList[this.commandList.length] = sc;
+            // status
+            sc = new TSOS.ShellCommand(this.shellStatus, "status", "- Changes the status message.");
+            this.commandList[this.commandList.length] = sc;
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
             //
@@ -260,6 +263,9 @@ var TSOS;
                     case "seppuku":
                         _StdOut.putText("Seppuku commits seppuku. Loads the BSOD message.");
                         break;
+                    case "status":
+                        _StdOut.putText("Status allows the user to change the status.");
+                        break;
                     // TODO: Make descriptive MANual page entries for the the rest of the shell commands here.
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
@@ -348,6 +354,19 @@ var TSOS;
         Shell.prototype.shellSeppuku = function () {
             //This simulates an interrupt that the kernel doesn't know how to handle
             _KernelInterruptQueue.enqueue(99);
+        };
+        Shell.prototype.shellStatus = function (args) {
+            if (args.length > 0) {
+                _UserStatus = "";
+                for (var _i = 0, args_1 = args; _i < args_1.length; _i++) {
+                    var word = args_1[_i];
+                    _UserStatus += word + " ";
+                }
+            }
+            else {
+                _StdOut.putText("Usage: status <message>  Please supply a message.");
+            }
+            console.log(_UserStatus);
         };
         return Shell;
     }());
