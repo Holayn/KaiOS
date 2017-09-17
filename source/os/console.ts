@@ -99,11 +99,32 @@ module TSOS {
              * Font descent measures from the baseline to the lowest point in the font.
              * Font height margin is extra spacing between the lines.
              */
-            this.currentYPosition += _DefaultFontSize + 
-                                     _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) +
-                                     _FontHeightMargin;
+            
+            let lineHeight = _DefaultFontSize + _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) + _FontHeightMargin;
 
-            // TODO: Handle scrolling. (iProject 1)
+            /*
+             * This checks to see if the output will go off the screen
+             * If it does, then we handle scrolling by saving the image data of the canvas, clearing the canvas, then
+             * redrawing the canvas with the image data being drawn starting from a line height further off the screen.
+             */
+            var canvasText = [];
+            if(this.currentYPosition+lineHeight >= _Canvas.height){
+                // var rectData = _DrawingContext.getImageData(0, 0, _Canvas.width, _Canvas.height);
+                // _DrawingContext.clearRect(0, 0, _Canvas.width, _Canvas.height);
+                // _DrawingContext.putImageData(rectData, 0, -lineHeight, 0, 0, _Canvas.width, _Canvas.height);
+
+                //Save each line to an array, then spit it back out to the canvas but without the first one.
+                for(var i=0; i<_Canvas.height; i+=lineHeight){
+                    var lineData = _DrawingContext.getImageData(0, i, _Canvas.width, lineHeight);
+                    canvasText.push(lineData);
+                }
+                for(var i=0; i<canvasText.length; i++){
+                    _DrawingContext.putImageData(canvasText[i], 0, (-lineHeight + i*(lineHeight)), 0, 0, _Canvas.width, _Canvas.height);
+                }
+            }
+            else{
+                this.currentYPosition += lineHeight;
+            }
         }
     }
  }
