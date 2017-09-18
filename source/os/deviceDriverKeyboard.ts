@@ -64,7 +64,7 @@ module TSOS {
                 chr = String.fromCharCode(keyCode);
                 _KernelInputQueue.enqueue(chr);
                 //Play a chord when the user presses enter (if PianoTime is enabled)
-                if(_PianoTime){
+                if(_PianoTime && keyCode == 13){
                     audio = new Audio('distrib/sound/40.wav');
                     audio.play();
                     audio = new Audio('distrib/sound/44.wav');
