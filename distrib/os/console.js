@@ -46,6 +46,15 @@ var TSOS;
                     // ... and reset our buffer.
                     this.buffer = "";
                 }
+                else if (chr === String.fromCharCode(8)) {
+                    //Delete the last character from the buffer, clear the line, and redraw the line of text
+                    var lineHeight = _DefaultFontSize + _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) + _FontHeightMargin;
+                    this.buffer = this.buffer.substring(0, this.buffer.length - 1);
+                    this.currentXPosition = 0;
+                    _DrawingContext.clearRect(0, this.currentYPosition - lineHeight + 5, _Canvas.width, lineHeight * 2);
+                    this.putText(_OsShell.promptStr);
+                    this.putText(this.buffer);
+                }
                 else {
                     // This is a "normal" character, so ...
                     // ... draw it on the screen...
