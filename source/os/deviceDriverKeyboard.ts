@@ -130,7 +130,9 @@ module TSOS {
                 _KernelInputQueue.enqueue("down");
             }
             else if (keyCode == 9){     //tab
-                _KernelInputQueue.enqueue("tab");
+                chr = String.fromCharCode(keyCode);
+                console.log(chr);
+                _KernelInputQueue.enqueue(chr);
             }
         }
     }

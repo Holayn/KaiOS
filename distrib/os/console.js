@@ -10,7 +10,7 @@
 var TSOS;
 (function (TSOS) {
     var Console = /** @class */ (function () {
-        function Console(currentFont, currentFontSize, currentXPosition, currentYPosition, buffer, commandHistory, commandPtr) {
+        function Console(currentFont, currentFontSize, currentXPosition, currentYPosition, buffer, commandHistory, commandPtr, numOfWraps) {
             if (currentFont === void 0) { currentFont = _DefaultFontFamily; }
             if (currentFontSize === void 0) { currentFontSize = _DefaultFontSize; }
             if (currentXPosition === void 0) { currentXPosition = 0; }
@@ -18,6 +18,7 @@ var TSOS;
             if (buffer === void 0) { buffer = ""; }
             if (commandHistory === void 0) { commandHistory = []; }
             if (commandPtr === void 0) { commandPtr = 0; }
+            if (numOfWraps === void 0) { numOfWraps = 0; }
             this.currentFont = currentFont;
             this.currentFontSize = currentFontSize;
             this.currentXPosition = currentXPosition;
@@ -25,6 +26,7 @@ var TSOS;
             this.buffer = buffer;
             this.commandHistory = commandHistory;
             this.commandPtr = commandPtr;
+            this.numOfWraps = numOfWraps;
         }
         Console.prototype.init = function () {
             this.clearScreen();
@@ -50,18 +52,31 @@ var TSOS;
                     // ... and add it to the history of commands ...
                     this.commandHistory.push(this.buffer);
                     this.commandPtr = this.commandHistory.length - 1;
+                    // ... and reset the number of wraps done, user can't delete ...
+                    this.numOfWraps = 0;
                     // ... and reset our buffer.
                     this.buffer = "";
                 }
                 else if (chr === String.fromCharCode(8)) {
                     //Delete the last character from the buffer, clear the line, and redraw the line of text
+                    //We need to be able to delete from wrapped lines, so...
+                    //Since backspace prints from the starting line, which will cause input to rewrap again
+                    //all we need to do is clear all lines that have been wrapped on so we can start anew
                     this.clearCurrentLine();
+                    //Wrap -- goes back to the starting line, clearing everything along the way
+                    while (this.numOfWraps > 0) {
+                        this.previousLine();
+                        this.clearCurrentLine();
+                        this.numOfWraps--;
+                    }
+                    this.putText(_OsShell.promptStr);
                     this.buffer = this.buffer.substring(0, this.buffer.length - 1);
                     this.putText(this.buffer);
                 }
                 else if (chr === "up") {
                     //Recall the previous command and print it to the current line, first clearing the line
                     this.clearCurrentLine();
+                    this.putText(_OsShell.promptStr);
                     if (this.commandPtr != -1) {
                         this.commandPtr--;
                     }
@@ -73,6 +88,7 @@ var TSOS;
                     if (this.commandPtr != this.commandHistory.length - 1) {
                         this.buffer = "";
                         this.clearCurrentLine();
+                        this.putText(_OsShell.promptStr);
                         this.commandPtr++;
                         if (this.commandPtr + 1 != this.commandHistory.length) {
                             this.putText(this.commandHistory[this.commandPtr + 1]);
@@ -80,13 +96,14 @@ var TSOS;
                         }
                     }
                 }
-                else if (chr === "tab") {
+                else if (chr === String.fromCharCode(9)) {
                     //See if the user input so far matches any part of the beginning of a command defined in the shell.
                     //Auto-complete the command on the first match
                     var regexp = new RegExp("^" + this.buffer, "i");
                     for (var i = 0; i < _OsShell.commandList.length; i++) {
                         if (regexp.test(_OsShell.commandList[i].command)) {
                             this.clearCurrentLine();
+                            this.putText(_OsShell.promptStr);
                             this.buffer = _OsShell.commandList[i].command;
                             this.putText(this.buffer);
                             break;
@@ -113,11 +130,45 @@ var TSOS;
             // UPDATE: Even though we are now working in TypeScript, char and string remain undistinguished.
             //         Consider fixing that.
             if (text !== "") {
-                // Draw the text at the current X and Y coordinates.
-                _DrawingContext.drawText(this.currentFont, this.currentFontSize, this.currentXPosition, this.currentYPosition, text);
-                // Move the current X position.
-                var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, text);
-                this.currentXPosition = this.currentXPosition + offset;
+                //If the line is too long, we have to find where to advance the line
+                //This can be a whole line of text, or a single character being drawn
+                //So, if a line of text,find where in text that makes the line too long, 
+                //then advance the line from there
+                if (this.currentXPosition + _DrawingContext.measureText(this.currentFont, this.currentFontSize, text) > _Canvas.width) {
+                    if (text.length > 1) {
+                        //Find which char in the sentence makes the line too long, advance the line there,
+                        //then continue printing rest of line
+                        var len = this.currentXPosition;
+                        for (var i = 0; i < text.length; i++) {
+                            len += _DrawingContext.measureText(this.currentFont, this.currentFontSize, text.charAt(i));
+                            if (len > _Canvas.width) {
+                                var firstLine = text.substring(0, i);
+                                var secondLine = text.substring(i);
+                                _DrawingContext.drawText(this.currentFont, this.currentFontSize, this.currentXPosition, this.currentYPosition, firstLine);
+                                this.advanceLine();
+                                //Recursive call until the entire line is wrapped
+                                this.putText(secondLine);
+                                break;
+                            }
+                        }
+                    }
+                    else {
+                        this.advanceLine();
+                        _DrawingContext.drawText(this.currentFont, this.currentFontSize, this.currentXPosition, this.currentYPosition, text);
+                        var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, text);
+                        this.currentXPosition = this.currentXPosition + offset;
+                    }
+                    //We have to keep track of the number of wraps so we can clear
+                    //the correct number of lines when we delete
+                    this.numOfWraps++;
+                }
+                else {
+                    // Draw the text at the current X and Y coordinates.
+                    _DrawingContext.drawText(this.currentFont, this.currentFontSize, this.currentXPosition, this.currentYPosition, text);
+                    // Move the current X position.
+                    var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, text);
+                    this.currentXPosition = this.currentXPosition + offset;
+                }
             }
         };
         Console.prototype.advanceLine = function () {
@@ -135,10 +186,12 @@ var TSOS;
              */
             var canvasText = [];
             if (this.currentYPosition + lineHeight >= _Canvas.height) {
+                //Save each line to an array, then spit it back out to the canvas but without the first one.
+                //For some reason, there were sizing issues (see commented code below) when taking
+                //the entire canvas, so my solution was to do each line separately
                 // var rectData = _DrawingContext.getImageData(0, 0, _Canvas.width, _Canvas.height);
                 // _DrawingContext.clearRect(0, 0, _Canvas.width, _Canvas.height);
                 // _DrawingContext.putImageData(rectData, 0, -lineHeight, 0, 0, _Canvas.width, _Canvas.height);
-                //Save each line to an array, then spit it back out to the canvas but without the first one.
                 for (var i = 0; i < _Canvas.height; i += lineHeight) {
                     var lineData = _DrawingContext.getImageData(0, i, _Canvas.width, lineHeight);
                     canvasText.push(lineData);
@@ -151,11 +204,16 @@ var TSOS;
                 this.currentYPosition += lineHeight;
             }
         };
+        Console.prototype.previousLine = function () {
+            //We use this to help us delete wrapped lines
+            var lineHeight = _DefaultFontSize + _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) + _FontHeightMargin;
+            this.currentYPosition -= lineHeight;
+        };
         Console.prototype.clearCurrentLine = function () {
+            //Helper function to clear a line
             var lineHeight = _DefaultFontSize + _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) + _FontHeightMargin;
             this.currentXPosition = 0;
             _DrawingContext.clearRect(0, this.currentYPosition - lineHeight + 5, _Canvas.width, lineHeight * 2);
-            this.putText(_OsShell.promptStr);
         };
         return Console;
     }());

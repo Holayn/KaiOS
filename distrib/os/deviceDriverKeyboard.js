@@ -135,7 +135,9 @@ var TSOS;
                 _KernelInputQueue.enqueue("down");
             }
             else if (keyCode == 9) {
-                _KernelInputQueue.enqueue("tab");
+                chr = String.fromCharCode(keyCode);
+                console.log(chr);
+                _KernelInputQueue.enqueue(chr);
             }
         };
         return DeviceDriverKeyboard;
