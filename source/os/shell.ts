@@ -379,19 +379,20 @@ module TSOS {
 
         //Validates by making sure the op codes are valid (hex, 2 long each)
         //Handles the case where the user enters newlines.
+        //A user has to enter a program for load to return valid
         public shellLoad() {
             let re = /[0-9A-Fa-f]{2}/i;
             let foundError = false;
             let userInput = (<HTMLInputElement>document.getElementById("taProgramInput")).value;
-            userInput = userInput.replace(/\r?\n|\r/g, " ");
-            let userArr = userInput.split(" ");
-            for(let opCode of userArr){
-                if((opCode != "") && (opCode.length != 2 || !re.test(opCode))){
-                    _StdOut.putText("Syntax error in user program!");
-                    foundError = true;
-                    break;
+                userInput = userInput.replace(/\r?\n|\r/g, " ");
+                let userArr = userInput.split(" ");
+                for(let opCode of userArr){
+                    if((opCode.length != 2 || !re.test(opCode))){
+                        _StdOut.putText("Syntax error in user program!");
+                        foundError = true;
+                        break;
+                    }
                 }
-            }
             if(!foundError){
                 _StdOut.putText("User program is valid");
             }

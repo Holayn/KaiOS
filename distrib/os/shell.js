@@ -319,6 +319,7 @@ var TSOS;
         };
         //Validates by making sure the op codes are valid (hex, 2 long each)
         //Handles the case where the user enters newlines.
+        //A user has to enter a program for load to return valid
         Shell.prototype.shellLoad = function () {
             var re = /[0-9A-Fa-f]{2}/i;
             var foundError = false;
@@ -327,7 +328,7 @@ var TSOS;
             var userArr = userInput.split(" ");
             for (var _i = 0, userArr_1 = userArr; _i < userArr_1.length; _i++) {
                 var opCode = userArr_1[_i];
-                if ((opCode != "") && (opCode.length != 2 || !re.test(opCode))) {
+                if ((opCode.length != 2 || !re.test(opCode))) {
                     _StdOut.putText("Syntax error in user program!");
                     foundError = true;
                     break;
