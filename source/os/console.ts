@@ -56,7 +56,6 @@ module TSOS {
                     //Delete the last character from the buffer, clear the line, and redraw the line of text
                     this.clearCurrentLine();
                     this.buffer = this.buffer.substring(0, this.buffer.length - 1);
-                    this.putText(_OsShell.promptStr);
                     this.putText(this.buffer);
                 } 
                 else if(chr === "up") {
@@ -65,7 +64,6 @@ module TSOS {
                     if(this.commandPtr != -1){
                         this.commandPtr--;
                     }
-                    this.putText(_OsShell.promptStr);
                     this.putText(this.commandHistory[this.commandPtr+1]);
                     this.buffer = this.commandHistory[this.commandPtr+1];
                 }
@@ -75,7 +73,6 @@ module TSOS {
                         this.buffer = "";
                         this.clearCurrentLine();
                         this.commandPtr++;
-                        this.putText(_OsShell.promptStr);
                         if(this.commandPtr+1 != this.commandHistory.length){
                             this.putText(this.commandHistory[this.commandPtr+1]);
                             this.buffer = this.commandHistory[this.commandPtr+1];
@@ -84,16 +81,16 @@ module TSOS {
                 }
                 else if(chr === "tab"){
                     //See if the user input so far matches any part of the beginning of a command defined in the shell.
-                    //Auto-complete the command if there is a match
-                    //BEGINNING
+                    //Auto-complete the command on the first match
                     var regexp = new RegExp("^"+this.buffer, "i");
                     for(var i=0; i<_OsShell.commandList.length; i++){
                         if(regexp.test(_OsShell.commandList[i].command)){
-                            console.log("Found command to complete");
+                            this.clearCurrentLine();
+                            this.buffer = _OsShell.commandList[i].command;
+                            this.putText(this.buffer);
+                            break;
                         }
                     }
-                    // this.buffer
-                    // _OsShell.commandList
                 }
                 else {
                     // This is a "normal" character, so ...
@@ -163,6 +160,7 @@ module TSOS {
             let lineHeight = _DefaultFontSize + _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) + _FontHeightMargin;
             this.currentXPosition = 0;
             _DrawingContext.clearRect(0, this.currentYPosition-lineHeight+5, _Canvas.width, lineHeight*2);
+            this.putText(_OsShell.promptStr);
         }
     }
  }
