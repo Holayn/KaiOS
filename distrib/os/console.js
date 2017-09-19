@@ -133,7 +133,7 @@ var TSOS;
             var lineHeight = _DefaultFontSize + _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) + _FontHeightMargin;
             /*
              * This checks to see if the output will go off the screen
-             * If it does, then we handle scrolling by saving the image data of the canvas, clearing the canvas, then
+             * If it does, then we handle scrolling by saving the image data of the canvas, then
              * redrawing the canvas with the image data being drawn starting from a line height further off the screen.
              */
             var canvasText = [];
