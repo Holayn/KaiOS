@@ -1,6 +1,7 @@
 # Kai's Operating Systems Repo. :^) :^) :^)
 ## Please note that earlier commits have the issue number they address in the commit comment.
-### View the appropriate branch for the final version of a desired assignment. Master is used as the current working branch.
+If there is no issue tagged in the commit, check the comments, or it is not associated with an issue.
+### View the appropriate branch for the final version of a desired assignment/project. Master is used as the current working branch.
 Browser-based Operating System in TypeScript
 ============================================
 
