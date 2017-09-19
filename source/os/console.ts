@@ -101,7 +101,7 @@ module TSOS {
                 }
                 else if(chr === String.fromCharCode(9)){        //tab
                     //See if the user input so far matches any part of the beginning of a command defined in the shell.
-                    //Auto-complete the command on the first match
+                    //Auto-complete the command on the first match.
                     //If more than one match, pressing tab again will go to next match,
                     //which we store in a history array
                     if(this.commandMatches.length > 1){
@@ -126,11 +126,6 @@ module TSOS {
                         for(var i=0; i<_OsShell.commandList.length; i++){
                             if(regexp.test(_OsShell.commandList[i].command)){
                                 this.commandMatches.push(_OsShell.commandList[i].command);
-                                // this.clearCurrentLine();
-                                // this.putText(_OsShell.promptStr);
-                                // this.buffer = _OsShell.commandList[i].command;
-                                // this.putText(this.buffer);
-                                // break;
                             }
                         }
                         this.clearCurrentLine();
@@ -161,6 +156,7 @@ module TSOS {
             // UPDATE: Even though we are now working in TypeScript, char and string remain undistinguished.
             //         Consider fixing that.
             if (text !== "") {
+                //LINE-WRAPPING
                 //If the line is too long, we have to find where to advance the line
                 //This can be a whole line of text, or a single character being drawn
                 //So, if a line of text,find where in text that makes the line too long, 
@@ -220,6 +216,7 @@ module TSOS {
              */
             var canvasText = [];
             if(this.currentYPosition+lineHeight >= _Canvas.height){
+                //When we advance the line, check to see if it goes offscreen.
                 //Save each line to an array, then spit it back out to the canvas but without the first one.
                 //For some reason, there were sizing issues (see commented code below) when taking
                 //the entire canvas, so my solution was to do each line separately

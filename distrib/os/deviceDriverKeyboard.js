@@ -136,7 +136,6 @@ var TSOS;
             }
             else if (keyCode == 9) {
                 chr = String.fromCharCode(keyCode);
-                console.log(chr);
                 _KernelInputQueue.enqueue(chr);
             }
         };

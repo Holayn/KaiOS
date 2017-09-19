@@ -243,7 +243,7 @@ module TSOS {
         }
 
         public shellVer(args) {
-            _StdOut.putText(APP_NAME + " version " + APP_VERSION + ".");
+            _StdOut.putText(APP_NAME + " version " + APP_VERSION + ". Creator: Kai Wong Fall 2017 Operating Systems");
         }
 
         public shellHelp(args) {
