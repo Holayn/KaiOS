@@ -66,13 +66,33 @@ var TSOS;
                 // TODO: Check for caps-lock and handle as shifted if so.
                 _KernelInputQueue.enqueue(chr);
             }
-            else if (((keyCode >= 48) && (keyCode <= 57)) || // digits
-                (keyCode == 32) || // space
-                (keyCode == 13)) {
+            else if (((keyCode >= 48) && (keyCode <= 57))) {
+                if (isShifted) {
+                    var to_symbol = {
+                        '48': '41',
+                        '49': '33',
+                        '50': '64',
+                        '51': '35',
+                        '52': '36',
+                        '53': '37',
+                        '54': '94',
+                        '55': '38',
+                        '56': '42',
+                        '57': '40'
+                    };
+                    chr = String.fromCharCode(to_symbol[keyCode]);
+                }
+                else {
+                    chr = String.fromCharCode(keyCode);
+                }
+                _KernelInputQueue.enqueue(chr);
+            }
+            else if (((keyCode == 32) || // space
+                (keyCode == 13))) {
                 chr = String.fromCharCode(keyCode);
                 _KernelInputQueue.enqueue(chr);
                 //Play a chord when the user presses enter (if PianoTime is enabled)
-                if (_PianoTime) {
+                if (_PianoTime && keyCode == 13) {
                     audio = new Audio('distrib/sound/40.wav');
                     audio.play();
                     audio = new Audio('distrib/sound/44.wav');
@@ -80,6 +100,29 @@ var TSOS;
                     audio = new Audio('distrib/sound/47.wav');
                     audio.play();
                 }
+            }
+            else if ((keyCode >= 186) && (keyCode <= 222)) {
+                var to_ascii = {
+                    '188': { "notShifted": '44', "isShifted": '60' },
+                    '109': { "notShifted": '45', "isShifted": '95' },
+                    '190': { "notShifted": '46', "isShifted": '62' },
+                    '191': { "notShifted": '47', "isShifted": '63' },
+                    '192': { "notShifted": '96', "isShifted": '126' },
+                    '220': { "notShifted": '92', "isShifted": '124' },
+                    '222': { "notShifted": '39', "isShifted": '34' },
+                    '221': { "notShifted": '93', "isShifted": '125' },
+                    '219': { "notShifted": '91', "isShifted": '123' },
+                    '187': { "notShifted": '61', "isShifted": '43' },
+                    '186': { "notShifted": '59', "isShifted": '58' },
+                    '189': { "notShifted": '45', "isShifted": '95' } // -
+                };
+                if (isShifted) {
+                    chr = String.fromCharCode(to_ascii[keyCode].isShifted);
+                }
+                else {
+                    chr = String.fromCharCode(to_ascii[keyCode].notShifted);
+                }
+                _KernelInputQueue.enqueue(chr);
             }
         };
         return DeviceDriverKeyboard;
