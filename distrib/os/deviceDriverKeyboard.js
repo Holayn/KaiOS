@@ -128,6 +128,7 @@ var TSOS;
                 chr = String.fromCharCode(keyCode);
                 _KernelInputQueue.enqueue(chr);
             }
+            //up is 38, down is 40. tab is 9.
         };
         return DeviceDriverKeyboard;
     }(TSOS.DeviceDriver));

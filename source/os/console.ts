@@ -17,7 +17,9 @@ module TSOS {
                     public currentFontSize = _DefaultFontSize,
                     public currentXPosition = 0,
                     public currentYPosition = _DefaultFontSize,
-                    public buffer = "") {
+                    public buffer = "",
+                    public commandHistory = [],
+                    public commandPtr = 0) {
         }
 
         public init(): void {
@@ -44,6 +46,9 @@ module TSOS {
                     // The enter key marks the end of a console command, so ...
                     // ... tell the shell ...
                     _OsShell.handleInput(this.buffer);
+                    // ... and add it to the history of commands ...
+                    this.commandHistory.push(this.buffer);
+                    this.commandPtr++;
                     // ... and reset our buffer.
                     this.buffer = "";
                 }
