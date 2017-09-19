@@ -10,13 +10,15 @@
 var TSOS;
 (function (TSOS) {
     var Console = /** @class */ (function () {
-        function Console(currentFont, currentFontSize, currentXPosition, currentYPosition, buffer, commandHistory, commandPtr, numOfWraps) {
+        function Console(currentFont, currentFontSize, currentXPosition, currentYPosition, buffer, commandHistory, commandMatches, commandMatchCounter, commandPtr, numOfWraps) {
             if (currentFont === void 0) { currentFont = _DefaultFontFamily; }
             if (currentFontSize === void 0) { currentFontSize = _DefaultFontSize; }
             if (currentXPosition === void 0) { currentXPosition = 0; }
             if (currentYPosition === void 0) { currentYPosition = _DefaultFontSize; }
             if (buffer === void 0) { buffer = ""; }
             if (commandHistory === void 0) { commandHistory = []; }
+            if (commandMatches === void 0) { commandMatches = []; }
+            if (commandMatchCounter === void 0) { commandMatchCounter = 0; }
             if (commandPtr === void 0) { commandPtr = 0; }
             if (numOfWraps === void 0) { numOfWraps = 0; }
             this.currentFont = currentFont;
@@ -25,6 +27,8 @@ var TSOS;
             this.currentYPosition = currentYPosition;
             this.buffer = buffer;
             this.commandHistory = commandHistory;
+            this.commandMatches = commandMatches;
+            this.commandMatchCounter = commandMatchCounter;
             this.commandPtr = commandPtr;
             this.numOfWraps = numOfWraps;
         }
@@ -54,6 +58,9 @@ var TSOS;
                     this.commandPtr = this.commandHistory.length - 1;
                     // ... and reset the number of wraps done, user can't delete ...
                     this.numOfWraps = 0;
+                    // ... and reset the commands we matched with tab ...
+                    this.commandMatches = [];
+                    this.commandMatchCounter = 0;
                     // ... and reset our buffer.
                     this.buffer = "";
                 }
@@ -99,15 +106,42 @@ var TSOS;
                 else if (chr === String.fromCharCode(9)) {
                     //See if the user input so far matches any part of the beginning of a command defined in the shell.
                     //Auto-complete the command on the first match
-                    var regexp = new RegExp("^" + this.buffer, "i");
-                    for (var i = 0; i < _OsShell.commandList.length; i++) {
-                        if (regexp.test(_OsShell.commandList[i].command)) {
-                            this.clearCurrentLine();
-                            this.putText(_OsShell.promptStr);
-                            this.buffer = _OsShell.commandList[i].command;
-                            this.putText(this.buffer);
-                            break;
+                    //If more than one match, pressing tab again will go to next match,
+                    //which we store in a history array
+                    if (this.commandMatches.length > 1) {
+                        this.clearCurrentLine();
+                        this.putText(_OsShell.promptStr);
+                        this.buffer = this.commandMatches[this.commandMatchCounter];
+                        this.putText(this.buffer);
+                        if (this.commandMatchCounter + 1 == this.commandMatches.length) {
+                            this.commandMatchCounter = 0;
                         }
+                        else {
+                            this.commandMatchCounter++;
+                        }
+                    }
+                    else {
+                        //Get all the commands that match
+                        //In cmd.exe, pressing tab on empty input cycles through everything (directories)
+                        //We are going to imitate this here, but with commands
+                        var regexp = new RegExp("^" + this.buffer, "i");
+                        this.commandMatches = [];
+                        this.commandMatchCounter = 0;
+                        for (var i = 0; i < _OsShell.commandList.length; i++) {
+                            if (regexp.test(_OsShell.commandList[i].command)) {
+                                this.commandMatches.push(_OsShell.commandList[i].command);
+                                // this.clearCurrentLine();
+                                // this.putText(_OsShell.promptStr);
+                                // this.buffer = _OsShell.commandList[i].command;
+                                // this.putText(this.buffer);
+                                // break;
+                            }
+                        }
+                        this.clearCurrentLine();
+                        this.putText(_OsShell.promptStr);
+                        this.buffer = this.commandMatches[this.commandMatchCounter];
+                        this.putText(this.buffer);
+                        this.commandMatchCounter++;
                     }
                 }
                 else {
