@@ -119,9 +119,15 @@ module TSOS {
                 }
                 _KernelInputQueue.enqueue(chr);
             }
-            else if ((keyCode == 8)){       //backspace
+            else if (keyCode == 8){       //backspace
                 chr = String.fromCharCode(keyCode);
                 _KernelInputQueue.enqueue(chr);
+            }
+            else if (keyCode == 38){
+                _KernelInputQueue.enqueue("up");
+            }
+            else if(keyCode == 40){
+                _KernelInputQueue.enqueue("down");
             }
 
             //up is 38, down is 40. tab is 9.

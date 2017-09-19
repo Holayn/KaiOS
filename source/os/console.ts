@@ -48,7 +48,7 @@ module TSOS {
                     _OsShell.handleInput(this.buffer);
                     // ... and add it to the history of commands ...
                     this.commandHistory.push(this.buffer);
-                    this.commandPtr++;
+                    this.commandPtr = this.commandHistory.length-1;
                     // ... and reset our buffer.
                     this.buffer = "";
                 }
@@ -61,6 +61,16 @@ module TSOS {
                     this.putText(_OsShell.promptStr);
                     this.putText(this.buffer);
                 } 
+                else if(chr === "up") {
+                    //Recall the previous command and print it to the current line, first clearing the line
+                    let lineHeight = _DefaultFontSize + _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) + _FontHeightMargin;
+                    this.currentXPosition = 0;
+                    _DrawingContext.clearRect(0, this.currentYPosition-lineHeight+5, _Canvas.width, lineHeight*2);
+                    this.putText(_OsShell.promptStr);
+                    this.putText(this.commandHistory[this.commandPtr]);
+                    this.buffer = this.commandHistory[this.commandPtr];
+                    this.commandPtr--;
+                }
                 else {
                     // This is a "normal" character, so ...
                     // ... draw it on the screen...
