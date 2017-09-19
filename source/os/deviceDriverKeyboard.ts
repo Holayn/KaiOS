@@ -123,14 +123,15 @@ module TSOS {
                 chr = String.fromCharCode(keyCode);
                 _KernelInputQueue.enqueue(chr);
             }
-            else if (keyCode == 38){
+            else if (keyCode == 38){        //up arrow
                 _KernelInputQueue.enqueue("up");
             }
-            else if(keyCode == 40){
+            else if (keyCode == 40){        //down arrow
                 _KernelInputQueue.enqueue("down");
             }
-
-            //up is 38, down is 40. tab is 9.
+            else if (keyCode == 9){     //tab
+                _KernelInputQueue.enqueue("tab");
+            }
         }
     }
 }

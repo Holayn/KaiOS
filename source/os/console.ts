@@ -54,18 +54,14 @@ module TSOS {
                 }
                 else if (chr === String.fromCharCode(8)) { //     Backspace key
                     //Delete the last character from the buffer, clear the line, and redraw the line of text
-                    let lineHeight = _DefaultFontSize + _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) + _FontHeightMargin;
+                    this.clearCurrentLine();
                     this.buffer = this.buffer.substring(0, this.buffer.length - 1);
-                    this.currentXPosition = 0;
-                    _DrawingContext.clearRect(0, this.currentYPosition-lineHeight+5, _Canvas.width, lineHeight*2);
                     this.putText(_OsShell.promptStr);
                     this.putText(this.buffer);
                 } 
                 else if(chr === "up") {
                     //Recall the previous command and print it to the current line, first clearing the line
-                    let lineHeight = _DefaultFontSize + _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) + _FontHeightMargin;
-                    this.currentXPosition = 0;
-                    _DrawingContext.clearRect(0, this.currentYPosition-lineHeight+5, _Canvas.width, lineHeight*2);
+                    this.clearCurrentLine();
                     if(this.commandPtr != -1){
                         this.commandPtr--;
                     }
@@ -77,9 +73,7 @@ module TSOS {
                     //Recall the next command if there is one and print it to the current line, first clearing the line
                     if(this.commandPtr != this.commandHistory.length-1){
                         this.buffer = "";
-                        let lineHeight = _DefaultFontSize + _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) + _FontHeightMargin;
-                        this.currentXPosition = 0;
-                        _DrawingContext.clearRect(0, this.currentYPosition-lineHeight+5, _Canvas.width, lineHeight*2);
+                        this.clearCurrentLine();
                         this.commandPtr++;
                         this.putText(_OsShell.promptStr);
                         if(this.commandPtr+1 != this.commandHistory.length){
@@ -87,6 +81,19 @@ module TSOS {
                             this.buffer = this.commandHistory[this.commandPtr+1];
                         }
                     }
+                }
+                else if(chr === "tab"){
+                    //See if the user input so far matches any part of the beginning of a command defined in the shell.
+                    //Auto-complete the command if there is a match
+                    //BEGINNING
+                    var regexp = new RegExp("^"+this.buffer, "i");
+                    for(var i=0; i<_OsShell.commandList.length; i++){
+                        if(regexp.test(_OsShell.commandList[i].command)){
+                            console.log("Found command to complete");
+                        }
+                    }
+                    // this.buffer
+                    // _OsShell.commandList
                 }
                 else {
                     // This is a "normal" character, so ...
@@ -150,6 +157,12 @@ module TSOS {
             else{
                 this.currentYPosition += lineHeight;
             }
+        }
+
+        private clearCurrentLine(): void {
+            let lineHeight = _DefaultFontSize + _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) + _FontHeightMargin;
+            this.currentXPosition = 0;
+            _DrawingContext.clearRect(0, this.currentYPosition-lineHeight+5, _Canvas.width, lineHeight*2);
         }
     }
  }

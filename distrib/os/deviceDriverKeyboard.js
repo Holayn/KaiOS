@@ -134,7 +134,9 @@ var TSOS;
             else if (keyCode == 40) {
                 _KernelInputQueue.enqueue("down");
             }
-            //up is 38, down is 40. tab is 9.
+            else if (keyCode == 9) {
+                _KernelInputQueue.enqueue("tab");
+            }
         };
         return DeviceDriverKeyboard;
     }(TSOS.DeviceDriver));
