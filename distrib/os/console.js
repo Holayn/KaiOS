@@ -67,10 +67,27 @@ var TSOS;
                     var lineHeight = _DefaultFontSize + _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) + _FontHeightMargin;
                     this.currentXPosition = 0;
                     _DrawingContext.clearRect(0, this.currentYPosition - lineHeight + 5, _Canvas.width, lineHeight * 2);
+                    if (this.commandPtr != -1) {
+                        this.commandPtr--;
+                    }
                     this.putText(_OsShell.promptStr);
-                    this.putText(this.commandHistory[this.commandPtr]);
-                    this.buffer = this.commandHistory[this.commandPtr];
-                    this.commandPtr--;
+                    this.putText(this.commandHistory[this.commandPtr + 1]);
+                    this.buffer = this.commandHistory[this.commandPtr + 1];
+                }
+                else if (chr === "down") {
+                    //Recall the next command if there is one and print it to the current line, first clearing the line
+                    if (this.commandPtr != this.commandHistory.length - 1) {
+                        this.buffer = "";
+                        var lineHeight = _DefaultFontSize + _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) + _FontHeightMargin;
+                        this.currentXPosition = 0;
+                        _DrawingContext.clearRect(0, this.currentYPosition - lineHeight + 5, _Canvas.width, lineHeight * 2);
+                        this.commandPtr++;
+                        this.putText(_OsShell.promptStr);
+                        if (this.commandPtr + 1 != this.commandHistory.length) {
+                            this.putText(this.commandHistory[this.commandPtr + 1]);
+                            this.buffer = this.commandHistory[this.commandPtr + 1];
+                        }
+                    }
                 }
                 else {
                     // This is a "normal" character, so ...
