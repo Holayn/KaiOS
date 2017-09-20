@@ -18,11 +18,11 @@ module TSOS {
                     public currentXPosition = 0,
                     public currentYPosition = _DefaultFontSize,
                     public buffer = "",
-                    public commandHistory = [],
-                    public commandMatches = [],
-                    public commandMatchCounter = 0,
-                    public commandPtr = 0,
-                    public numOfWraps = 0) {
+                    public commandHistory = [],             //Stores a history of all commands the user has typed in
+                    public commandMatches = [],             //Stores the matches of tab completion
+                    public commandMatchCounter = 0,         //Counter to keep track of tab cycle
+                    public commandPtr = 0,                  //Counter to keep track of where in the command history we are
+                    public numOfWraps = 0) {                //Counter to keep track the number of times we have line wrapped
         }
 
         public init(): void {
@@ -66,7 +66,7 @@ module TSOS {
                     //Since backspace prints from the starting line, which will cause input to rewrap again
                     //all we need to do is clear all lines that have been wrapped on so we can start anew
                     this.clearCurrentLine();
-                    //Wrap -- goes back to the starting line, clearing everything along the way
+                    //Wrap -- goes back to the starting line, clearing all the previously wrapped lines along the way
                     while(this.numOfWraps > 0){
                         this.previousLine();
                         this.clearCurrentLine();
@@ -76,17 +76,18 @@ module TSOS {
                     this.buffer = this.buffer.substring(0, this.buffer.length - 1);
                     this.putText(this.buffer);
                 } 
-                else if(chr === "up") {
+                else if(chr === "up") {         //Up arrow
                     //Recall the previous command and print it to the current line, first clearing the line
                     this.clearCurrentLine();
                     this.putText(_OsShell.promptStr);
+                    //Set the pointer to the previous command in preparation for next up keypress
                     if(this.commandPtr != -1){
                         this.commandPtr--;
                     }
                     this.putText(this.commandHistory[this.commandPtr+1]);
                     this.buffer = this.commandHistory[this.commandPtr+1];
                 }
-                else if(chr === "down") {
+                else if(chr === "down") {       //Down arrow
                     //Recall the next command if there is one and print it to the current line, first clearing the line
                     if(this.commandPtr != this.commandHistory.length-1){
                         this.buffer = "";
@@ -102,8 +103,8 @@ module TSOS {
                 else if(chr === String.fromCharCode(9)){        //tab
                     //See if the user input so far matches any part of the beginning of a command defined in the shell.
                     //Auto-complete the command on the first match.
-                    //If more than one match, pressing tab again will go to next match,
-                    //which we store in a history array
+                    //If more than one match, pressing tab again will go to next match and continue cycling.
+                    //We store all matched commands in a command match array.
                     if(this.commandMatches.length > 1){
                         this.clearCurrentLine();
                         this.putText(_OsShell.promptStr);
@@ -128,11 +129,14 @@ module TSOS {
                                 this.commandMatches.push(_OsShell.commandList[i].command);
                             }
                         }
-                        this.clearCurrentLine();
-                        this.putText(_OsShell.promptStr);
-                        this.buffer = this.commandMatches[this.commandMatchCounter];
-                        this.putText(this.buffer);
-                        this.commandMatchCounter++;
+                        //Checks to see if we matched anything
+                        if(this.commandMatches.length != 0){
+                            this.clearCurrentLine();
+                            this.putText(_OsShell.promptStr);
+                            this.buffer = this.commandMatches[this.commandMatchCounter];
+                            this.putText(this.buffer);
+                            this.commandMatchCounter++;
+                        }
                     }
                 }
                 else {
@@ -216,8 +220,9 @@ module TSOS {
              */
             var canvasText = [];
             if(this.currentYPosition+lineHeight >= _Canvas.height){
+                //SCROLLING
                 //When we advance the line, check to see if it goes offscreen.
-                //Save each line to an array, then spit it back out to the canvas but without the first one.
+                //Save each line to an array, then spit it back out to the canvas but without the first line.
                 //For some reason, there were sizing issues (see commented code below) when taking
                 //the entire canvas, so my solution was to do each line separately
 

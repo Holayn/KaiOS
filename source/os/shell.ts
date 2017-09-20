@@ -414,7 +414,6 @@ module TSOS {
             else{
                 _StdOut.putText("Usage: status <message>  Please supply a message.");
             }
-            console.log(_UserStatus);
         }
 
     }
