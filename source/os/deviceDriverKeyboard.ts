@@ -60,6 +60,7 @@ module TSOS {
                 _KernelInputQueue.enqueue(chr);
             } else if (((keyCode >= 48) && (keyCode <= 57))){   // digits
                 if(isShifted){
+                    //If the shift key is pressed, return its corresponding code value
                     var to_symbol = {
                         '48':'41',
                         '49':'33',
@@ -95,7 +96,7 @@ module TSOS {
             //Since we live in a land of happiness, the keyCode produced from e.which is incorrect for symbols.
             //Characters trigger the onkeypress event. Symbols trigger the onkeydown event.
             //Thus, they return different values. String.fromCharCode won't work on this symbol value.
-            //We have to convert the value to ASCII so we can handle it properly with String.fromCharCode
+            //We have to convert the value to its correct value so we can handle it properly with String.fromCharCode
             else if ((keyCode >= 186) && (keyCode <= 222)){
                 var to_ascii = {
                     '188': { "notShifted" : '44', "isShifted" : '60' }, // ,
@@ -123,9 +124,13 @@ module TSOS {
                 chr = String.fromCharCode(keyCode);
                 _KernelInputQueue.enqueue(chr);
             }
+            //Since 38 is also ampersand, I just cheat and enqueue my own thing, which I read later. It's still a string,
+            //so it doesn't violate any type issues, at least in TypeScript, right?
             else if (keyCode == 38){        //up arrow
                 _KernelInputQueue.enqueue("up");
             }
+            //Since 40 is also a paren, I just cheat and enqueue my own thing, which I read later from the console. It's still a string,
+            //so it doesn't violate any type issues, at least in TypeScript, right?
             else if (keyCode == 40){        //down arrow
                 _KernelInputQueue.enqueue("down");
             }

@@ -404,6 +404,8 @@ module TSOS {
             _KernelInterruptQueue.enqueue(66);
         }
 
+        //This allows the user to change their status by setting the global user status variable to
+        //whatever their input was
         public shellStatus(args) {
             if (args.length > 0) {
                 _UserStatus = "";

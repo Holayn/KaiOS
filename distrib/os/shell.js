@@ -343,6 +343,8 @@ var TSOS;
             //Execute order 66
             _KernelInterruptQueue.enqueue(66);
         };
+        //This allows the user to change their status by setting the global user status variable to
+        //whatever their input was
         Shell.prototype.shellStatus = function (args) {
             if (args.length > 0) {
                 _UserStatus = "";

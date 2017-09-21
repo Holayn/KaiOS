@@ -68,6 +68,7 @@ var TSOS;
             }
             else if (((keyCode >= 48) && (keyCode <= 57))) {
                 if (isShifted) {
+                    //If the shift key is pressed, return its corresponding code value
                     var to_symbol = {
                         '48': '41',
                         '49': '33',

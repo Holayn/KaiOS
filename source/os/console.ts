@@ -51,6 +51,7 @@ module TSOS {
                     _OsShell.handleInput(this.buffer);
                     // ... and add it to the history of commands ...
                     this.commandHistory.push(this.buffer);
+                    // ... and set the pointer to the most recent command ...
                     this.commandPtr = this.commandHistory.length-1;
                     // ... and reset the number of wraps done, user can't delete ...
                     this.numOfWraps = 0;
@@ -105,6 +106,7 @@ module TSOS {
                     //Auto-complete the command on the first match.
                     //If more than one match, pressing tab again will go to next match and continue cycling.
                     //We store all matched commands in a command match array.
+                    //All we do we is clear the user input and print out the command in its place
                     if(this.commandMatches.length > 1){
                         this.clearCurrentLine();
                         this.putText(_OsShell.promptStr);
@@ -126,6 +128,7 @@ module TSOS {
                         this.commandMatchCounter = 0;
                         for(var i=0; i<_OsShell.commandList.length; i++){
                             if(regexp.test(_OsShell.commandList[i].command)){
+                                //Store all matches commands in an array
                                 this.commandMatches.push(_OsShell.commandList[i].command);
                             }
                         }
@@ -163,7 +166,7 @@ module TSOS {
                 //LINE-WRAPPING
                 //If the line is too long, we have to find where to advance the line
                 //This can be a whole line of text, or a single character being drawn
-                //So, if a line of text,find where in text that makes the line too long, 
+                //So, if a line of text, find where in text that makes the line too long, 
                 //then advance the line from there
                 if(this.currentXPosition + _DrawingContext.measureText(this.currentFont, this.currentFontSize, text) > _Canvas.width){
                     if(text.length > 1){ //a sentence that makes the line too long.
@@ -183,7 +186,7 @@ module TSOS {
                             }
                         }
                     }
-                    else{ //a char that makes the line too long
+                    else{ //a char that makes the line too long, so just advance the cursor to the next line
                         this.advanceLine();
                         _DrawingContext.drawText(this.currentFont, this.currentFontSize, this.currentXPosition, this.currentYPosition, text);
                         var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, text);
@@ -235,6 +238,7 @@ module TSOS {
                     canvasText.push(lineData);
                 }
                 for(var i=0; i<canvasText.length; i++){
+                    //Start reprinting the lines, but have the first line be above, off-screen from the canvas
                     _DrawingContext.putImageData(canvasText[i], 0, (-lineHeight + i*(lineHeight)), 0, 0, _Canvas.width, _Canvas.height);
                 }
             }
@@ -244,7 +248,7 @@ module TSOS {
         }
 
         public previousLine(): void {
-            //We use this to help us delete wrapped lines
+            //We use this to help us delete wrapped lines, all it does it move the cursor position to the previous line
             let lineHeight = _DefaultFontSize + _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) + _FontHeightMargin;
             this.currentYPosition -= lineHeight;
         }
