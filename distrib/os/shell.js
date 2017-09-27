@@ -341,7 +341,7 @@ var TSOS;
             }
             if (!foundError) {
                 _StdOut.putText("User program is valid");
-                //Assign a PID. Create a new PCB for it, and put it in the ready queue.
+                //Assign a PID. Create a new PCB for it, and put it in the job/resident queue.
             }
         };
         Shell.prototype.shellSeppuku = function () {
