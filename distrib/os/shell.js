@@ -14,7 +14,9 @@
 var TSOS;
 (function (TSOS) {
     var Shell = /** @class */ (function () {
-        function Shell() {
+        function Shell(processCounter) {
+            if (processCounter === void 0) { processCounter = 0; }
+            this.processCounter = processCounter;
             // Properties
             this.promptStr = ">";
             this.commandList = [];
@@ -340,8 +342,12 @@ var TSOS;
                 }
             }
             if (!foundError) {
-                _StdOut.putText("User program is valid");
+                _StdOut.putText("Program loaded in memory with process ID " + this.processCounter);
                 //Assign a PID. Create a new PCB for it, and put it in the job/resident queue.
+                var pcb = new TSOS.ProcessControlBlock(this.processCounter);
+                pcb.init();
+                _MemoryResidentQueue.enqueue(pcb);
+                this.processCounter++;
             }
         };
         Shell.prototype.shellSeppuku = function () {

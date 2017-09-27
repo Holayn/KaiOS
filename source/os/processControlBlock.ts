@@ -5,23 +5,35 @@
    ------------ */
 
    module TSOS {
-    export class ProcessControlBLock {
-        constructor(public State: string,
-                    public Pid: number,
-                    public PC: number,
-                    public IR: number, 
-                    public Acc: number, 
-                    public Xreg: number,
-                    public Yreg: number,
-                    public Zflag: number,
-                    public Base: number,
-                    public Limit: number
-         ){}
+    export class ProcessControlBlock {
+        // constructor(public State: string,
+        //             public Pid: number,
+        //             public PC: number,
+        //             public IR: number, 
+        //             public Acc: number, 
+        //             public Xreg: number,
+        //             public Yreg: number,
+        //             public Zflag: number,
+        //             public Base: number,
+        //             public Limit: number
+        //  ){}
+        public State: string;
+        public Pid: number;
+        public PC: number;
+        public IR: number; 
+        public Acc: number; 
+        public Xreg: number;
+        public Yreg: number;
+        public Zflag: number;
+        public Base: number;
+        public Limit: number;
+        constructor(public processId){
+            this.Pid = processId;
+        }
         
         // Set everything to 0
         public init(): void {
             this.State = "";
-            this.Pid = 0;
             this.PC = 0;
             this.IR = 0;
             this.Acc = 0;

@@ -23,7 +23,7 @@ module TSOS {
         public curses = "[fuvg],[cvff],[shpx],[phag],[pbpxfhpxre],[zbgureshpxre],[gvgf]";
         public apologies = "[sorry]";
 
-        constructor() {
+        constructor(public processCounter: number = 0) {
         }
 
         public init() {
@@ -402,8 +402,12 @@ module TSOS {
                     }
                 }
             if(!foundError){
-                _StdOut.putText("User program is valid");
+                _StdOut.putText("Program loaded in memory with process ID " + this.processCounter);
                 //Assign a PID. Create a new PCB for it, and put it in the job/resident queue.
+                let pcb = new ProcessControlBlock(this.processCounter);
+                pcb.init();
+                _MemoryResidentQueue.enqueue(pcb);
+                this.processCounter++;
             }
         }
 
