@@ -17,9 +17,7 @@ module TSOS {
 
     export class Memory {
 
-        constructor() {
-
-        }
+        constructor() {}
 
         public init(): void {
             
