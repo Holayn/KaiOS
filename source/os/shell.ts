@@ -112,7 +112,13 @@ module TSOS {
             // status
             sc = new ShellCommand(this.shellStatus,
                                   "status",
-                                  "- Changes the status message.");
+                                  "<pid> - Changes the status message.");
+            this.commandList[this.commandList.length] = sc;
+
+            // run
+            sc = new ShellCommand(this.shellRun,
+                "run",
+                "- Runs a program already in memory.");
             this.commandList[this.commandList.length] = sc;
 
             // ps  - list the running processes and their IDs
@@ -312,7 +318,9 @@ module TSOS {
                     case "status":
                         _StdOut.putText("Status allows the user to change the status.");
                         break;
-                    // TODO: Make descriptive MANual page entries for the the rest of the shell commands here.
+                    case "run":
+                        _StdOut.putText("Run allows the user to run a program loaded into memory.");
+                        break;
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
                 }
@@ -395,6 +403,7 @@ module TSOS {
                 }
             if(!foundError){
                 _StdOut.putText("User program is valid");
+                //Assign a PID. Create a new PCB for it, and put it in the ready queue.
             }
         }
 
@@ -416,6 +425,11 @@ module TSOS {
             else{
                 _StdOut.putText("Usage: status <message>  Please supply a message.");
             }
+        }
+
+        //Runs a program in memory
+        public shellRun() {
+            _StdOut.putText("Usage: run <pid>  Please supply a process ID.");
         }
 
     }
