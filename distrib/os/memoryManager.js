@@ -27,7 +27,7 @@ var TSOS;
             console.log(_Memory.memoryArray);
             // Update the display accordingly
             // _Memory.clearMemory();
-            _Memory.updateMemory();
+            _Console.hostMemory();
         };
         // Checks to see if there is an available partition in memory
         // For now, we'll only check the first partition to see if it's available

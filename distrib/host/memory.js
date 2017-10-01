@@ -43,16 +43,6 @@ var TSOS;
                 }
             }
         };
-        Memory.prototype.updateMemory = function () {
-            var table = document.getElementById('tableMemory');
-            var memoryPtr = 0;
-            for (var i = 0; i < table.rows.length; i++) {
-                for (var j = 1; j < 9; j++) {
-                    table.rows[i].cells.item(j).innerHTML = _Memory.memoryArray[memoryPtr].toString();
-                    memoryPtr++;
-                }
-            }
-        };
         return Memory;
     }());
     TSOS.Memory = Memory;
