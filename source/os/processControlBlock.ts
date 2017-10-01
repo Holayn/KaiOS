@@ -33,7 +33,7 @@
         
         // Set everything to 0
         public init(base, limit): void {
-            this.State = "";
+            this.State = "Waiting";
             this.PC = 0;
             this.IR = 0;
             this.Acc = 0;

@@ -12,7 +12,7 @@ var TSOS;
         }
         // Set everything to 0
         ProcessControlBlock.prototype.init = function (base, limit) {
-            this.State = "";
+            this.State = "Waiting";
             this.PC = 0;
             this.IR = 0;
             this.Acc = 0;
