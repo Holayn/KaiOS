@@ -29,6 +29,11 @@ var TSOS;
             // _Memory.clearMemory();
             _Memory.updateMemory();
         };
+        // Checks to see if there is an available partition in memory
+        // For now, we'll only check the first partition to see if it's available
+        MemoryManager.prototype.checkMemory = function () {
+            return true;
+        };
         return MemoryManager;
     }());
     TSOS.MemoryManager = MemoryManager;

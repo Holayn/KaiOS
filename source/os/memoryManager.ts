@@ -31,9 +31,8 @@
 
         // Checks to see if there is an available partition in memory
         // For now, we'll only check the first partition to see if it's available
-        // public checkMemory(): boolean{
-            // Check the first partition
-            // for(var i=0; i<)
-        // }
+        public checkMemory(): boolean{
+            return true;
+        }
     }
 }

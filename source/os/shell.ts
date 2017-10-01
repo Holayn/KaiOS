@@ -403,11 +403,14 @@ module TSOS {
                     }
                 }
             if(!foundError){
-                // Check to see if there is an available partition in memory to put program in
-                _MemoryManager.checkMemory();
                 // Call the kernel to create a new process
-                var pid = _Kernel.krnCreateProcessBlock(userArr);
-                _StdOut.putText("Program loaded in memory with process ID " + pid);
+                var pid = _Kernel.krnCreateProcess(userArr);
+                if(pid == -1){
+                    _StdOut.putText("Loading of program failed!");
+                }
+                else{
+                    _StdOut.putText("Program loaded in memory with process ID " + pid);
+                }
             }
         }
 

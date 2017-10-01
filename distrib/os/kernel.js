@@ -137,14 +137,21 @@ var TSOS;
         // - ReadFile
         // - WriteFile
         // - CloseFile
-        Kernel.prototype.krnCreateProcessBlock = function (opcodes) {
-            //Assign a PID. Create a new PCB for it, and put it in the job/resident queue.
-            var pcb = new TSOS.ProcessControlBlock(_Pid);
-            pcb.init();
-            _ResidentQueue.enqueue(pcb);
-            // Have the memory manager load the new process into memory
-            _MemoryManager.loadIntoMemory(opcodes);
-            _Pid++;
+        Kernel.prototype.krnCreateProcess = function (opcodes) {
+            // Check to see if there is an available partition in memory to put program in
+            if (_MemoryManager.checkMemory()) {
+                //Assign a PID. Create a new PCB for it, and put it in the job/resident queue.
+                var pcb = new TSOS.ProcessControlBlock(_Pid);
+                pcb.init();
+                _ResidentQueue.enqueue(pcb);
+                // Have the memory manager load the new process into memory
+                _MemoryManager.loadIntoMemory(opcodes);
+                _Pid++;
+                return pcb.Pid;
+            }
+            else {
+                return -1;
+            }
         };
         //
         // OS Utility Routines

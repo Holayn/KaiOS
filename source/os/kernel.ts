@@ -156,14 +156,22 @@ module TSOS {
         // - WriteFile
         // - CloseFile
 
-        public krnCreateProcessBlock(opcodes){
-            //Assign a PID. Create a new PCB for it, and put it in the job/resident queue.
-            let pcb = new ProcessControlBlock(_Pid);
-            pcb.init();
-            _ResidentQueue.enqueue(pcb);
-            // Have the memory manager load the new process into memory
-            _MemoryManager.loadIntoMemory(opcodes);
-            _Pid++;
+        public krnCreateProcess(opcodes){
+            // Check to see if there is an available partition in memory to put program in
+            if(_MemoryManager.checkMemory()){
+                //Assign a PID. Create a new PCB for it, and put it in the job/resident queue.
+                let pcb = new ProcessControlBlock(_Pid);
+                pcb.init();
+                _ResidentQueue.enqueue(pcb);
+                // Have the memory manager load the new process into memory
+                _MemoryManager.loadIntoMemory(opcodes);
+                _Pid++;
+                return pcb.Pid;
+            }
+            else{
+                return -1;
+            }
+            
         }
 
 
