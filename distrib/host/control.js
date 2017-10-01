@@ -67,6 +67,28 @@ var TSOS;
         };
         // This will update and display the CPU in real time
         Control.hostCPU = function () {
+            var table = document.getElementById('tableCPU');
+            console.log(table.tBodies);
+            table.deleteRow(-1);
+            var row = table.insertRow(-1); // New row appended to table
+            // PC
+            var cell = row.insertCell();
+            cell.innerHTML = _CPU.PC.toString();
+            // IR
+            var cell = row.insertCell();
+            cell.innerHTML = _Memory.memoryArray[_CPU.PC].toString();
+            // Acc
+            cell = row.insertCell();
+            cell.innerHTML = _CPU.Acc.toString(16).toUpperCase(); // convert to hex for display
+            // Xreg
+            cell = row.insertCell();
+            cell.innerHTML = _CPU.Xreg.toString();
+            // Yreg
+            cell = row.insertCell();
+            cell.innerHTML = _CPU.Yreg.toString();
+            // Zflag
+            cell = row.insertCell();
+            cell.innerHTML = _CPU.Zflag.toString();
         };
         Control.hostMemory = function () {
             var table = document.getElementById('tableMemory');

@@ -26,7 +26,7 @@
             console.log(_Memory.memoryArray);
             // Update the display accordingly
             // _Memory.clearMemory();
-            _Console.hostMemory();
+            Control.hostMemory();
         }
 
         // Checks to see if there is an available partition in memory

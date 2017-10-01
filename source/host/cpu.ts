@@ -42,11 +42,20 @@ module TSOS {
             // TODO: Accumulate CPU usage and profiling statistics here.
             // Do the real work here. Be sure to set this.isExecuting appropriately.
             // Let's have a giant switch statement for the opcodes.
-            // Based on program counter, get op code, do it, then increment program counter
-            switch(_Memory[this.PC]){
-                case "A9":
-                    
+            // Based on program counter, get op code, do it, then increment program 
+
+            switch(_Memory.memoryArray[this.PC]){
+                case "A9": // load the accumulator with value in next area of memory
+                    this.PC++;
+                    this.Acc = parseInt(_Memory.memoryArray[this.PC].toString(), 16); // Load it with decimal
+                    break;
+                default:
+                    console.log("opcode");
             }
+            this.PC++;
+            console.log(this.PC + " " + this.Acc + " " + this.Xreg + " " + this.Yreg + " " + this.Zflag);
+            // Update the CPU display
+            Control.hostCPU();
         }
     }
 }
