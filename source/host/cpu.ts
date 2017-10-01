@@ -47,7 +47,17 @@ module TSOS {
             switch(_Memory.memoryArray[this.PC]){
                 case "A9": // load the accumulator with value in next area of memory
                     this.PC++;
-                    this.Acc = parseInt(_Memory.memoryArray[this.PC].toString(), 16); // Load it with decimal
+                    // Load accumulator with decimal (but of course we display it as hex)
+                    this.Acc = parseInt(_Memory.memoryArray[this.PC].toString(), 16); 
+                    break;
+                case "AD": // load the accumulator with a value from memory
+                    this.PC++;
+                    // Get the hex memory address by looking at the next two values in memory and swapping because of little-endian format
+                    var hexString = _Memory.memoryArray[this.PC].toString() 
+                    this.PC++;
+                    hexString = _Memory.memoryArray[this.PC].toString() + hexString;
+                    // Convert it to integer and store it in the accumulator
+                    this.Acc = parseInt(hexString, 16);
                     break;
                 default:
                     console.log("opcode");
