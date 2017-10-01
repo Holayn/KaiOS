@@ -2,6 +2,8 @@
 ///<reference path="../utils.ts" />
 ///<reference path="shellCommand.ts" />
 ///<reference path="userCommand.ts" />
+///<reference path="processControlBlock.ts" />
+///<reference path="memoryManager.ts" />
 /* ------------
    Shell.ts
 
@@ -14,9 +16,7 @@
 var TSOS;
 (function (TSOS) {
     var Shell = /** @class */ (function () {
-        function Shell(processCounter) {
-            if (processCounter === void 0) { processCounter = 0; }
-            this.processCounter = processCounter;
+        function Shell() {
             // Properties
             this.promptStr = ">";
             this.commandList = [];
@@ -342,12 +342,11 @@ var TSOS;
                 }
             }
             if (!foundError) {
-                _StdOut.putText("Program loaded in memory with process ID " + this.processCounter);
-                //Assign a PID. Create a new PCB for it, and put it in the job/resident queue.
-                var pcb = new TSOS.ProcessControlBlock(this.processCounter);
-                pcb.init();
-                _MemoryResidentQueue.enqueue(pcb);
-                this.processCounter++;
+                // Check to see if there is an available partition in memory to put program in
+                _MemoryManager.checkMemory();
+                // Call the kernel to create a new process
+                var pid = _Kernel.krnCreateProcessBlock(userArr);
+                _StdOut.putText("Program loaded in memory with process ID " + pid);
             }
         };
         Shell.prototype.shellSeppuku = function () {
@@ -370,8 +369,30 @@ var TSOS;
             }
         };
         //Runs a program in memory
-        Shell.prototype.shellRun = function () {
-            _StdOut.putText("Usage: run <pid>  Please supply a process ID.");
+        //Clear memory after done
+        Shell.prototype.shellRun = function (args) {
+            if (args.length == 1) {
+                // Find the process with the correct pid
+                var foundPid = false;
+                console.log(_ResidentQueue);
+                for (var _i = 0, _ResidentQueue_1 = _ResidentQueue; _i < _ResidentQueue_1.length; _i++) {
+                    var pcb = _ResidentQueue_1[_i];
+                    console.log("a" + args[0]);
+                    if (pcb.Pid == args[0]) {
+                        console.log("hey");
+                        // Now put that pid in the ready queue!!!
+                        _ReadyQueue.enqueue(pcb);
+                        // Remove it from the resident queue...?
+                        _ResidentQueue.splice(_ResidentQueue.indexOf(pcb), 1);
+                    }
+                }
+                if (!foundPid) {
+                    _StdOut.putText("Usage: run <pid>  Please supply a valid process ID.");
+                }
+            }
+            else {
+                _StdOut.putText("Usage: run <pid>  Please supply a process ID.");
+            }
         };
         return Shell;
     }());

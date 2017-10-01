@@ -39,6 +39,8 @@ var _DefaultFontFamily: string = "sans";        // Ignored, I think. The was jus
 var _DefaultFontSize: number = 13.0;
 var _FontHeightMargin: number = 4.0;              // Additional space added to font size when advancing a line.
 
+var _Pid: number = 0;
+
 var _Trace: boolean = true;  // Default the OS trace to be on.
 
 // The OS Kernel and its queues.
@@ -48,7 +50,11 @@ var _KernelInputQueue: any = null;  // Is this better? I don't like uninitialize
 var _KernelBuffers: any[] = null;   // when clearly 'any' is not what we want. There is likely a better way, but what is it?
 
 // The OS Memory's resident queue
-var _MemoryResidentQueue: any = null;
+var _ResidentQueue: any = null;
+var _ReadyQueue: any = null;
+
+// The OS's memory manager
+var _MemoryManager: any = null;
 
 // Standard input and output
 var _StdIn;    // Same "to null or not to null" issue as above.

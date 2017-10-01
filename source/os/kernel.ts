@@ -26,7 +26,7 @@ module TSOS {
             _KernelInterruptQueue = new Queue();  // A (currently) non-priority queue for interrupt requests (IRQs).
             _KernelBuffers = new Array();         // Buffers... for the kernel.
             _KernelInputQueue = new Queue();      // Where device input lands before being processed out somewhere.
-            _MemoryResidentQueue = new Queue();   // Where we load the program into memory, where it waits to be run
+            _ResidentQueue = new Queue();   // Where we load the program into memory, where it waits to be run
 
             // Initialize the console.
             _Console = new Console();          // The command line interface / console I/O device.
@@ -45,6 +45,9 @@ module TSOS {
             //
             // ... more?
             //
+
+            // Yeah, there's more. Load the memory manager.
+            _MemoryManager = new MemoryManager();
 
             // Enable the OS Interrupts.  (Not the CPU clock interrupt, as that is done in the hardware sim.)
             this.krnTrace("Enabling the interrupts.");
@@ -152,6 +155,16 @@ module TSOS {
         // - ReadFile
         // - WriteFile
         // - CloseFile
+
+        public krnCreateProcessBlock(opcodes){
+            //Assign a PID. Create a new PCB for it, and put it in the job/resident queue.
+            let pcb = new ProcessControlBlock(_Pid);
+            pcb.init();
+            _ResidentQueue.enqueue(pcb);
+            // Have the memory manager load the new process into memory
+            _MemoryManager.loadIntoMemory(opcodes);
+            _Pid++;
+        }
 
 
         //

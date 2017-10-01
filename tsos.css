@@ -52,3 +52,9 @@ h3 {
   background-color: white;
   width: 875px;
 }
+
+th, td {
+  font-family: Courier New, Courier, monospace;
+  border: 1px solid gray;
+  padding: 5px;
+}

@@ -2,6 +2,8 @@
 ///<reference path="../utils.ts" />
 ///<reference path="shellCommand.ts" />
 ///<reference path="userCommand.ts" />
+///<reference path="processControlBlock.ts" />
+///<reference path="memoryManager.ts" />
 
 
 /* ------------
@@ -23,8 +25,7 @@ module TSOS {
         public curses = "[fuvg],[cvff],[shpx],[phag],[pbpxfhpxre],[zbgureshpxre],[gvgf]";
         public apologies = "[sorry]";
 
-        constructor(public processCounter: number = 0) {
-        }
+        constructor(){}
 
         public init() {
             var sc;
@@ -402,12 +403,11 @@ module TSOS {
                     }
                 }
             if(!foundError){
-                _StdOut.putText("Program loaded in memory with process ID " + this.processCounter);
-                //Assign a PID. Create a new PCB for it, and put it in the job/resident queue.
-                let pcb = new ProcessControlBlock(this.processCounter);
-                pcb.init();
-                _MemoryResidentQueue.enqueue(pcb);
-                this.processCounter++;
+                // Check to see if there is an available partition in memory to put program in
+                _MemoryManager.checkMemory();
+                // Call the kernel to create a new process
+                var pid = _Kernel.krnCreateProcessBlock(userArr);
+                _StdOut.putText("Program loaded in memory with process ID " + pid);
             }
         }
 
@@ -420,7 +420,7 @@ module TSOS {
         //This allows the user to change their status by setting the global user status variable to
         //whatever their input was
         public shellStatus(args) {
-            if (args.length > 0) {
+            if(args.length > 0) {
                 _UserStatus = "";
                 for(var word of args){
                     _UserStatus += word + " ";
@@ -432,8 +432,29 @@ module TSOS {
         }
 
         //Runs a program in memory
-        public shellRun() {
-            _StdOut.putText("Usage: run <pid>  Please supply a process ID.");
+        //Clear memory after done
+        public shellRun(args) {
+            if(args.length == 1){
+                // Find the process with the correct pid
+                var foundPid = false;
+                console.log(_ResidentQueue);
+                for(var pcb of _ResidentQueue){
+                    console.log("a" + args[0])
+                    if(pcb.Pid == args[0]){
+                        console.log("hey")
+                        // Now put that pid in the ready queue!!!
+                        _ReadyQueue.enqueue(pcb);
+                        // Remove it from the resident queue...?
+                        _ResidentQueue.splice(_ResidentQueue.indexOf(pcb), 1);
+                    }
+                }
+                if(!foundPid){
+                    _StdOut.putText("Usage: run <pid>  Please supply a valid process ID.");
+                }
+            }
+            else{
+                _StdOut.putText("Usage: run <pid>  Please supply a process ID.");
+            }
         }
 
     }

@@ -29,6 +29,7 @@ var _DrawingContext; // = _Canvas.getContext("2d");  // Assigned here for type s
 var _DefaultFontFamily = "sans"; // Ignored, I think. The was just a place-holder in 2008, but the HTML canvas may have use for it.
 var _DefaultFontSize = 13.0;
 var _FontHeightMargin = 4.0; // Additional space added to font size when advancing a line.
+var _Pid = 0;
 var _Trace = true; // Default the OS trace to be on.
 // The OS Kernel and its queues.
 var _Kernel;
@@ -36,7 +37,10 @@ var _KernelInterruptQueue; // Initializing this to null (which I would normally 
 var _KernelInputQueue = null; // Is this better? I don't like uninitialized variables. But I also don't like using the type specifier 'any'
 var _KernelBuffers = null; // when clearly 'any' is not what we want. There is likely a better way, but what is it?
 // The OS Memory's resident queue
-var _MemoryResidentQueue = null;
+var _ResidentQueue = null;
+var _ReadyQueue = null;
+// The OS's memory manager
+var _MemoryManager = null;
 // Standard input and output
 var _StdIn; // Same "to null or not to null" issue as above.
 var _StdOut;

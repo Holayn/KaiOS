@@ -18,14 +18,43 @@ module TSOS {
     export class Memory {
 
         //Let's just represent the memory as an array of size 768 bytes, 3 partitions of 256
-        constructor(public memoryArray: Array<String> = new Array<String>(768)) {}
+        constructor(public memoryArray: Array<String>) {}
 
         public init(): void {
             this.memoryArray = new Array<String>(768);
+            // Initialize memory with all 00s
+            for(var i=0; i<this.memoryArray.length; i++){
+                this.memoryArray[i] = "00";
+            }
+            var table = (<HTMLTableElement>document.getElementById('tableMemory'));
+            for(var i=0; i<this.memoryArray.length/8; i++){
+                var row = table.insertRow(i);
+                var memoryAddrCell = row.insertCell(0);
+                var address = i*8;
+                // Display address in proper memory hex notation
+                // Adds leading 0s
+                var displayAddress = "0x";
+                for(var k=0; k<3-address.toString(16).length; k++){
+                    displayAddress += "0";
+                }
+                displayAddress += address.toString(16).toUpperCase();
+                memoryAddrCell.innerHTML = displayAddress;
+                for(var j=1; j<9; j++){
+                    var cell = row.insertCell(j);
+                    cell.innerHTML = "00";
+                }
+            }
         }
 
-        public loadIntoMemory(): void {
-
-        }
+        public updateMemory(): void {
+            var table = (<HTMLTableElement>document.getElementById('tableMemory'));
+            var memoryPtr = 0;
+            for(var i=0; i<table.rows.length; i++){
+                for(var j=1; j<9; j++){
+                    table.rows[i].cells.item(j).innerHTML = _Memory.memoryArray[memoryPtr].toString();
+                    memoryPtr++;
+                }
+            }
+        }   
     }
 }
