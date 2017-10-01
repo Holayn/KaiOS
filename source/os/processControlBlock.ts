@@ -32,7 +32,7 @@
         }
         
         // Set everything to 0
-        public init(): void {
+        public init(base, limit): void {
             this.State = "";
             this.PC = 0;
             this.IR = 0;
@@ -40,8 +40,8 @@
             this.Xreg = 0;
             this.Yreg = 0;
             this.Zflag = 0;
-            this.Base = 0;
-            this.Limit = 0;
+            this.Base = base;
+            this.Limit = limit;
         }
     }
 }

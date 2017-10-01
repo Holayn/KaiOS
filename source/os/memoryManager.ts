@@ -31,8 +31,24 @@
 
         // Checks to see if there is an available partition in memory
         // For now, we'll only check the first partition to see if it's available
-        public checkMemory(): boolean{
+        // If there is, we should keep track what the base register is
+        // This really should be the scheduler's job, but not implementing
+        // that yet.
+        public checkMemory(): boolean {
+            for(var i=this.base[0]; i<this.limit; i++){
+                if(_Memory.memoryArray[i] != "00"){
+                    return false;
+                }
+            }
             return true;
+        }
+        // The only base register we care about for now is the one
+        // for the first partition.
+        public getBaseRegister(): number {
+            return 0;
+        }
+        public getLimitRegister(): number{
+            return this.limit;
         }
     }
 }

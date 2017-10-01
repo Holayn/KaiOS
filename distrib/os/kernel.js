@@ -142,7 +142,10 @@ var TSOS;
             if (_MemoryManager.checkMemory()) {
                 //Assign a PID. Create a new PCB for it, and put it in the job/resident queue.
                 var pcb = new TSOS.ProcessControlBlock(_Pid);
-                pcb.init();
+                // Get base limit register from memory manager
+                var base = _MemoryManager.getBaseRegister();
+                var limit = _MemoryManager.getLimitRegister();
+                pcb.init(base, limit);
                 _ResidentQueue.enqueue(pcb);
                 // Have the memory manager load the new process into memory
                 _MemoryManager.loadIntoMemory(opcodes);
