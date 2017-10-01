@@ -441,13 +441,17 @@ module TSOS {
                 // Find the process with the correct pid in the resident queue
                 var foundPid = false;
                 console.log(_ResidentQueue.q);
-                for(var pcb of _ResidentQueue.q){
+                //Change to incr loop
+                for(var i=0; i<_ResidentQueue.getSize(); i++){
+                    var pcb = _ResidentQueue.dequeue();
                     if(pcb.Pid == args[0]){
                         // Now put that pid in the ready queue!!!
                         _ReadyQueue.enqueue(pcb);
-                        // Remove it from the resident queue...?
-                        _ResidentQueue.q.splice(_ResidentQueue.q.indexOf(pcb), 1);
                         foundPid = true;
+                    }
+                    else{
+                        // If it's not the pcb Gotham needed, put it back in resident queue
+                        _ResidentQueue.enqueue(pcb);
                     }
                 }
                 if(!foundPid){

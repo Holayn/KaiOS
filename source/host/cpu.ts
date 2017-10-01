@@ -42,6 +42,9 @@ module TSOS {
             // TODO: Accumulate CPU usage and profiling statistics here.
             // Do the real work here. Be sure to set this.isExecuting appropriately.
             // Let's have a giant switch statement for the opcodes.
+            // Ok, so dequeue from the ready queue. This ready queue will later be reordered by scheduler.
+            // You'll get a PCB.
+            // Start executing the op codes based on its program counter.
         }
     }
 }
