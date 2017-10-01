@@ -90,6 +90,7 @@ module TSOS {
             if(!_ReadyQueue.isEmpty()){
                 _CPU.isExecuting = true;
                 // Set CPU's stuff to PCB's stored info. We need a way to keep track what is running.
+                _Running = _ReadyQueue.dequeue();
             }
             else{
                 _CPU.isExecuting = false;
