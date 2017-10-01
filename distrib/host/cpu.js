@@ -46,6 +46,13 @@ var TSOS;
             // Ok, so dequeue from the ready queue. This ready queue will later be reordered by scheduler.
             // You'll get a PCB.
             // Start executing the op codes based on its program counter.
+            // One op code at a time.
+            // For now, if there is currently a process being executed, let it run
+            // to its full completion.
+            // Need to keep track somehow if process currently executing. If program counter 0, no process running
+            // Also, how do we update PCB info?
+            if (this.PC == 0) {
+            }
         };
         return Cpu;
     }());

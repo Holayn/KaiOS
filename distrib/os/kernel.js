@@ -76,6 +76,7 @@ var TSOS;
             // If so, make the CPU run user process by setting isExecuting to true
             if (!_ReadyQueue.isEmpty()) {
                 _CPU.isExecuting = true;
+                // Set CPU's stuff to PCB's stored info. We need a way to keep track what is running.
             }
             else {
                 _CPU.isExecuting = false;

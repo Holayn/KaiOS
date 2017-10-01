@@ -39,6 +39,8 @@ var _KernelBuffers = null; // when clearly 'any' is not what we want. There is l
 // The OS Memory's resident queue
 var _ResidentQueue = null;
 var _ReadyQueue = null;
+// Keeps track of running PCB
+var _Running = null;
 // The OS's memory manager
 var _MemoryManager = null;
 // Standard input and output

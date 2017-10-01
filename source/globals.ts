@@ -53,6 +53,9 @@ var _KernelBuffers: any[] = null;   // when clearly 'any' is not what we want. T
 var _ResidentQueue: any = null;
 var _ReadyQueue: any = null;
 
+// Keeps track of running PCB
+var _Running: TSOS.ProcessControlBlock = null;
+
 // The OS's memory manager
 var _MemoryManager: any = null;
 
