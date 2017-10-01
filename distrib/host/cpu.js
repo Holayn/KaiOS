@@ -51,21 +51,50 @@ var TSOS;
                     this.Acc = parseInt(_Memory.memoryArray[this.PC].toString(), 16);
                     break;
                 case "AD":// load the accumulator with a value from memory
-                    this.PC++;
                     // Get the hex memory address by looking at the next two values in memory and swapping because of little-endian format
+                    this.PC++;
                     var hexString = _Memory.memoryArray[this.PC].toString();
                     this.PC++;
                     hexString = _Memory.memoryArray[this.PC].toString() + hexString;
                     // Convert it to integer and store it in the accumulator
                     this.Acc = parseInt(hexString, 16);
                     break;
-                default:
-                    console.log("opcode");
+                case "8D":// store the accumulator in memory
+                    // Gets the hex memory address to store in by looking at the next two values in memory and swapping because of little-endian format
+                    this.PC++;
+                    var hexString = _Memory.memoryArray[this.PC].toString();
+                    this.PC++;
+                    hexString = _Memory.memoryArray[this.PC].toString() + hexString;
+                    // Convert to get the integer address in memory
+                    var address = parseInt(hexString, 16);
+                    console.log("Address:" + address);
+                    // Get the value stored in the accumulator (convert to hex string) and put it at the address in memory
+                    // Also, check to see if we need to have a leading zero...only numbers below 16 need a leading zero
+                    var value = this.Acc.toString(16).substr(-2);
+                    if (this.Acc < 16) {
+                        value = "0" + value;
+                    }
+                    console.log("Value:" + value);
+                    _Memory.memoryArray[address] = value;
+                    break;
+                case "6D": // add with carry (add contents of address to accumulator and store result in accumulator)
+                case "A2": // load the X register with a constant
+                case "AE": // load the X register from memory
+                case "A0": // load the Y register with a constant
+                case "AC": // load the Y register from memory
+                case "EA": // no operation
+                case "00": // break (system call)
+                case "EC": // compare byte in memory to X register. Sets the Z flag to zero if equal
+                case "D0": // branch n bytes if Z flag = 0
+                case "EE": // Increment the value of a byte
+                case "FF": // System call: if 1 in X reg, make syscall to print integer store in Y reg. if 2, then print 00-terminated string stored at address in Y register.
             }
             this.PC++;
             console.log(this.PC + " " + this.Acc + " " + this.Xreg + " " + this.Yreg + " " + this.Zflag);
             // Update the CPU display
             TSOS.Control.hostCPU();
+            // Update the memory display
+            TSOS.Control.hostMemory();
         };
         return Cpu;
     }());

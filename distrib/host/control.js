@@ -68,7 +68,6 @@ var TSOS;
         // This will update and display the CPU in real time
         Control.hostCPU = function () {
             var table = document.getElementById('tableCPU');
-            console.log(table.tBodies);
             table.deleteRow(-1);
             var row = table.insertRow(-1); // New row appended to table
             // PC
@@ -90,6 +89,7 @@ var TSOS;
             cell = row.insertCell();
             cell.innerHTML = _CPU.Zflag.toString();
         };
+        // This will update and display the memory in real time
         Control.hostMemory = function () {
             var table = document.getElementById('tableMemory');
             var memoryPtr = 0;

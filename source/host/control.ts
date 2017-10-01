@@ -81,7 +81,6 @@ module TSOS {
         // This will update and display the CPU in real time
         public static hostCPU(): void{
             var table = (<HTMLTableElement>document.getElementById('tableCPU'));
-            console.log(table.tBodies);
             table.deleteRow(-1);
             var row = table.insertRow(-1); // New row appended to table
             // PC
@@ -104,6 +103,7 @@ module TSOS {
             cell.innerHTML = _CPU.Zflag.toString();
         }
 
+        // This will update and display the memory in real time
         public static hostMemory(): void{
             var table = (<HTMLTableElement>document.getElementById('tableMemory'));
             var memoryPtr = 0;
