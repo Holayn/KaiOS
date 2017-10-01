@@ -375,18 +375,17 @@ var TSOS;
         //Clear memory after done
         Shell.prototype.shellRun = function (args) {
             if (args.length == 1) {
-                // Find the process with the correct pid
+                // Find the process with the correct pid in the resident queue
                 var foundPid = false;
-                console.log(_ResidentQueue);
-                for (var _i = 0, _ResidentQueue_1 = _ResidentQueue; _i < _ResidentQueue_1.length; _i++) {
-                    var pcb = _ResidentQueue_1[_i];
-                    console.log("a" + args[0]);
+                console.log(_ResidentQueue.q);
+                for (var _i = 0, _a = _ResidentQueue.q; _i < _a.length; _i++) {
+                    var pcb = _a[_i];
                     if (pcb.Pid == args[0]) {
-                        console.log("hey");
                         // Now put that pid in the ready queue!!!
                         _ReadyQueue.enqueue(pcb);
                         // Remove it from the resident queue...?
-                        _ResidentQueue.splice(_ResidentQueue.indexOf(pcb), 1);
+                        _ResidentQueue.q.splice(_ResidentQueue.q.indexOf(pcb), 1);
+                        foundPid = true;
                     }
                 }
                 if (!foundPid) {
