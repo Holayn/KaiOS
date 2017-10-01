@@ -72,16 +72,6 @@ var TSOS;
                This is NOT the same as a TIMER, which causes an interrupt and is handled like other interrupts.
                This, on the other hand, is the clock pulse from the hardware / VM / host that tells the kernel
                that it has to look for interrupts and process them if it finds any.                           */
-            // On each clock pulse, check to see if there is anything in the ready queue.
-            // If so, make the CPU run user process by setting isExecuting to true
-            if (!_ReadyQueue.isEmpty()) {
-                _CPU.isExecuting = true;
-                // Set CPU's stuff to PCB's stored info. We need a way to keep track what is running.
-                _Running = _ReadyQueue.dequeue();
-            }
-            else {
-                _CPU.isExecuting = false;
-            }
             // Check for an interrupt, are any. Page 560
             if (_KernelInterruptQueue.getSize() > 0) {
                 // Process the first interrupt on the interrupt queue.
@@ -94,7 +84,33 @@ var TSOS;
             }
             else {
                 this.krnTrace("Idle");
+                // On each clock pulse, check to see if there is anything in the ready queue.
+                // If so, make the CPU run user process by setting isExecuting to true
+                if (!_ReadyQueue.isEmpty()) {
+                    // Set CPU's stuff to PCB's stored info. We need a way to keep track what is running. 
+                    // How to tell CPU is not executing anymore? Break opcode
+                    // Ok, so dequeue from the ready queue. This ready queue will later be reordered by scheduler.
+                    // You'll get a PCB.
+                    // Start executing the op codes based on its program counter.
+                    // One op code at a time.
+                    // For now, if there is currently a process being executed, let it run
+                    // to its full completion.
+                    // Need to keep track somehow if process currently executing. If program counter 0, no process running. NOPE.
+                    // Also, how do we update PCB info?
+                    _Running = _ReadyQueue.dequeue();
+                    // Put all stuff from PCB to CPU
+                    _CPU.PC = _Running.PC;
+                    _CPU.Acc = _Running.Acc;
+                    _CPU.Xreg = _Running.Xreg;
+                    _CPU.Yreg = _Running.Yreg;
+                    _CPU.Zflag = _Running.Zflag;
+                    _CPU.isExecuting = true;
+                }
+                else {
+                    _CPU.isExecuting = false;
+                }
             }
+            // Read CPU stuff, store back into PCB
         };
         //
         // Interrupt Handling

@@ -43,15 +43,9 @@ var TSOS;
             // TODO: Accumulate CPU usage and profiling statistics here.
             // Do the real work here. Be sure to set this.isExecuting appropriately.
             // Let's have a giant switch statement for the opcodes.
-            // Ok, so dequeue from the ready queue. This ready queue will later be reordered by scheduler.
-            // You'll get a PCB.
-            // Start executing the op codes based on its program counter.
-            // One op code at a time.
-            // For now, if there is currently a process being executed, let it run
-            // to its full completion.
-            // Need to keep track somehow if process currently executing. If program counter 0, no process running
-            // Also, how do we update PCB info?
-            if (this.PC == 0) {
+            // Based on program counter, get op code, do it, then increment program counter
+            switch (_Memory[this.PC]) {
+                case "A9":
             }
         };
         return Cpu;

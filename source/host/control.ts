@@ -78,6 +78,11 @@ module TSOS {
             // TODO in the future: Optionally update a log database or some streaming service.
         }
 
+        // This will update and display the CPU in real time
+        public static hostCPU(): void{
+
+        }
+
 
         //
         // Host Events

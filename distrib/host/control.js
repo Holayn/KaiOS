@@ -65,6 +65,9 @@ var TSOS;
             document.getElementById("taskBar").innerHTML = "<h2>" + dateTime + " | " + _UserStatus + "</h2>";
             // TODO in the future: Optionally update a log database or some streaming service.
         };
+        // This will update and display the CPU in real time
+        Control.hostCPU = function () {
+        };
         //
         // Host Events
         //
