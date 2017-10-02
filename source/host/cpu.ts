@@ -78,6 +78,9 @@ module TSOS {
                     this.Acc += parseInt(value, 16);
                     break;
                 case "A2": // load the X register with a constant
+                    // Load X register with decimal (but of course we display it as hex in memory)
+                    this.Xreg = parseInt(_Memory.memoryArray[this.PC+1].toString(), 16); 
+                    break;
                 case "AE": // load the X register from memory
                 case "A0": // load the Y register with a constant
                 case "AC": // load the Y register from memory
