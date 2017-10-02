@@ -24,8 +24,7 @@ module TSOS {
                     public Xreg: number = 0,
                     public Yreg: number = 0,
                     public Zflag: number = 0,
-                    public isExecuting: boolean = false,
-                    public IR: string = "0") {
+                    public isExecuting: boolean = false) {
 
         }
 
@@ -36,7 +35,6 @@ module TSOS {
             this.Yreg = 0;
             this.Zflag = 0;
             this.isExecuting = false;
-            this.IR = "0";
         }
 
         public cycle(): void {
@@ -48,47 +46,36 @@ module TSOS {
 
             switch(_Memory.memoryArray[this.PC]){
                 case "A9": // load the accumulator with value in next area of memory
-                    this.PC++;
                     // Load accumulator with decimal (but of course we display it as hex)
-                    this.Acc = parseInt(_Memory.memoryArray[this.PC].toString(), 16); 
-                    this.IR = "A9";
+                    this.Acc = parseInt(_Memory.memoryArray[this.PC+1].toString(), 16); 
                     break;
                 case "AD": // load the accumulator with a value from memory
                     // Get the hex memory address by looking at the next two values in memory and swapping because of little-endian format
-                    this.PC++;
-                    var hexString = _Memory.memoryArray[this.PC].toString() 
-                    this.PC++;
-                    hexString = _Memory.memoryArray[this.PC].toString() + hexString;
+                    var hexString = _Memory.memoryArray[this.PC+1].toString() 
+                    hexString = _Memory.memoryArray[this.PC+2].toString() + hexString;
                     // Convert it to integer and store it in the accumulator
                     this.Acc = parseInt(hexString, 16);
-                    this.IR = "AD";
                     break;
                 case "8D": // store the accumulator in memory
                     // Gets the hex memory address to store in by looking at the next two values in memory and swapping because of little-endian format
-                    this.PC++;
-                    var hexString = _Memory.memoryArray[this.PC].toString() 
-                    this.PC++;
-                    hexString = _Memory.memoryArray[this.PC].toString() + hexString;
+                    var hexString = _Memory.memoryArray[this.PC+1].toString() 
+                    hexString = _Memory.memoryArray[this.PC+2].toString() + hexString;
                     // Convert to get the integer address in memory
                     var address = parseInt(hexString, 16);
                     // Get the value stored in the accumulator (convert to hex string) and put it at the address in memory
                     // Also, check to see if we need to have a leading zero...only numbers below 16 need a leading zero
                     var value = this.Acc.toString(16).substr(-2);
                     _Memory.memoryArray[address] = value;
-                    this.IR = "8D";
                     break;
                 case "6D": // add with carry (add contents of address to accumulator and store result in accumulator)
                     // Gets the hex memory address to store in by looking at the next two values in memory and swapping because of little-endian format
-                    this.PC++;
-                    var hexString = _Memory.memoryArray[this.PC].toString() 
-                    this.PC++;
-                    hexString = _Memory.memoryArray[this.PC].toString() + hexString;
+                    var hexString = _Memory.memoryArray[this.PC+1].toString() 
+                    hexString = _Memory.memoryArray[this.PC+2].toString() + hexString;
                     // Convert to get the integer address in memory
                     var address = parseInt(hexString, 16);
                     // Now, get the value stored at the address in memory, then add it to the accumulator
                     var value = _Memory.memoryArray[address];
                     this.Acc += parseInt(value, 16);
-                    this.IR = "6D";
                     break;
                 case "A2": // load the X register with a constant
                 case "AE": // load the X register from memory

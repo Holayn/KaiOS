@@ -75,7 +75,7 @@ var TSOS;
             cell.innerHTML = _CPU.PC.toString();
             // IR
             var cell = row.insertCell();
-            cell.innerHTML = _CPU.IR.toString();
+            cell.innerHTML = _Memory.memoryArray[_CPU.PC].toString();
             // Acc
             cell = row.insertCell();
             cell.innerHTML = _CPU.Acc.toString();
