@@ -82,11 +82,23 @@ module TSOS {
                     this.Xreg = parseInt(_Memory.memoryArray[this.PC+1].toString(), 16); 
                     break;
                 case "AE": // load the X register from memory
+                    // Get the hex memory address by looking at the next two values in memory and swapping because of little-endian format
+                    var hexString = _Memory.memoryArray[this.PC+1].toString() 
+                    hexString = _Memory.memoryArray[this.PC+2].toString() + hexString;
+                    // Convert it to integer and store it in the accumulator
+                    this.Xreg = parseInt(hexString, 16);
+                    break;
                 case "A0": // load the Y register with a constant
                     // Load Y register with decimal (but of course we display it as hex in memory)
                     this.Yreg = parseInt(_Memory.memoryArray[this.PC+1].toString(), 16); 
                     break;
                 case "AC": // load the Y register from memory
+                    // Get the hex memory address by looking at the next two values in memory and swapping because of little-endian format
+                    var hexString = _Memory.memoryArray[this.PC+1].toString() 
+                    hexString = _Memory.memoryArray[this.PC+2].toString() + hexString;
+                    // Convert it to integer and store it in the accumulator
+                    this.Yreg = parseInt(hexString, 16);
+                    break;
                 case "EA": // no operation
                 case "00": // break (system call)
                 case "EC": // compare byte in memory to X register. Sets the Z flag to zero if equal
