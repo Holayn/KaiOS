@@ -43,8 +43,8 @@ module TSOS {
             // Do the real work here. Be sure to set this.isExecuting appropriately.
             // Let's have a giant switch statement for the opcodes.
             // Based on program counter, get op code, do it, then increment program 
-
-            switch(_Memory.memoryArray[this.PC]){
+            var opCode = _Memory.memoryArray[this.PC];
+            switch(opCode){
                 case "A9": // load the accumulator with value in next area of memory
                     // Load accumulator with decimal (but of course we display it as hex)
                     this.Acc = parseInt(_Memory.memoryArray[this.PC+1].toString(), 16); 
@@ -100,13 +100,22 @@ module TSOS {
                     this.Yreg = parseInt(hexString, 16);
                     break;
                 case "EA": // no operation
+                    // This is the NOP (no operation) op code. We don't do anything.
+                    break;
                 case "00": // break (system call)
+                    // We simply call the break system call by setting isExecuting to false. Stops the CPU's execution of whatever it's executing.
+                    // Since we have to clear the CPU anyway, let's just call CPU.init() again to reset it
+                    this.init();
+                    break;
                 case "EC": // compare byte in memory to X register. Sets the Z flag to zero if equal
                 case "D0": // branch n bytes if Z flag = 0
                 case "EE": // Increment the value of a byte
                 case "FF": // System call: if 1 in X reg, make syscall to print integer store in Y reg. if 2, then print 00-terminated string stored at address in Y register.
             }
-            this.PC++;
+            // If there was not a break, then increment the program counter
+            if(opCode !== "00"){
+                this.PC++;
+            }
             console.log(this.PC + " " + this.Acc + " " + this.Xreg + " " + this.Yreg + " " + this.Zflag);
             // Update the CPU display
             Control.hostCPU();
