@@ -14,10 +14,11 @@
 var TSOS;
 (function (TSOS) {
     var Memory = /** @class */ (function () {
-        //Let's just represent the memory as an array of size 768 bytes, 3 partitions of 256
+        // Let's just represent the memory as an array of size 768 bytes, 3 partitions of 256
         function Memory(memoryArray) {
             this.memoryArray = memoryArray;
         }
+        // Initialize the memory and the memory display
         Memory.prototype.init = function () {
             this.memoryArray = new Array(768);
             // Initialize memory with all 00s
@@ -25,18 +26,20 @@ var TSOS;
                 this.memoryArray[i] = "00";
             }
             var table = document.getElementById('tableMemory');
+            // We assume each row will hold 8 memory values
             for (var i = 0; i < this.memoryArray.length / 8; i++) {
                 var row = table.insertRow(i);
                 var memoryAddrCell = row.insertCell(0);
                 var address = i * 8;
                 // Display address in proper memory hex notation
-                // Adds leading 0s
+                // Adds leading 0s if necessary
                 var displayAddress = "0x";
                 for (var k = 0; k < 3 - address.toString(16).length; k++) {
                     displayAddress += "0";
                 }
                 displayAddress += address.toString(16).toUpperCase();
                 memoryAddrCell.innerHTML = displayAddress;
+                // Fill all the cells with 00s
                 for (var j = 1; j < 9; j++) {
                     var cell = row.insertCell(j);
                     cell.innerHTML = "00";
