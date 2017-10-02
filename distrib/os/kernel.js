@@ -192,9 +192,10 @@ var TSOS;
             _MemoryManager.clearMemoryPartition(_Running);
             _CPU.init();
         };
-        // This system call prints the CPU's Y register
+        // This system call prints the integer in the CPU's Y register
         Kernel.prototype.krnPrintYReg = function () {
-            _StdIn.putText(_CPU.Yreg);
+            _StdIn.putText(_CPU.Yreg + "");
+            console.log("printing Y: " + _CPU.Yreg);
         };
         // This system call prints the 00-terminated string stored at the address in the Y register
         Kernel.prototype.krnPrintYRegString = function () {
@@ -203,8 +204,11 @@ var TSOS;
             // Gets the ASCII from the address, converts it to characters, then passes to console's putText.
             while (_Memory.memoryArray[address] != "00") {
                 var value = _Memory.memoryArray[address];
+                // Convert hex to decimal
+                value = parseInt(value.toString(), 16);
                 var chr = String.fromCharCode(value);
                 string += chr;
+                address++;
             }
             _StdIn.putText(string);
         };
