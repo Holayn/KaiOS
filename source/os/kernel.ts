@@ -210,8 +210,7 @@ module TSOS {
         // set isExecuting to false.
         // We also need to reset the memory partition the process was running in. Look in PCB to see which partition to reset
         public krnExitProcess(){
-            console.log("Base of running PCB: " + _Running.Base);
-            _MemoryManager.clearMemoryPartition(_Running.Base);
+            _MemoryManager.clearMemoryPartition(_Running);
             _CPU.init();
         }
 

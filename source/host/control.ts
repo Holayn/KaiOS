@@ -88,7 +88,12 @@ module TSOS {
             cell.innerHTML = _CPU.PC.toString();
             // IR
             var cell = row.insertCell();
-            cell.innerHTML = _Memory.memoryArray[_CPU.PC].toString(); 
+            if(_CPU.isExecuting){
+                cell.innerHTML = _Memory.memoryArray[_CPU.PC].toString(); 
+            }
+            else{
+                cell.innerHTML = "0";
+            }
             // Acc
             cell = row.insertCell();
             cell.innerHTML = _CPU.Acc.toString();
