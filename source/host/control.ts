@@ -91,32 +91,16 @@ module TSOS {
             cell.innerHTML = _Memory.memoryArray[_CPU.PC].toString(); 
             // Acc
             cell = row.insertCell();
-            cell.innerHTML = _CPU.Acc.toString(16).toUpperCase(); // convert to hex for display
-            // Check to see if we need to have a leading zero...only numbers below 16 need a leading zero
-            if(_CPU.Acc < 16){
-                cell.innerHTML = "0" + cell.innerHTML;
-            }
+            cell.innerHTML = _CPU.Acc.toString();
             // Xreg
             cell = row.insertCell();
-            cell.innerHTML = _CPU.Xreg.toString(16).toUpperCase(); // convert to hex for display
-            // Check to see if we need to have a leading zero...only numbers below 16 need a leading zero
-            if(_CPU.Xreg < 16){
-                cell.innerHTML = "0" + cell.innerHTML;
-            }
+            cell.innerHTML = _CPU.Xreg.toString();
             // Yreg
             cell = row.insertCell();
-            cell.innerHTML = _CPU.Yreg.toString(16).toUpperCase(); // convert to hex for display
-            // Check to see if we need to have a leading zero...only numbers below 16 need a leading zero
-            if(_CPU.Yreg < 16){
-                cell.innerHTML = "0" + cell.innerHTML;
-            }
+            cell.innerHTML = _CPU.Yreg.toString();
             // Zflag
             cell = row.insertCell();
-            cell.innerHTML = _CPU.Zflag.toString(16).toUpperCase(); // convert to hex for display
-            // Check to see if we need to have a leading zero...only numbers below 16 need a leading zero
-            if(_CPU.Zflag < 16){
-                cell.innerHTML = "0" + cell.innerHTML;
-            }
+            cell.innerHTML = _CPU.Zflag.toString();
         }
 
         // This will update and display the memory in real time
@@ -126,6 +110,12 @@ module TSOS {
             for(var i=0; i<table.rows.length; i++){
                 for(var j=1; j<9; j++){
                     table.rows[i].cells.item(j).innerHTML = _Memory.memoryArray[memoryPtr].toString();
+                    // Check to see if the hex needs a leading zero.
+                    // If it does, then convert the hex to decimal, then back to hex, and add a leading zero.
+                    // We do that seemingly dumb step because if the value stored in memory already has a leading 0, will mess things up.
+                    if(parseInt(_Memory.memoryArray[memoryPtr], 16) < 16 && parseInt(_Memory.memoryArray[memoryPtr], 16) > 0){
+                        table.rows[i].cells.item(j).innerHTML = "0" + parseInt(_Memory.memoryArray[memoryPtr], 16).toString(16);
+                    }
                     memoryPtr++;
                 }
             }
