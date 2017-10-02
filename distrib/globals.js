@@ -29,7 +29,7 @@ var _DrawingContext; // = _Canvas.getContext("2d");  // Assigned here for type s
 var _DefaultFontFamily = "sans"; // Ignored, I think. The was just a place-holder in 2008, but the HTML canvas may have use for it.
 var _DefaultFontSize = 13.0;
 var _FontHeightMargin = 4.0; // Additional space added to font size when advancing a line.
-var _Pid = 0;
+var _Pid = 0; // Number to assign to processes
 var _Trace = true; // Default the OS trace to be on.
 // The OS Kernel and its queues.
 var _Kernel;

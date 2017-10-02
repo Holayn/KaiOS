@@ -75,7 +75,7 @@ var TSOS;
             cell.innerHTML = _CPU.PC.toString();
             // IR
             var cell = row.insertCell();
-            cell.innerHTML = _Memory.memoryArray[_CPU.PC].toString();
+            cell.innerHTML = _CPU.IR.toString();
             // Acc
             cell = row.insertCell();
             cell.innerHTML = _CPU.Acc.toString();
@@ -96,7 +96,7 @@ var TSOS;
             for (var i = 0; i < table.rows.length; i++) {
                 for (var j = 1; j < 9; j++) {
                     table.rows[i].cells.item(j).innerHTML = _Memory.memoryArray[memoryPtr].toString();
-                    // Check to see if the hex needs a leading zero
+                    // Check to see if the hex needs a leading zero.
                     // If it does, then convert the hex to decimal, then back to hex, and add a leading zero.
                     // We do that seemingly dumb step because if the value stored in memory already has a leading 0, will mess things up.
                     if (parseInt(_Memory.memoryArray[memoryPtr], 16) < 16 && parseInt(_Memory.memoryArray[memoryPtr], 16) > 0) {

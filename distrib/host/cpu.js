@@ -16,19 +16,21 @@
 var TSOS;
 (function (TSOS) {
     var Cpu = /** @class */ (function () {
-        function Cpu(PC, Acc, Xreg, Yreg, Zflag, isExecuting) {
+        function Cpu(PC, Acc, Xreg, Yreg, Zflag, isExecuting, IR) {
             if (PC === void 0) { PC = 0; }
             if (Acc === void 0) { Acc = 0; }
             if (Xreg === void 0) { Xreg = 0; }
             if (Yreg === void 0) { Yreg = 0; }
             if (Zflag === void 0) { Zflag = 0; }
             if (isExecuting === void 0) { isExecuting = false; }
+            if (IR === void 0) { IR = "0"; }
             this.PC = PC;
             this.Acc = Acc;
             this.Xreg = Xreg;
             this.Yreg = Yreg;
             this.Zflag = Zflag;
             this.isExecuting = isExecuting;
+            this.IR = IR;
         }
         Cpu.prototype.init = function () {
             this.PC = 0;
@@ -37,6 +39,7 @@ var TSOS;
             this.Yreg = 0;
             this.Zflag = 0;
             this.isExecuting = false;
+            this.IR = "0";
         };
         Cpu.prototype.cycle = function () {
             _Kernel.krnTrace('CPU cycle');
@@ -49,6 +52,7 @@ var TSOS;
                     this.PC++;
                     // Load accumulator with decimal (but of course we display it as hex)
                     this.Acc = parseInt(_Memory.memoryArray[this.PC].toString(), 16);
+                    this.IR = "A9";
                     break;
                 case "AD":// load the accumulator with a value from memory
                     // Get the hex memory address by looking at the next two values in memory and swapping because of little-endian format
@@ -58,6 +62,7 @@ var TSOS;
                     hexString = _Memory.memoryArray[this.PC].toString() + hexString;
                     // Convert it to integer and store it in the accumulator
                     this.Acc = parseInt(hexString, 16);
+                    this.IR = "AD";
                     break;
                 case "8D":// store the accumulator in memory
                     // Gets the hex memory address to store in by looking at the next two values in memory and swapping because of little-endian format
@@ -71,6 +76,7 @@ var TSOS;
                     // Also, check to see if we need to have a leading zero...only numbers below 16 need a leading zero
                     var value = this.Acc.toString(16).substr(-2);
                     _Memory.memoryArray[address] = value;
+                    this.IR = "8D";
                     break;
                 case "6D":// add with carry (add contents of address to accumulator and store result in accumulator)
                     // Gets the hex memory address to store in by looking at the next two values in memory and swapping because of little-endian format
@@ -83,6 +89,7 @@ var TSOS;
                     // Now, get the value stored at the address in memory, then add it to the accumulator
                     var value = _Memory.memoryArray[address];
                     this.Acc += parseInt(value, 16);
+                    this.IR = "6D";
                     break;
                 case "A2": // load the X register with a constant
                 case "AE": // load the X register from memory
