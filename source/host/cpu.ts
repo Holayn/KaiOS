@@ -119,8 +119,7 @@ module TSOS {
                     this.PC++;
                     break;
                 case "00": // break (system call)
-                    // Execute system call for a break interrupt
-                    // _KernelInterruptQueue(BREAK_IR);
+                    // Execute system call for a process exit
                     _Kernel.krnExitProcess();
                     break;
                 case "EC": // compare byte in memory to X register. Sets the Z flag to zero if equal
@@ -172,7 +171,6 @@ module TSOS {
                     this.PC = this.PC+3;
                     break;
                 case "FF": // System call: if 1 in X reg, make syscall to print integer store in Y reg. if 2, then print 00-terminated string stored at address in Y register.
-                //NEEDS TO BE SOFTWARE INTERRUPT
                     if(this.Xreg == 1){
                         _Kernel.krnPrintYReg();
                     }

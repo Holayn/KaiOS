@@ -343,13 +343,7 @@ var TSOS;
             }
             if (!foundError) {
                 // Call the kernel to create a new process
-                var pid = _Kernel.krnCreateProcess(userArr);
-                if (pid == -1) {
-                    _StdOut.putText("Loading of program failed!");
-                }
-                else {
-                    _StdOut.putText("Program loaded in memory with process ID " + pid);
-                }
+                _Kernel.krnCreateProcess(userArr);
             }
         };
         Shell.prototype.shellSeppuku = function () {

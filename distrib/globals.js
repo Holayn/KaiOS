@@ -16,8 +16,9 @@ var CPU_CLOCK_INTERVAL = 100; // This is in ms (milliseconds) so 1000 = 1 second
 var TIMER_IRQ = 0; // Pages 23 (timer), 9 (interrupts), and 561 (interrupt priority).
 // NOTE: The timer is different from hardware/host clock pulses. Don't confuse these.
 var KEYBOARD_IRQ = 1;
-var BREAK_IR = 2;
-var CONSOLE_WRITE_IR = 3;
+var PROCESS_EXIT = 2;
+var PROCESS_CREATE = 3;
+var CONSOLE_WRITE_IR = 4;
 //
 // Global Variables
 // TODO: Make a global object and use that instead of the "_" naming convention in the global namespace.

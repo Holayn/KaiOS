@@ -144,12 +144,31 @@ var TSOS;
                 // This stops the CPU from executing whatever it is executing. Let's just call CPU.init() to reset it, which will
                 // set isExecuting to false.
                 // We also need to reset the memory partition the process was running in. Look in PCB to see which partition to reset
-                case BREAK_IR:// Kernel stop of CPU execution
+                case PROCESS_EXIT:// Interrupt to exit from a process
                     _MemoryManager.clearMemoryPartition(_Running);
                     _CPU.init();
                     break;
-                case CONSOLE_WRITE_IR:
-                    _StdIn.putText(params);
+                case CONSOLE_WRITE_IR:// Interrupt to write to console
+                    _StdOut.putText(params);
+                    break;
+                case PROCESS_CREATE:// Interrupt to create a process
+                    // Check to see if there is an available partition in memory to put program in.
+                    // If there is no available memory, then let the shell know so it can display appropriate output to the user.
+                    if (_MemoryManager.checkMemory()) {
+                        var pcb = new TSOS.ProcessControlBlock(_Pid);
+                        // Get base and limit register from memory manager
+                        var base = _MemoryManager.getBaseRegister();
+                        var limit = _MemoryManager.getLimitRegister();
+                        pcb.init(base, limit);
+                        _ResidentQueue.enqueue(pcb);
+                        // Have the memory manager load the new process into memory
+                        _MemoryManager.loadIntoMemory(params);
+                        _StdOut.putText("Program loaded in memory with process ID " + _Pid);
+                        _Pid++;
+                    }
+                    else {
+                        _StdOut.putText("Loading of program failed!");
+                    }
                     break;
                 default:
                     this.krnTrapError("Invalid Interrupt Request. irq=" + irq + " params=[" + params + "]");
@@ -175,28 +194,14 @@ var TSOS;
         // - WriteFile
         // - CloseFile
         // Creates a process by creating a PCB for the program, loading the program into memory, and putting the PCB onto the resident queue.
+        // Done by generating the software interrupt for it
         Kernel.prototype.krnCreateProcess = function (opcodes) {
-            // Check to see if there is an available partition in memory to put program in.
-            // If there is no available memory, then let the shell know so it can display appropriate output to the user.
-            if (_MemoryManager.checkMemory()) {
-                //Assign a PID. Create a new PCB for it, and put it in the job/resident queue.
-                var pcb = new TSOS.ProcessControlBlock(_Pid);
-                // Get base limit register from memory manager
-                var base = _MemoryManager.getBaseRegister();
-                var limit = _MemoryManager.getLimitRegister();
-                pcb.init(base, limit);
-                _ResidentQueue.enqueue(pcb);
-                // Have the memory manager load the new process into memory
-                _MemoryManager.loadIntoMemory(opcodes);
-                _Pid++;
-                return pcb.Pid;
-            }
-            else {
-                return -1;
-            }
+            var params = opcodes;
+            _KernelInterruptQueue.enqueue(new TSOS.Interrupt(PROCESS_CREATE, params));
         };
         Kernel.prototype.krnExitProcess = function () {
-            _KernelInterruptQueue.enqueue(new TSOS.Interrupt(BREAK_IR));
+            var params;
+            _KernelInterruptQueue.enqueue(new TSOS.Interrupt(PROCESS_EXIT, params));
         };
         // This system call generates the software interrupt that will print the integer value of the Y register to the console
         Kernel.prototype.krnPrintYReg = function () {

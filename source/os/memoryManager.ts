@@ -1,7 +1,7 @@
 /* ------------
    memoryManager.ts
 
-   This is the client OS implementation of a PCB
+   This is the client OS implementation of a MMU.
    ------------ */
 
    module TSOS {
