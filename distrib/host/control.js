@@ -79,15 +79,31 @@ var TSOS;
             // Acc
             cell = row.insertCell();
             cell.innerHTML = _CPU.Acc.toString(16).toUpperCase(); // convert to hex for display
+            // Check to see if we need to have a leading zero...only numbers below 16 need a leading zero
+            if (_CPU.Acc < 16) {
+                cell.innerHTML = "0" + cell.innerHTML;
+            }
             // Xreg
             cell = row.insertCell();
-            cell.innerHTML = _CPU.Xreg.toString();
+            cell.innerHTML = _CPU.Xreg.toString(16).toUpperCase(); // convert to hex for display
+            // Check to see if we need to have a leading zero...only numbers below 16 need a leading zero
+            if (_CPU.Xreg < 16) {
+                cell.innerHTML = "0" + cell.innerHTML;
+            }
             // Yreg
             cell = row.insertCell();
-            cell.innerHTML = _CPU.Yreg.toString();
+            cell.innerHTML = _CPU.Yreg.toString(16).toUpperCase(); // convert to hex for display
+            // Check to see if we need to have a leading zero...only numbers below 16 need a leading zero
+            if (_CPU.Yreg < 16) {
+                cell.innerHTML = "0" + cell.innerHTML;
+            }
             // Zflag
             cell = row.insertCell();
-            cell.innerHTML = _CPU.Zflag.toString();
+            cell.innerHTML = _CPU.Zflag.toString(16).toUpperCase(); // convert to hex for display
+            // Check to see if we need to have a leading zero...only numbers below 16 need a leading zero
+            if (_CPU.Zflag < 16) {
+                cell.innerHTML = "0" + cell.innerHTML;
+            }
         };
         // This will update and display the memory in real time
         Control.hostMemory = function () {

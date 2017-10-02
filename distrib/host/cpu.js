@@ -67,17 +67,23 @@ var TSOS;
                     hexString = _Memory.memoryArray[this.PC].toString() + hexString;
                     // Convert to get the integer address in memory
                     var address = parseInt(hexString, 16);
-                    console.log("Address:" + address);
                     // Get the value stored in the accumulator (convert to hex string) and put it at the address in memory
                     // Also, check to see if we need to have a leading zero...only numbers below 16 need a leading zero
                     var value = this.Acc.toString(16).substr(-2);
-                    if (this.Acc < 16) {
-                        value = "0" + value;
-                    }
-                    console.log("Value:" + value);
                     _Memory.memoryArray[address] = value;
                     break;
-                case "6D": // add with carry (add contents of address to accumulator and store result in accumulator)
+                case "6D":// add with carry (add contents of address to accumulator and store result in accumulator)
+                    // Gets the hex memory address to store in by looking at the next two values in memory and swapping because of little-endian format
+                    this.PC++;
+                    var hexString = _Memory.memoryArray[this.PC].toString();
+                    this.PC++;
+                    hexString = _Memory.memoryArray[this.PC].toString() + hexString;
+                    // Convert to get the integer address in memory
+                    var address = parseInt(hexString, 16);
+                    // Now, get the value stored at the address in memory, then add it to the accumulator
+                    var value = _Memory.memoryArray[address];
+                    this.Acc += parseInt(value, 16);
+                    break;
                 case "A2": // load the X register with a constant
                 case "AE": // load the X register from memory
                 case "A0": // load the Y register with a constant
