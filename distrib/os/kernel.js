@@ -141,6 +141,16 @@ var TSOS;
                     _krnKeyboardDriver.isr(params); // Kernel mode device driver
                     _StdIn.handleInput();
                     break;
+                // This stops the CPU from executing whatever it is executing. Let's just call CPU.init() to reset it, which will
+                // set isExecuting to false.
+                // We also need to reset the memory partition the process was running in. Look in PCB to see which partition to reset
+                case BREAK_IR:// Kernel stop of CPU execution
+                    _MemoryManager.clearMemoryPartition(_Running);
+                    _CPU.init();
+                    break;
+                case CONSOLE_WRITE_IR:
+                    _StdIn.putText(params);
+                    break;
                 default:
                     this.krnTrapError("Invalid Interrupt Request. irq=" + irq + " params=[" + params + "]");
                     _StdOut.putText("RIP IN POTATOES UR OPERATING SYSTEM IS DED L0L");
@@ -185,17 +195,13 @@ var TSOS;
                 return -1;
             }
         };
-        // This stops the CPU from executing whatever it is executing. Let's just call CPU.init() to reset it, which will
-        // set isExecuting to false.
-        // We also need to reset the memory partition the process was running in. Look in PCB to see which partition to reset
         Kernel.prototype.krnExitProcess = function () {
-            _MemoryManager.clearMemoryPartition(_Running);
-            _CPU.init();
+            _KernelInterruptQueue.enqueue(new TSOS.Interrupt(BREAK_IR));
         };
-        // This system call prints the integer in the CPU's Y register
+        // This system call generates the software interrupt that will print the integer value of the Y register to the console
         Kernel.prototype.krnPrintYReg = function () {
-            _StdIn.putText(_CPU.Yreg + "");
-            console.log("printing Y: " + _CPU.Yreg);
+            var params = _CPU.Yreg + "";
+            _KernelInterruptQueue.enqueue(new TSOS.Interrupt(CONSOLE_WRITE_IR, params));
         };
         // This system call prints the 00-terminated string stored at the address in the Y register
         Kernel.prototype.krnPrintYRegString = function () {
@@ -210,7 +216,8 @@ var TSOS;
                 string += chr;
                 address++;
             }
-            _StdIn.putText(string);
+            var params = string;
+            _KernelInterruptQueue.enqueue(new TSOS.Interrupt(CONSOLE_WRITE_IR, params));
         };
         //
         // OS Utility Routines

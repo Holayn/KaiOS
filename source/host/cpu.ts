@@ -119,8 +119,9 @@ module TSOS {
                     this.PC++;
                     break;
                 case "00": // break (system call)
-                    // Call the break system call
-                    // _Kernel.krnExitProcess();
+                    // Execute system call for a break interrupt
+                    // _KernelInterruptQueue(BREAK_IR);
+                    _Kernel.krnExitProcess();
                     break;
                 case "EC": // compare byte in memory to X register. Sets the Z flag to zero if equal
                     // Gets the hex memory address by looking at the next two values in memory and swapping because of little-endian format
