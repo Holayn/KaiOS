@@ -157,7 +157,7 @@ var TSOS;
         // - ReadConsole
         // - WriteConsole
         // - CreateProcess
-        // - ExitProcess - should clear memory
+        // - ExitProcess
         // - WaitForProcessToExit
         // - CreateFile
         // - OpenFile
@@ -191,6 +191,22 @@ var TSOS;
         Kernel.prototype.krnExitProcess = function () {
             _MemoryManager.clearMemoryPartition(_Running);
             _CPU.init();
+        };
+        // This system call prints the CPU's Y register
+        Kernel.prototype.krnPrintYReg = function () {
+            _StdIn.putText(_CPU.Yreg);
+        };
+        // This system call prints the 00-terminated string stored at the address in the Y register
+        Kernel.prototype.krnPrintYRegString = function () {
+            var address = _CPU.Yreg;
+            var string = "";
+            // Gets the ASCII from the address, converts it to characters, then passes to console's putText.
+            while (_Memory.memoryArray[address] != "00") {
+                var value = _Memory.memoryArray[address];
+                var chr = String.fromCharCode(value);
+                string += chr;
+            }
+            _StdIn.putText(string);
         };
         //
         // OS Utility Routines

@@ -146,7 +146,15 @@ var TSOS;
                     byteValue++;
                     // Then set the incremented byte back to that address in memory
                     _Memory.memoryArray[address] = byteValue;
-                case "FF": // System call: if 1 in X reg, make syscall to print integer store in Y reg. if 2, then print 00-terminated string stored at address in Y register.
+                    break;
+                case "FF":// System call: if 1 in X reg, make syscall to print integer store in Y reg. if 2, then print 00-terminated string stored at address in Y register.
+                    if (this.Xreg == 1) {
+                        _Kernel.krnPrintYReg();
+                    }
+                    else if (this.Xreg == 2) {
+                        _Kernel.krnPrintYRegString();
+                    }
+                    break;
             }
             // If there was not a break, then increment the program counter
             // If we increment the PC after a break, the CPU will incorrectly display a PC value of 1.
