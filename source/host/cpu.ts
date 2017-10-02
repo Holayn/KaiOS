@@ -124,10 +124,21 @@ module TSOS {
                     }
                     break;
                 case "D0": // branch n bytes if Z flag = 0
+                    if(this.Zflag == 0){
+                        // First, get the number of bytes to branch by looking at next value in memory
+                        var branch = parseInt(_Memory.memoryArray[this.PC+1].toString(), 16); 
+                        // Then, set the program counter to the number of bytes.
+                        // Decrement the PC by one, because we need to evaluate the op code at n bytes.
+                        // This is due to the fact that we increment the PC with every cycle.
+                        this.PC = branch;
+                        this.PC--;
+                    }
+                    break;
                 case "EE": // Increment the value of a byte
                 case "FF": // System call: if 1 in X reg, make syscall to print integer store in Y reg. if 2, then print 00-terminated string stored at address in Y register.
             }
             // If there was not a break, then increment the program counter
+            // If we increment the PC after a break, the CPU will incorrectly display a PC value of 1.
             if(opCode !== "00"){
                 this.PC++;
             }
