@@ -12,7 +12,7 @@ var TSOS;
             this.base = [0, 256, 512];
         }
         // For now, we load programs into location 00 of memory, in the first partition.
-        // Later, we'll have to change this
+        // Later, we'll have to change this when we deal with the other partitions
         MemoryManager.prototype.loadIntoMemory = function (opCodes) {
             var loadCounter = this.base[0];
             for (var _i = 0, opCodes_1 = opCodes; _i < opCodes_1.length; _i++) {
@@ -41,6 +41,10 @@ var TSOS;
                 }
             }
             return true;
+        };
+        // Clears a memory partition, given the base of that partition
+        MemoryManager.prototype.clearMemoryPartition = function (base) {
+            console.log("Clearing memory partition");
         };
         // The only base register we care about for now is the one
         // for the first partition.

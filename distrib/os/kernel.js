@@ -164,8 +164,10 @@ var TSOS;
         // - ReadFile
         // - WriteFile
         // - CloseFile
+        // Creates a process by creating a PCB for the program, loading the program into memory, and putting the PCB onto the resident queue.
         Kernel.prototype.krnCreateProcess = function (opcodes) {
-            // Check to see if there is an available partition in memory to put program in
+            // Check to see if there is an available partition in memory to put program in.
+            // If there is no available memory, then let the shell know so it can display appropriate output to the user.
             if (_MemoryManager.checkMemory()) {
                 //Assign a PID. Create a new PCB for it, and put it in the job/resident queue.
                 var pcb = new TSOS.ProcessControlBlock(_Pid);
@@ -182,6 +184,14 @@ var TSOS;
             else {
                 return -1;
             }
+        };
+        // This stops the CPU from executing whatever it is executing. Let's just call CPU.init() to reset it, which will
+        // set isExecuting to false.
+        // We also need to reset the memory partition the process was running in. Look in PCB to see which partition to reset
+        Kernel.prototype.krnExitProcess = function () {
+            console.log("Base of running PCB: " + _Running.Base);
+            _MemoryManager.clearMemoryPartition(_Running.Base);
+            _CPU.init();
         };
         //
         // OS Utility Routines

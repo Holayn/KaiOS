@@ -104,9 +104,8 @@ var TSOS;
                     // This is the NOP (no operation) op code. We don't do anything.
                     break;
                 case "00":// break (system call)
-                    // We simply call the break system call by setting isExecuting to false. Stops the CPU's execution of whatever it's executing.
-                    // Since we have to clear the CPU anyway, let's just call CPU.init() again to reset it
-                    this.init();
+                    // Call the break system call
+                    _Kernel.krnExitProcess();
                     break;
                 case "EC": // compare byte in memory to X register. Sets the Z flag to zero if equal
                 case "D0": // branch n bytes if Z flag = 0

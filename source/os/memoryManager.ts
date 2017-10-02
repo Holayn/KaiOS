@@ -12,7 +12,7 @@
         }
         
         // For now, we load programs into location 00 of memory, in the first partition.
-        // Later, we'll have to change this
+        // Later, we'll have to change this when we deal with the other partitions
         public loadIntoMemory(opCodes): void {
             var loadCounter = this.base[0];
             for(var opCode of opCodes){
@@ -41,6 +41,11 @@
                 }
             }
             return true;
+        }
+
+        // Clears a memory partition, given the base of that partition
+        public clearMemoryPartition(base): void {
+            console.log("Clearing memory partition");
         }
         // The only base register we care about for now is the one
         // for the first partition.
