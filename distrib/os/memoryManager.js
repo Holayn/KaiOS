@@ -58,6 +58,15 @@ var TSOS;
         MemoryManager.prototype.getLimitRegister = function () {
             return this.limit;
         };
+        // This reads the memory based on a given address in memory
+        // Returns the hex string value stored in memory
+        MemoryManager.prototype.readMemory = function (addr) {
+            return _Memory.memoryArray[addr].toString();
+        };
+        // This writes to memory based on an address and value given
+        MemoryManager.prototype.writeMemory = function (addr, value) {
+            _Memory.memoryArray[addr] = value;
+        };
         return MemoryManager;
     }());
     TSOS.MemoryManager = MemoryManager;

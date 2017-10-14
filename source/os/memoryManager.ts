@@ -56,14 +56,19 @@
         public getBaseRegister(): number {
             return 0;
         }
-        public getLimitRegister(): number{
+        public getLimitRegister(): number {
             return this.limit;
         }
 
-        //This reads the memory based on a given address in memory
-        //Returns the hex string value stored in memory
-        public readMemory(addr): string{
+        // This reads the memory based on a given address in memory
+        // Returns the hex string value stored in memory
+        public readMemory(addr): string {
+            return _Memory.memoryArray[addr].toString();
+        }
 
+        // This writes to memory based on an address and value given
+        public writeMemory(addr, value): void {
+            _Memory.memoryArray[addr] = value;
         }
 
     }
