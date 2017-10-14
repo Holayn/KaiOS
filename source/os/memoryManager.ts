@@ -59,5 +59,12 @@
         public getLimitRegister(): number{
             return this.limit;
         }
+
+        //This reads the memory based on a given address in memory
+        //Returns the hex string value stored in memory
+        public readMemory(addr): string{
+
+        }
+
     }
 }

@@ -172,11 +172,21 @@ module TSOS {
                     break;
                 case "FF": // System call: if 1 in X reg, make syscall to print integer store in Y reg. if 2, then print 00-terminated string stored at address in Y register.
                     if(this.Xreg == 1){
-                        _Kernel.krnPrintYReg();
+                        _Kernel.krnWriteConsole(this.Yreg);
                     }
                     else if(this.Xreg == 2){
-                        console.log("Printing string at address " + this.Yreg);
-                        _Kernel.krnPrintYRegString();
+                        var address = this.Yreg;
+                        var string = "";
+                        // Gets the ASCII from the address, converts it to characters, then passes to console's putText.
+                        while(_Memory.memoryArray[address] != "00"){
+                            var ascii = _Memory.memoryArray[address];
+                            // Convert hex to decimal
+                            var dec = parseInt(ascii.toString(), 16);
+                            var chr = String.fromCharCode(dec);
+                            string += chr;
+                            address++;
+                        }
+                        _Kernel.krnWriteConsole(string);
                     }
                     this.PC++;
                     break;
