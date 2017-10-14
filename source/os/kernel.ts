@@ -199,13 +199,12 @@ module TSOS {
             // If there is no available memory, then let the shell know so it can display appropriate output to the user.
             if(_MemoryManager.checkMemory()){
                 let pcb = new ProcessControlBlock(_Pid);
-                // Get base and limit register from memory manager
-                var base = _MemoryManager.getBaseRegister();
-                var limit = _MemoryManager.getLimitRegister();
-                pcb.init(base, limit);
+                pcb.init();
                 _ResidentQueue.enqueue(pcb);
-                // Have the memory manager load the new process into memory
-                _MemoryManager.loadIntoMemory(opcodes);
+                // Have the memory manager load the new program into memory
+                // We have to get an available partition in memory and load the program into there
+                var partition = _MemoryManager.getFreePartition();
+                _MemoryManager.loadIntoMemory(opcodes, partition);
                 _StdOut.putText("Program loaded in memory with process ID " + _Pid);
                 _Pid++;
             }

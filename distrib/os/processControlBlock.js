@@ -11,7 +11,7 @@ var TSOS;
             this.Pid = processId;
         }
         // Set everything to 0
-        ProcessControlBlock.prototype.init = function (base, limit) {
+        ProcessControlBlock.prototype.init = function () {
             this.State = "Waiting";
             this.PC = 0;
             this.IR = 0;
@@ -19,8 +19,6 @@ var TSOS;
             this.Xreg = 0;
             this.Yreg = 0;
             this.Zflag = 0;
-            this.Base = base;
-            this.Limit = limit;
         };
         return ProcessControlBlock;
     }());
