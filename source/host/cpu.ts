@@ -172,7 +172,8 @@ module TSOS {
                     break;
                 case "FF": // System call: if 1 in X reg, make syscall to print integer store in Y reg. if 2, then print 00-terminated string stored at address in Y register.
                     if(this.Xreg == 1){
-                        _Kernel.krnWriteConsole(this.Yreg);
+                        _KernelInterruptQueue.enqueue(new Interrupt(CONSOLE_WRITE_IR, this.Yreg))
+                        // _Kernel.krnWriteConsole(this.Yreg);
                     }
                     else if(this.Xreg == 2){
                         var address = this.Yreg;
@@ -186,7 +187,8 @@ module TSOS {
                             string += chr;
                             address++;
                         }
-                        _Kernel.krnWriteConsole(string);
+                        _KernelInterruptQueue.enqueue(new Interrupt(CONSOLE_WRITE_IR, string))
+                        // _Kernel.krnWriteConsole(string);
                     }
                     this.PC++;
                     break;
