@@ -141,6 +141,9 @@ var TSOS;
                     _krnKeyboardDriver.isr(params); // Kernel mode device driver
                     _StdIn.handleInput();
                     break;
+                case PROCESS_EXIT:
+                    this.krnExitProcess();
+                    break;
                 default:
                     this.krnTrapError("Invalid Interrupt Request. irq=" + irq + " params=[" + params + "]");
                     _StdOut.putText("RIP IN POTATOES UR OPERATING SYSTEM IS DED L0L");

@@ -120,8 +120,8 @@ var TSOS;
                     this.PC++;
                     break;
                 case "00":// break (system call)
-                    // Execute system call for a process exit
-                    _Kernel.krnExitProcess();
+                    // Execute system call for a process exit by generating software interrupt
+                    _KernelInterruptQueue.enqueue(PROCESS_EXIT);
                     break;
                 case "EC":// compare byte in memory to X register. Sets the Z flag to zero if equal
                     // Gets the hex memory address by looking at the next two values in memory and swapping because of little-endian format
