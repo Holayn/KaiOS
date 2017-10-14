@@ -120,7 +120,7 @@ module TSOS {
                     break;
                 case "00": // break (system call)
                     // Execute system call for a process exit by generating software interrupt
-                    _KernelInterruptQueue.enqueue(PROCESS_EXIT);
+                    _KernelInterruptQueue.enqueue(new Interrupt(PROCESS_EXIT, 0));
                     break;
                 case "EC": // compare byte in memory to X register. Sets the Z flag to zero if equal
                     // Gets the hex memory address by looking at the next two values in memory and swapping because of little-endian format
@@ -172,7 +172,7 @@ module TSOS {
                     break;
                 case "FF": // System call: if 1 in X reg, make syscall to print integer store in Y reg. if 2, then print 00-terminated string stored at address in Y register.
                     if(this.Xreg == 1){
-                        _KernelInterruptQueue.enqueue(new Interrupt(CONSOLE_WRITE_IR, this.Yreg))
+                        _KernelInterruptQueue.enqueue(new Interrupt(CONSOLE_WRITE_IR, ""+this.Yreg))
                         // _Kernel.krnWriteConsole(this.Yreg);
                     }
                     else if(this.Xreg == 2){

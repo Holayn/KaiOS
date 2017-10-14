@@ -11,7 +11,7 @@ var TSOS;
             this.Pid = processId;
         }
         // Set everything to 0
-        ProcessControlBlock.prototype.init = function () {
+        ProcessControlBlock.prototype.init = function (partition) {
             this.State = "Waiting";
             this.PC = 0;
             this.IR = 0;
@@ -19,6 +19,7 @@ var TSOS;
             this.Xreg = 0;
             this.Yreg = 0;
             this.Zflag = 0;
+            this.Partition = partition;
         };
         return ProcessControlBlock;
     }());

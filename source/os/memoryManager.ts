@@ -68,12 +68,13 @@
         }
 
         // Clears a memory partition, given the partition.
-        // Clears the memory in the range of addresses provided by the PCB's base and limit
-        public clearMemoryPartition(pcb): void {
-            console.log("Clearing memory partition");
-            for(var i=pcb.Base; i<pcb.Limit; i++){
+        // Make sure to update the memory display
+        public clearMemoryPartition(partition): void {
+            console.log("Clearing memory partition " + partition);
+            for(var i=this.partitions[partition].base; i<this.partitions[partition].limit; i++){
                 _Memory.memoryArray[i] = "00";
             }
+            Control.hostMemory();
         }
         // These return the base and limit registers based on the partition number given
         public getBaseRegister(partition): number {

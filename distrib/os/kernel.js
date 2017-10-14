@@ -25,8 +25,6 @@ var TSOS;
             _KernelInterruptQueue = new TSOS.Queue(); // A (currently) non-priority queue for interrupt requests (IRQs).
             _KernelBuffers = new Array(); // Buffers... for the kernel.
             _KernelInputQueue = new TSOS.Queue(); // Where device input lands before being processed out somewhere.
-            _ResidentQueue = new TSOS.Queue(); // Where we load the program into memory, where it waits to be run.
-            _ReadyQueue = new TSOS.Queue(); // Where a program is put when marked for CPU to move its program counter forward.
             // Initialize the console.
             _Console = new TSOS.Console(); // The command line interface / console I/O device.
             _Console.init();
@@ -43,6 +41,8 @@ var TSOS;
             //
             // Yeah, there's more. Load the memory manager.
             _MemoryManager = new TSOS.MemoryManager();
+            // Load the process manager
+            _ProcessManager = new TSOS.ProcessManager();
             // Enable the OS Interrupts.  (Not the CPU clock interrupt, as that is done in the hardware sim.)
             this.krnTrace("Enabling the interrupts.");
             this.krnEnableInterrupts();
@@ -85,30 +85,7 @@ var TSOS;
             else {
                 this.krnTrace("Idle");
                 // On each clock pulse, check to see if there is anything in the ready queue.
-                // If so, make the CPU run user process by setting isExecuting to true
-                if (!_ReadyQueue.isEmpty()) {
-                    // Set CPU's stuff to PCB's stored info. We need a way to keep track what is running. 
-                    // How to tell CPU is not executing anymore? Break opcode
-                    // Ok, so dequeue from the ready queue. This ready queue will later be reordered by scheduler.
-                    // You'll get a PCB.
-                    // Start executing the op codes based on its program counter.
-                    // One op code at a time.
-                    // For now, if there is currently a process being executed, let it run
-                    // to its full completion.
-                    // Need to keep track somehow if process currently executing. If program counter 0, no process running. NOPE.
-                    // Also, how do we update PCB info?
-                    _Running = _ReadyQueue.dequeue();
-                    // Put all stuff from PCB to CPU
-                    _CPU.PC = _Running.PC;
-                    _CPU.Acc = _Running.Acc;
-                    _CPU.Xreg = _Running.Xreg;
-                    _CPU.Yreg = _Running.Yreg;
-                    _CPU.Zflag = _Running.Zflag;
-                    _CPU.isExecuting = true;
-                }
-                else {
-                    _CPU.isExecuting = false;
-                }
+                _ProcessManager.checkReadyQueue();
             }
             // Read CPU stuff, store back into PCB
         };
@@ -170,32 +147,14 @@ var TSOS;
         // - ReadFile
         // - WriteFile
         // - CloseFile
-        // This stops the CPU from executing whatever it is executing. Let's just call CPU.init() to reset it, which will
-        // set isExecuting to false.
-        // We also need to reset the memory partition the process was running in. Look in PCB to see which partition to reset
         // Creates a process by creating a PCB for the program, loading the program into memory, and putting the PCB onto the resident queue.
         // Done by generating the software interrupt for it
         Kernel.prototype.krnCreateProcess = function (opcodes) {
-            // Check to see if there is an available partition in memory to put program in.
-            // If there is no available memory, then let the shell know so it can display appropriate output to the user.
-            if (_MemoryManager.checkMemory()) {
-                var pcb = new TSOS.ProcessControlBlock(_Pid);
-                pcb.init();
-                _ResidentQueue.enqueue(pcb);
-                // Have the memory manager load the new program into memory
-                // We have to get an available partition in memory and load the program into there
-                var partition = _MemoryManager.getFreePartition();
-                _MemoryManager.loadIntoMemory(opcodes, partition);
-                _StdOut.putText("Program loaded in memory with process ID " + _Pid);
-                _Pid++;
-            }
-            else {
-                _StdOut.putText("Loading of program failed!");
-            }
+            _ProcessManager.createProcess(opcodes);
         };
+        // Stops the CPU from executing whatever it's executing.
         Kernel.prototype.krnExitProcess = function () {
-            _MemoryManager.clearMemoryPartition(_Running);
-            _CPU.init();
+            _ProcessManager.exitProcess();
         };
         Kernel.prototype.krnWriteConsole = function (string) {
             _StdOut.putText(string);
