@@ -56,7 +56,7 @@ var _SingleStepMode = false;
 // In single step mode, tracks if we are to go to the next step
 var _NextStep = false;
 // User status
-var _UserStatus = "Welcome to KaiOS!";
+var _UserStatus = "And now, the curtain rises.";
 // At least this OS is not trying to kill you. (Yet.)
 var _SarcasticMode = false;
 // Global Device Driver Objects - page 12

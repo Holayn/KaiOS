@@ -76,7 +76,7 @@ var _SingleStepMode: boolean = false;
 var _NextStep: boolean = false;
 
 // User status
-var _UserStatus: String = "Welcome to KaiOS!";
+var _UserStatus: String = "And now, the curtain rises.";
 
 // At least this OS is not trying to kill you. (Yet.)
 var _SarcasticMode: boolean = false;

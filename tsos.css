@@ -3,14 +3,14 @@
 body {
   background-size: cover;
   font-family: Helvetica, Verdana, Arial, sans-serif;
-  font-size: 12pt;
+  font-size: 10   pt;
   font-weight: normal;
   font-style: normal;
 }
 
 h1 {
   color: black;
-  font-size: 24pt;
+  font-size: 10px;
   font-weight: normal;
   font-style: normal;
   border-bottom: 1px solid black;
@@ -18,14 +18,14 @@ h1 {
 
 h2 {
   color: black;
-  font-size: 20pt;
+  font-size: 10px;
   font-weight: normal;
   font-style: normal;
 }
 
 h3 {
   font-family: Helvetica, Verdana, Arial, sans-serif;
-  font-size: 16pt;
+  font-size: 10pt;
   font-weight: normal;
   font-style: normal;
 }
@@ -47,9 +47,15 @@ h3 {
   text-align: center;
 }
 
-#divTaskBar{
-  width: 875px;
+#divTaskBar {
+  /*width: 875px;*/
   background: rgba(255,255,255,0.6);
+}
+#taskBar {
+  font-size: 10px;
+}
+nav {
+  font-size: 10px;
 }
 
 #divLog {
@@ -60,7 +66,7 @@ h3 {
 #divLog textarea {
   font-family: Courier;
   width: 400px;
-  font-size: 11px;
+  font-size: 10px;
 }
 #divCPU {
   background-color: rgba(0,0,0,.2);
@@ -153,4 +159,32 @@ h3 {
   z-index: -1;
   background: #909193 url(distrib/images/spiral.jpg);
   background-size: cover;
+}
+
+label .label-header{
+  color: black;
+  font-weight: bold;
+}
+
+#beautiful {
+  background-color: rgba(0,0,0,.2);
+  border: 2px;
+  border-radius: 5px;
+  width: 450px;
+  height: 550px;
+}
+#sexy {
+  margin-left: auto;
+  margin-right: auto;
+  background: url('distrib/images/beautiful.png');
+  background-size: cover;
+  background-position-x: -50px;
+  width: 400px;
+  height: 500px;
+}
+
+.panel-header {
+  color: black;
+  font-weight: bold;
+  margin-left: 40%;
 }
