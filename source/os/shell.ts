@@ -393,8 +393,11 @@ module TSOS {
             let re = /[0-9A-Fa-f]{2}/i;
             let foundError = false;
             let userInput = (<HTMLInputElement>document.getElementById("taProgramInput")).value;
-                userInput = userInput.replace(/\r?\n|\r/g, " ");
+                userInput = userInput.replace(/\r?\n|\r/g, " "); //removes newlines
+                userInput = userInput.replace(/\s+/g, " ").trim(); //removes sequential spaces
+                userInput = userInput.trim(); //remove leading and trailing spaces
                 let userArr = userInput.split(" ");
+                console.log(userArr);
                 for(let opCode of userArr){
                     if((opCode.length != 2 || !re.test(opCode))){
                         _StdOut.putText("Syntax error in user program!");

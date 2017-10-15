@@ -43,6 +43,8 @@ module TSOS {
             // Do the real work here. Be sure to set this.isExecuting appropriately.
             // Let's have a giant switch statement for the opcodes.
             // Based on program counter, get op code, do it, then set program counter accordingly
+            // Update the CPU display
+            Control.hostCPU();
             let opCode = _MemoryManager.readMemory(this.PC);
             switch(opCode){
                 case "A9": // load the accumulator with value in next area of memory
@@ -148,7 +150,8 @@ module TSOS {
                         // If it goes beyond the limit, then loop back around.
                         console.log("PC: " + this.PC);
                         console.log("Branch: " + branch);
-                        this.PC = (this.PC + branch)%254;
+                        // this.PC = (this.PC + branch)%254;
+                        this.PC = (this.PC + branch + 2)%256;
                         console.log("PC IS NOW " + this.PC);
                         console.log("branched");
                     }
@@ -197,8 +200,6 @@ module TSOS {
                     _KernelInterruptQueue.enqueue(new Interrupt(CONSOLE_WRITE_IR, "Invalid op code, exiting..."));
             }
             console.log(opCode + " " + this.PC + " " + this.Acc + " " + this.Xreg + " " + this.Yreg + " " + this.Zflag);
-            // Update the CPU display
-            Control.hostCPU();
             // Update the memory display
             Control.hostMemory();
         }

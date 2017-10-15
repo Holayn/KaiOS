@@ -331,8 +331,11 @@ var TSOS;
             var re = /[0-9A-Fa-f]{2}/i;
             var foundError = false;
             var userInput = document.getElementById("taProgramInput").value;
-            userInput = userInput.replace(/\r?\n|\r/g, " ");
+            userInput = userInput.replace(/\r?\n|\r/g, " "); //removes newlines
+            userInput = userInput.replace(/\s+/g, " ").trim(); //removes sequential spaces
+            userInput = userInput.trim(); //remove leading and trailing spaces
             var userArr = userInput.split(" ");
+            console.log(userArr);
             for (var _i = 0, userArr_1 = userArr; _i < userArr_1.length; _i++) {
                 var opCode = userArr_1[_i];
                 if ((opCode.length != 2 || !re.test(opCode))) {

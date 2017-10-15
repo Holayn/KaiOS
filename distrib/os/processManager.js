@@ -38,11 +38,13 @@ var TSOS;
         // set isExecuting to false.
         // We also need to reset the memory partition the process was running in. Look in PCB to see which partition to reset
         // We also need to remove the process from the ready queue display
+        // We also need to update the CPU display
         ProcessManager.prototype.exitProcess = function () {
             _MemoryManager.clearMemoryPartition(this.running.Partition);
             _CPU.init();
             this.running = null;
             TSOS.Control.hostProcesses();
+            TSOS.Control.hostCPU();
         };
         // On each clock pulse, check to see if there is anything in the ready queue.
         // If so, make the CPU run user process by setting isExecuting to true
