@@ -45,178 +45,184 @@
 
 	<body onload="onDocumentLoad()">
 		<div class="container-fluid">
-		<div id="header">
-			<h1 class="display-1 text-center">KaiOS</h1>
-		</div>
-		<div class="container-fluid">
-			<div class="row">
-				<div id="divButtonBar" class="col-md-3" style="min-width: 400px;">
-					<input type="button"
-					id = "btnStartOS"
-					name="brnStartOS"
-					class="btn btn-success"
-					value="Start"
-					tabindex="0"
-					onclick="TSOS.Control.hostBtnStartOS_click(this);">
+			<div id="header">
+				<h1 class="display-1 text-center">KaiOS</h1>
+			</div>
+			<div class="background">
+				<div class="container-fluid">
+					<div class="row">
+						<div id="divButtonBar" class="col-md-3" style="min-width: 400px;">
+							<input type="button"
+							id = "btnStartOS"
+							name="brnStartOS"
+							class="btn btn-success"
+							value="Start"
+							tabindex="0"
+							onclick="TSOS.Control.hostBtnStartOS_click(this);">
 
-					<input type="button"
-					id = "btnHaltOS"
-					name="brnHaltOS"
-					class="btn btn-danger"
-					disabled="disabled"
-					value="Halt"
-					tabindex="1"
-					onclick="TSOS.Control.hostBtnHaltOS_click(this);">
+							<input type="button"
+							id = "btnHaltOS"
+							name="brnHaltOS"
+							class="btn btn-danger"
+							disabled="disabled"
+							value="Halt"
+							tabindex="1"
+							onclick="TSOS.Control.hostBtnHaltOS_click(this);">
 
-					<input type="button"
-					id = "btnReset"
-					name="brnReset"
-					class="btn btn-warning"
-					disabled="disabled"
-					value="Reset"
-					tabindex="2"
-					onclick="TSOS.Control.hostBtnReset_click(this);">
+							<input type="button"
+							id = "btnReset"
+							name="brnReset"
+							class="btn btn-warning"
+							disabled="disabled"
+							value="Reset"
+							tabindex="2"
+							onclick="TSOS.Control.hostBtnReset_click(this);">
 
-					<input type="button"
-					id = "btnSingleStep"
-					name="btnSingleStep"
-					class="btn btn-primary"
-					disabled="disabled"
-					value="Single Step"
-					tabindex="2"
-					onclick="TSOS.Control.hostBtnSingleStep_click(this);">
-					<input type="button"
-					id = "btnNextStep"
-					name="btnNextStep"
-					class="btn"
-					disabled="disabled"
-					value=">"
-					tabindex="2"
-					onclick="TSOS.Control.hostBtnNextStep_click(this);">
+							<input type="button"
+							id = "btnSingleStep"
+							name="btnSingleStep"
+							class="btn btn-primary"
+							disabled="disabled"
+							value="Single Step"
+							tabindex="2"
+							onclick="TSOS.Control.hostBtnSingleStep_click(this);">
+							<input type="button"
+							id = "btnNextStep"
+							name="btnNextStep"
+							class="btn"
+							disabled="disabled"
+							value=">"
+							tabindex="2"
+							onclick="TSOS.Control.hostBtnNextStep_click(this);">
+						</div>
+						<div id="divTaskBar" class="col-md-8">
+							<nav id="taskBar">
+								<h2>&nbsp;</h2>
+							</nav>
+						</div>
+					</div>
 				</div>
-				<div id="divTaskBar" class="col-md-8">
-					<nav id="taskBar">
-						<h2>&nbsp;</h2>
-					</nav>
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col-md-3" style="min-width: 400px;">
+							<div id="divCPU" class="panel text-center">
+								<label>
+									CPU
+									<br>
+									<table name    ="tableCPU"
+										id      ="tableCPU"
+										bgcolor ="white"
+										style   ="color: black"
+										class   ="table table-bordered">
+										<thead>
+											<tr>
+												<td>PC</td>
+												<td>IR</td>
+												<td>Acc</td>
+												<td>X</td>
+												<td>Y</td>
+												<td>ZF</td>
+											</tr>
+										</thead>
+										<tbody>
+											<tr>
+												<td>0</td>
+												<td>0</td>
+												<td>0</td>
+												<td>0</td>
+												<td>0</td>
+												<td>0</td>
+											</tr>
+										</tbody>
+									</table>
+								</label>
+							</div>
+							<br>
+							<div id="divMemory" class="panel text-center">
+								<label class="text-center">
+									Memory
+									<br>
+									<table name    ="tableMemory"
+										id      ="tableMemory"
+										bgcolor ="white"
+										style   ="color: black; height: 100px; overflow-y: scroll; display: block; width: 100%; min-width: 300px;"
+										class   ="table table-bordered table-striped table-sm">
+									</table>
+								</label>
+							</div>
+							<br>
+							<div id="divUserProgramInput" class="panel text-center">
+								<label>
+									User Program Input
+									<br>
+									<textarea name="taProgramInput"
+									id  ="taProgramInput"
+									rows="8"
+									cols="48"
+									>A9 03 8D 41 00 A9 01 8D 40 00 AC 40 00 A2 01 FF EE 40 00 AE 40 00 EC 41 00 D0 EF A9 44 8D 42 00 A9 4F 8D 43 00 A9 4E 8D 44 00 A9 45 8D 45 00 A9 00 8D 46 00 A2 02 A0 42 FF 00</textarea>
+								</label>
+							</div>
+							<br>
+						</div>
+						<div class="col-md-5" style="width: 575px; max-width: 575px; min-width: 575px;">
+							<div id="divConsole" class="panel text-center" style="min-width: 540px; max-width: 540px;">
+								<canvas id="display"
+								width="500px"
+								height="500px"
+								tabindex="3"
+								style="margin-top:25px; margin-bottom:25px;">
+								</canvas>
+							</div>
+							<br>
+						</div>
+						<div class="col-md-3" style="min-width: 450px;">
+							<div id="divLog" class="panel text-center" style="min-width: 450px;">
+								<label class="text-center">
+									Host Log
+									<br>
+									<textarea name="taHostLog"
+									id  ="taHostLog"
+									rows="15"
+									cols="48"
+									></textarea>
+								</label>
+							</div>
+							<br>
+							<div id="divReady" class="panel text-center">
+								<label>
+									Ready Queue Display
+									<br>
+									<table name    ="tableReady"
+										id      ="tableReady"
+										bgcolor ="white"
+										style   ="color: black"
+										class   ="table table-bordered">
+										<thead>
+											<tr>
+											<td>PID</td>
+											<td style="text-align: center; width: 80px">State</td>
+											<td style="text-align: center; width: 40px">PC</td>
+											<td style="text-align: center; width: 25px">IR</td>
+											<td style="text-align: center; width: 25px">Acc</td>
+											<td style="text-align: center; width: 25px">X</td>
+											<td style="text-align: center; width: 25px">Y</td>
+											<td style="text-align: center; width: 25px">Z</td>
+											</tr>
+										</thead>
+									</table>
+								</label>
+							</div>
+						</div>
+					</div>
 				</div>
+				<p class="footerText" style="clear:both;">
+					<br>
+					Copyright &copy; 2008 - 2016 No Rights Reserved.
+					<br>
+					Reproduction is inhibited without the express written consent of
+					Ted Codd, Stevie Ray Vaughan, and Ian Fleming.
+				</p>
 			</div>
 		</div>
-		<div class="container-fluid">
-			<div class="row">
-				<div class="col-md-3" style="min-width: 400px;">
-					<div id="divCPU" class="panel text-center">
-						<label>
-							CPU
-							<br>
-							<table name    ="tableCPU"
-								   id      ="tableCPU"
-								   bgcolor ="white"
-								   style   ="color: black"
-								   class   ="table table-bordered">
-								<thead>
-									<tr>
-										<td>PC</td>
-										<td>IR</td>
-										<td>Acc</td>
-										<td>X</td>
-										<td>Y</td>
-										<td>ZF</td>
-									</tr>
-								</thead>
-								<tbody>
-									<tr>
-										<td>0</td>
-										<td>0</td>
-										<td>0</td>
-										<td>0</td>
-										<td>0</td>
-										<td>0</td>
-									</tr>
-								</tbody>
-							</table>
-						</label>
-					</div>
-					<br>
-					<div id="divMemory" class="panel text-center">
-						<label class="text-center">
-							Memory
-							<br>
-							<table name    ="tableMemory"
-								   id      ="tableMemory"
-								   bgcolor ="white"
-								   style   ="color: black; height: 100px; overflow-y: scroll; display: block; width: 100%; min-width: 300px;"
-								   class   ="table table-bordered table-striped table-sm">
-							</table>
-						</label>
-					</div>
-					<br>
-					<div id="divUserProgramInput" class="panel text-center">
-						<label>
-							User Program Input
-							<br>
-							<textarea name="taProgramInput"
-							id  ="taProgramInput"
-							rows="8"
-							cols="48"
-							>A9 03 8D 41 00 A9 01 8D 40 00 AC 40 00 A2 01 FF EE 40 00 AE 40 00 EC 41 00 D0 EF A9 44 8D 42 00 A9 4F 8D 43 00 A9 4E 8D 44 00 A9 45 8D 45 00 A9 00 8D 46 00 A2 02 A0 42 FF 00</textarea>
-						</label>
-					</div>
-				</div>
-				<div id="divConsole" class="col-md-5 text-center" style="min-width: 540px; max-width: 540px;">
-					<canvas id="display"
-					width="500px"
-					height="500px"
-					tabindex="3"
-					style="margin-top:25px;">
-					</canvas>
-				</div>
-				<div class="col-md-4">
-					<div id="divLog" class="panel text-center" style="min-width: 450px;">
-						<label class="text-center">
-							Host Log
-							<br>
-							<textarea name="taHostLog"
-							id  ="taHostLog"
-							rows="15"
-							cols="48"
-							></textarea>
-						</label>
-					</div>
-					<br>
-					<div id="divReady" class="panel text-center">
-						<label>
-							Ready Queue Display
-							<br>
-							<table name    ="tableReady"
-								   id      ="tableReady"
-								   bgcolor ="white"
-								   style   ="color: black"
-								   class   ="table table-bordered">
-								<thead>
-									<tr>
-									<td>PID</td>
-									<td style="text-align: center; width: 80px">State</td>
-									<td style="text-align: center; width: 40px">PC</td>
-									<td style="text-align: center; width: 25px">IR</td>
-									<td style="text-align: center; width: 25px">Acc</td>
-									<td style="text-align: center; width: 25px">X</td>
-									<td style="text-align: center; width: 25px">Y</td>
-									<td style="text-align: center; width: 25px">Z</td>
-									</tr>
-								</thead>
-							</table>
-						</label>
-					</div>
-				</div>
-			</div>
-		</div>
-		<p class="footerText" style="clear:both;">
-		<br>
-		Copyright &copy; 2008 - 2016 No Rights Reserved.
-		<br>
-		Reproduction is inhibited without the express written consent of
-		Ted Codd, Stevie Ray Vaughan, and Ian Fleming.
-		</p>
-	</div>
 	</body>
 </html>
