@@ -82,11 +82,6 @@ var TSOS;
             else if (_CPU.isExecuting) {
                 // Waits for the user to click on the next step button before cycling once
                 if (_SingleStepMode) {
-                    // We need to cycle the CPU once so that it processes the first instruction
-                    // if(_StartStepMode){
-                    //     _CPU.cycle();
-                    //     _StartStepMode = false;
-                    // }
                     if (_NextStep) {
                         _CPU.cycle();
                         _NextStep = false;
@@ -97,6 +92,7 @@ var TSOS;
                 }
             }
             else {
+                _NextStep = false; // Handles the case for if the user presses next step in single step mode when nothing is executing
                 this.krnTrace("Idle");
                 // On each clock pulse, check to see if there is anything in the ready queue.
                 _ProcessManager.checkReadyQueue();

@@ -113,29 +113,31 @@ var TSOS;
                 }
             }
             // Color the instruction that is being executed by the CPU
-            var index = _CPU.PC;
-            this.colorMemory(table, index, "bold");
-            // Color the bytes of memory the instruction is referring to
-            // This stores the bytes number of bytes the opcode refers to after itself in memory
-            var instructionMem = {
-                "A9": 1,
-                "AD": 2,
-                "8D": 2,
-                "6D": 2,
-                "A2": 1,
-                "AE": 2,
-                "A0": 1,
-                "AC": 2,
-                "EA": 0,
-                "00": 0,
-                "EC": 2,
-                "D0": 1,
-                "EE": 2,
-                "FF": 0
-            };
-            var opCode = _MemoryManager.readMemory(_CPU.PC);
-            for (var i = 1; i <= instructionMem[opCode]; i++) {
-                this.colorMemory(table, index + i, "normal");
+            if (_CPU.isExecuting) {
+                var index = _CPU.PC;
+                this.colorMemory(table, index, "bold");
+                // Color the bytes of memory the instruction is referring to
+                // This stores the bytes number of bytes the opcode refers to after itself in memory
+                var instructionMem = {
+                    "A9": 1,
+                    "AD": 2,
+                    "8D": 2,
+                    "6D": 2,
+                    "A2": 1,
+                    "AE": 2,
+                    "A0": 1,
+                    "AC": 2,
+                    "EA": 0,
+                    "00": 0,
+                    "EC": 2,
+                    "D0": 1,
+                    "EE": 2,
+                    "FF": 0
+                };
+                var opCode = _MemoryManager.readMemory(_CPU.PC);
+                for (var i = 1; i <= instructionMem[opCode]; i++) {
+                    this.colorMemory(table, index + i, "normal");
+                }
             }
         };
         // Helper method to color memory
@@ -230,7 +232,6 @@ var TSOS;
             document.getElementById("btnReset").disabled = false;
             // .. also enable the single step and next buttons ...
             document.getElementById("btnSingleStep").disabled = false;
-            document.getElementById("btnNextStep").disabled = false;
             // .. set focus on the OS console display ...
             document.getElementById("display").focus();
             // ... Create and initialize the CPU (because it's part of the hardware)  ...
@@ -264,12 +265,15 @@ var TSOS;
         // Triggers single step mode
         Control.hostBtnSingleStep_click = function (btn) {
             _SingleStepMode = !_SingleStepMode;
-            _StartStepMode = !_StartStepMode;
             if (_SingleStepMode) {
-                document.getElementById("btnSingleStep").style = "color: red";
+                document.getElementById("btnSingleStep").style = "background-color: #42f450";
+                document.getElementById("btnNextStep").style = "background-color: green";
+                document.getElementById("btnNextStep").disabled = false;
             }
             else {
-                document.getElementById("btnSingleStep").style = "color: black";
+                document.getElementById("btnSingleStep").style = "color: white";
+                document.getElementById("btnNextStep").style = "background-color: lightgrey;";
+                document.getElementById("btnNextStep").disabled = true;
             }
         };
         // Goes to the next step in single step mode

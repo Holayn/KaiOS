@@ -122,27 +122,13 @@ h3 {
   z-index: -1;
 }
 
-/*th, td {
-  font-family: Courier New, Courier, monospace;
-  border: 1px solid gray;
-  padding: 5px;
-}*/
+#btnReset {
+  color: white;
+}
+#btnNextStep {
+  color: white;
+}
 
 #tableCPU thead td {
   width: 45px;
 }
-
-#divButtonBar {
-
-}
-
-#divMain {
-  /*background: url(distrib/images/spiral.jpg);*/
-  /*background-size: cover;*/
-}
-
-.panel {
-}
-/*#divCPU > label{
-  background-color: red;
-}*/

@@ -72,8 +72,6 @@ var _PianoTime: boolean = false;
 
 // Tracks if we're in single step mode or not
 var _SingleStepMode: boolean = false;
-// In single step mode, tracks if we just entered single step mode
-var _StartStepMode: boolean = false;
 // In single step mode, tracks if we are to go to the next step
 var _NextStep: boolean = false;
 

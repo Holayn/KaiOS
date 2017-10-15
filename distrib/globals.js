@@ -53,8 +53,6 @@ var _OsShell;
 var _PianoTime = false;
 // Tracks if we're in single step mode or not
 var _SingleStepMode = false;
-// In single step mode, tracks if we just entered single step mode
-var _StartStepMode = false;
 // In single step mode, tracks if we are to go to the next step
 var _NextStep = false;
 // User status

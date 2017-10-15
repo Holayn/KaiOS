@@ -65,13 +65,14 @@ var TSOS;
                 return -1;
             }
         };
-        // Clears a memory partition, given the partition.
+        // Clears a memory partition, given the partition, and marks the partition as available.
         // Make sure to update the memory display
         MemoryManager.prototype.clearMemoryPartition = function (partition) {
             console.log("Clearing memory partition " + partition);
             for (var i = this.partitions[partition].base; i < this.partitions[partition].limit; i++) {
                 _Memory.memoryArray[i] = "00";
             }
+            this.partitions[partition].isEmpty = true;
             TSOS.Control.hostMemory();
         };
         // These return the base and limit registers based on the partition number given
