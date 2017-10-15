@@ -1,7 +1,7 @@
 /* TSOS.css */
 
 body {
-  background: #909193 url(distrib/images/piano.jpg);
+  /*background: #909193 url(distrib/images/piano.jpg);*/
   background-size: cover;
   font-family: Helvetica, Verdana, Arial, sans-serif;
   font-size: 12pt;
@@ -53,12 +53,96 @@ h3 {
   width: 875px;
 }
 
-th, td {
+#divLog {
+  background-color: rgba(0,0,0,.2);
+  border: 2px;
+  border-radius: 5px;
+}
+#divCPU {
+  background-color: rgba(0,0,0,.2);
+  border: 2px;
+  border-radius: 5px;
+}
+#tableCPU {
+  background-color: white;
+  font-family: Courier;
+}
+#tableCPU thead {
+  background-color: rgba(0,0,0,.1);
+}
+#divMemory {
+  background-color: rgba(0,0,0,.2);
+  border: 2px;
+  border-radius: 5px;
+}
+#tableMemory {
+  font-family: Courier;
+}
+#divConsole {
+  background-color: rgba(0,0,0,.2);
+  border: 2px;
+  border-radius: 5px;
+}
+#divUserProgramInput {
+  background-color: rgba(0,0,0,.2);
+  border: 2px;
+  border-radius: 5px;
+}
+#divReady {
+  background-color: rgba(0,0,0,.2);
+  border: 2px;
+  border-radius: 5px;
+  min-width: 450px;
+}
+#tableReady {
+  background-color: white;
+  font-family: Courier;
+}
+#tableReady thead {
+  background-color: rgba(0,0,0,.1);
+}
+#divUserProgramInput textarea {
+  width: 90%;
+}
+#header {
+  position: relative;
+}
+#header:after {
+  content : "";
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity : 0.2;
+  background-image: url('distrib/images/keyboard.png');
+  /*background-size: cover;*/
+  background-repeat: repeat;
+  z-index: -1;
+}
+
+/*th, td {
   font-family: Courier New, Courier, monospace;
   border: 1px solid gray;
   padding: 5px;
-}
+}*/
 
 #tableCPU thead td {
   width: 45px;
 }
+
+#divButtonBar {
+
+}
+
+#divMain {
+  /*background: url(distrib/images/spiral.jpg);*/
+  /*background-size: cover;*/
+}
+
+.panel {
+}
+/*#divCPU > label{
+  background-color: red;
+}*/
