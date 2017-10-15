@@ -83,10 +83,10 @@ var TSOS;
                 // Waits for the user to click on the next step button before cycling once
                 if (_SingleStepMode) {
                     // We need to cycle the CPU once so that it processes the first instruction
-                    if (_StartStepMode) {
-                        _CPU.cycle();
-                        _StartStepMode = false;
-                    }
+                    // if(_StartStepMode){
+                    //     _CPU.cycle();
+                    //     _StartStepMode = false;
+                    // }
                     if (_NextStep) {
                         _CPU.cycle();
                         _NextStep = false;
@@ -101,7 +101,6 @@ var TSOS;
                 // On each clock pulse, check to see if there is anything in the ready queue.
                 _ProcessManager.checkReadyQueue();
             }
-            // Read CPU stuff, store back into PCB
         };
         //
         // Interrupt Handling

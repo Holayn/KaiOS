@@ -44,8 +44,6 @@ var TSOS;
             // Do the real work here. Be sure to set this.isExecuting appropriately.
             // Let's have a giant switch statement for the opcodes.
             // Based on program counter, get op code, do it, then set program counter accordingly
-            // Update the CPU display
-            TSOS.Control.hostCPU();
             var opCode = _MemoryManager.readMemory(this.PC);
             switch (opCode) {
                 case "A9":// load the accumulator with value in next area of memory
@@ -201,6 +199,8 @@ var TSOS;
                     _KernelInterruptQueue.enqueue(new TSOS.Interrupt(CONSOLE_WRITE_IR, "Invalid op code, exiting..."));
             }
             console.log(opCode + " " + this.PC + " " + this.Acc + " " + this.Xreg + " " + this.Yreg + " " + this.Zflag);
+            // Update the CPU display
+            TSOS.Control.hostCPU();
             // Update the memory display
             TSOS.Control.hostMemory();
         };

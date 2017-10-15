@@ -76,7 +76,7 @@ var TSOS;
             // IR
             cell = row.insertCell();
             if (_CPU.isExecuting) {
-                cell.innerHTML = _MemoryManager.readMemory(_CPU.PC).toString();
+                cell.innerHTML = _MemoryManager.readMemory(_CPU.PC);
             }
             else {
                 cell.innerHTML = "0";
@@ -101,6 +101,7 @@ var TSOS;
             for (var i = 0; i < table.rows.length; i++) {
                 for (var j = 1; j < 9; j++) {
                     table.rows[i].cells.item(j).innerHTML = _MemoryManager.readMemory(memoryPtr);
+                    table.rows[i].cells.item(j).style = "color: black; font-weight: normal";
                     // Check to see if the hex needs a leading zero.
                     // If it does, then convert the hex to decimal, then back to hex, and add a leading zero.
                     // We do that seemingly dumb step because if the value stored in memory already has a leading 0, will make display look gross.
@@ -110,6 +111,43 @@ var TSOS;
                     }
                     memoryPtr++;
                 }
+            }
+            // Color the instruction that is being executed by the CPU
+            var index = _CPU.PC;
+            this.colorMemory(table, index, "bold");
+            // Color the bytes of memory the instruction is referring to
+            // This stores the bytes number of bytes the opcode refers to after itself in memory
+            var instructionMem = {
+                "A9": 1,
+                "AD": 2,
+                "8D": 2,
+                "6D": 2,
+                "A2": 1,
+                "AE": 2,
+                "A0": 1,
+                "AC": 2,
+                "EA": 0,
+                "00": 0,
+                "EC": 2,
+                "D0": 1,
+                "EE": 2,
+                "FF": 0
+            };
+            var opCode = _MemoryManager.readMemory(_CPU.PC);
+            for (var i = 1; i <= instructionMem[opCode]; i++) {
+                this.colorMemory(table, index + i, "normal");
+            }
+        };
+        // Helper method to color memory
+        Control.colorMemory = function (table, index, weight) {
+            var row = Math.floor(index / (table.rows[0].cells.length - 1)); // Gets the row the address is in
+            var col = (index % (table.rows[0].cells.length - 1)) + 1; // Gets the column the address is in
+            console.log(row + " " + col);
+            if (weight == "bold") {
+                table.rows[row].cells.item(col).style = "color: blue; font-weight: bold";
+            }
+            else {
+                table.rows[row].cells.item(col).style = "color: blue;";
             }
         };
         // This will update and display the processes in execution in the ready queue display
