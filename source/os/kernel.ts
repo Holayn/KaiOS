@@ -93,7 +93,21 @@ module TSOS {
                 var interrupt = _KernelInterruptQueue.dequeue();
                 this.krnInterruptHandler(interrupt.irq, interrupt.params);
             } else if (_CPU.isExecuting) { // If there are no interrupts then run one CPU cycle if there is anything being processed. {
-                _CPU.cycle();
+                // Waits for the user to click on the next step button before cycling once
+                if(_SingleStepMode){
+                    // We need to cycle the CPU once so that it processes the first instruction
+                    if(_StartStepMode){
+                        _CPU.cycle();
+                        _StartStepMode = false;
+                    }
+                    if(_NextStep){
+                        _CPU.cycle();
+                        _NextStep = false;
+                    }
+                }
+                else{
+                    _CPU.cycle();
+                }
             } else {                      // If there are no interrupts and there is nothing being executed then just be idle. {
                 this.krnTrace("Idle");
                 // On each clock pulse, check to see if there is anything in the ready queue.

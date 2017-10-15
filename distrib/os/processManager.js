@@ -80,6 +80,8 @@ var TSOS;
             this.running.State = "Running";
             // Update the display for the PCB
             TSOS.Control.hostProcesses();
+            // Update the CPU display as well
+            TSOS.Control.hostCPU();
         };
         return ProcessManager;
     }());

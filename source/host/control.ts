@@ -207,6 +207,9 @@ module TSOS {
             // .. enable the Halt and Reset buttons ...
             (<HTMLButtonElement>document.getElementById("btnHaltOS")).disabled = false;
             (<HTMLButtonElement>document.getElementById("btnReset")).disabled = false;
+            // .. also enable the single step and next buttons ...
+            (<HTMLButtonElement>document.getElementById("btnSingleStep")).disabled = false;
+            (<HTMLButtonElement>document.getElementById("btnNextStep")).disabled = false;
 
             // .. set focus on the OS console display ...
             document.getElementById("display").focus();
@@ -242,6 +245,23 @@ module TSOS {
             // That boolean parameter is the 'forceget' flag. When it is true it causes the page to always
             // be reloaded from the server. If it is false or not specified the browser may reload the
             // page from its cache, which is not what we want.
+        }
+
+        // Triggers single step mode
+        public static hostBtnSingleStep_click(btn): void {
+            _SingleStepMode = !_SingleStepMode;
+            _StartStepMode = !_StartStepMode;
+            if(_SingleStepMode){
+                (<HTMLButtonElement>document.getElementById("btnSingleStep")).style = "color: red";
+            }
+            else{
+                (<HTMLButtonElement>document.getElementById("btnSingleStep")).style = "color: black";
+            }
+        }
+
+        // Goes to the next step in single step mode
+        public static hostBtnNextStep_click(btn): void {
+            _NextStep = true;
         }
     }
 }

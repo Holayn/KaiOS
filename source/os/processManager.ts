@@ -81,6 +81,8 @@
             this.running.State = "Running";
             // Update the display for the PCB
             Control.hostProcesses();
+            // Update the CPU display as well
+            Control.hostCPU();
         }
     }
 }

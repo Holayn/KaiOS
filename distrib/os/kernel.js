@@ -80,7 +80,21 @@ var TSOS;
                 this.krnInterruptHandler(interrupt.irq, interrupt.params);
             }
             else if (_CPU.isExecuting) {
-                _CPU.cycle();
+                // Waits for the user to click on the next step button before cycling once
+                if (_SingleStepMode) {
+                    // We need to cycle the CPU once so that it processes the first instruction
+                    if (_StartStepMode) {
+                        _CPU.cycle();
+                        _StartStepMode = false;
+                    }
+                    if (_NextStep) {
+                        _CPU.cycle();
+                        _NextStep = false;
+                    }
+                }
+                else {
+                    _CPU.cycle();
+                }
             }
             else {
                 this.krnTrace("Idle");
