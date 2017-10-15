@@ -37,9 +37,12 @@ var TSOS;
         // This stops the CPU from executing whatever it is executing. Let's just call CPU.init() to reset it, which will
         // set isExecuting to false.
         // We also need to reset the memory partition the process was running in. Look in PCB to see which partition to reset
+        // We also need to remove the process from the ready queue display
         ProcessManager.prototype.exitProcess = function () {
             _MemoryManager.clearMemoryPartition(this.running.Partition);
             _CPU.init();
+            this.running = null;
+            TSOS.Control.hostProcesses();
         };
         // On each clock pulse, check to see if there is anything in the ready queue.
         // If so, make the CPU run user process by setting isExecuting to true
@@ -71,6 +74,10 @@ var TSOS;
             _CPU.Yreg = this.running.Yreg;
             _CPU.Zflag = this.running.Zflag;
             _CPU.isExecuting = true;
+            // Set the PCB status to running
+            this.running.State = "Running";
+            // Update the display for the PCB
+            TSOS.Control.hostProcesses();
         };
         return ProcessManager;
     }());

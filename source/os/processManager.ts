@@ -36,9 +36,12 @@
         // This stops the CPU from executing whatever it is executing. Let's just call CPU.init() to reset it, which will
         // set isExecuting to false.
         // We also need to reset the memory partition the process was running in. Look in PCB to see which partition to reset
+        // We also need to remove the process from the ready queue display
         public exitProcess(): void {
             _MemoryManager.clearMemoryPartition(this.running.Partition);
             _CPU.init();
+            this.running = null;
+            Control.hostProcesses();
         }
 
         // On each clock pulse, check to see if there is anything in the ready queue.
@@ -53,7 +56,6 @@
         }
         
         // This runs a process that is stored in memory
-
         public runProcess(): void {
             // Set CPU's stuff to PCB's stored info. We need a way to keep track what is running. 
             // How to tell CPU is not executing anymore? Break opcode
@@ -73,6 +75,10 @@
             _CPU.Yreg = this.running.Yreg;
             _CPU.Zflag = this.running.Zflag;
             _CPU.isExecuting = true;
+            // Set the PCB status to running
+            this.running.State = "Running";
+            // Update the display for the PCB
+            Control.hostProcesses();
         }
     }
 }

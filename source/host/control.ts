@@ -79,7 +79,7 @@ module TSOS {
         }
 
         // This will update and display the CPU in real time
-        public static hostCPU(): void{
+        public static hostCPU(): void {
             var table = (<HTMLTableElement>document.getElementById('tableCPU'));
             table.deleteRow(-1);
             var row = table.insertRow(-1); // New row appended to table
@@ -87,9 +87,9 @@ module TSOS {
             var cell = row.insertCell();
             cell.innerHTML = _CPU.PC.toString();
             // IR
-            var cell = row.insertCell();
+            cell = row.insertCell();
             if(_CPU.isExecuting){
-                cell.innerHTML = _Memory.memoryArray[_CPU.PC].toString(); 
+                cell.innerHTML = _MemoryManager.readMemory(_CPU.PC).toString(); 
             }
             else{
                 cell.innerHTML = "0";
@@ -109,23 +109,93 @@ module TSOS {
         }
 
         // This will update and display the memory in real time
-        public static hostMemory(): void{
+        public static hostMemory(): void {
             var table = (<HTMLTableElement>document.getElementById('tableMemory'));
             var memoryPtr = 0;
             for(var i=0; i<table.rows.length; i++){
                 for(var j=1; j<9; j++){
-                    table.rows[i].cells.item(j).innerHTML = _Memory.memoryArray[memoryPtr].toString();
+                    table.rows[i].cells.item(j).innerHTML = _MemoryManager.readMemory(memoryPtr);
                     // Check to see if the hex needs a leading zero.
                     // If it does, then convert the hex to decimal, then back to hex, and add a leading zero.
-                    // We do that seemingly dumb step because if the value stored in memory already has a leading 0, will mess things up.
-                    if(parseInt(_Memory.memoryArray[memoryPtr], 16) < 16 && parseInt(_Memory.memoryArray[memoryPtr], 16) > 0){
-                        table.rows[i].cells.item(j).innerHTML = "0" + parseInt(_Memory.memoryArray[memoryPtr], 16).toString(16);
+                    // We do that seemingly dumb step because if the value stored in memory already has a leading 0, will make display look gross.
+                    var dec = parseInt(_MemoryManager.readMemory(memoryPtr), 16);
+                    if(dec < 16 && dec > 0){
+                        table.rows[i].cells.item(j).innerHTML = "0" + dec.toString(16);
                     }
                     memoryPtr++;
                 }
             }
         }
 
+        // This will update and display the processes in execution in the ready queue display
+        public static hostProcesses(): void {
+            var table = (<HTMLTableElement>document.getElementById('tableReady'));
+            // For each PCB in ready queue, print out a new row for it
+            // Create a clone of the ready queue so we don't mess around with the actual ready queue
+            // Dequeue each PCB in this copy of the ready queue and display its info
+            var readyQueue = Object.assign({},_ProcessManager.readyQueue);
+            console.log(readyQueue);
+            for(var i=0; i<table.rows.length-1; i++){
+                table.deleteRow(-1);
+            }
+            // Include the PCB that is running
+            if(_ProcessManager.running != null){
+                var running = _ProcessManager.running;
+                var row = table.insertRow(-1); // New row appended to table
+                // PID
+                var cell = row.insertCell();
+                cell.innerHTML = running.Pid;
+                // State
+                cell = row.insertCell();
+                cell.innerHTML = running.State;
+                // PC
+                cell = row.insertCell();
+                cell.innerHTML = running.PC;
+                // IR
+                cell = row.insertCell();
+                cell.innerHTML = running.IR;
+                // Acc
+                cell = row.insertCell();
+                cell.innerHTML = running.Acc;
+                // Xreg
+                cell = row.insertCell();
+                cell.innerHTML = running.Xreg;
+                // Yreg
+                cell = row.insertCell();
+                cell.innerHTML = running.Yreg;
+                // Zflag
+                cell = row.insertCell();
+                cell.innerHTML = running.Zflag;
+            }
+            while(readyQueue.length > 0){
+                var pcb = readyQueue.pop();
+                var row = table.insertRow(-1); // New row appended to table
+                // PID
+                var cell = row.insertCell();
+                cell.innerHTML = pcb.Pid;
+                // State
+                cell = row.insertCell();
+                cell.innerHTML = pcb.State;
+                // PC
+                cell = row.insertCell();
+                cell.innerHTML = pcb.PC;
+                // IR
+                cell = row.insertCell();
+                cell.innerHTML = pcb.IR;
+                // Acc
+                cell = row.insertCell();
+                cell.innerHTML = pcb.Acc;
+                // Xreg
+                cell = row.insertCell();
+                cell.innerHTML = pcb.Xreg;
+                // Yreg
+                cell = row.insertCell();
+                cell.innerHTML = pcb.Yreg;
+                // Zflag
+                cell = row.insertCell();
+                cell.innerHTML = pcb.Zflag;
+            }
+        }
 
         //
         // Host Events
