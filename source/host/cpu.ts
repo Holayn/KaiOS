@@ -192,6 +192,9 @@ module TSOS {
                     }
                     this.PC++;
                     break;
+                default: // If the op code is invalid, exit the process
+                    _KernelInterruptQueue.enqueue(new Interrupt(PROCESS_EXIT, 0));
+                    _KernelInterruptQueue.enqueue(new Interrupt(CONSOLE_WRITE_IR, "Invalid op code, exiting..."));
             }
             console.log(opCode + " " + this.PC + " " + this.Acc + " " + this.Xreg + " " + this.Yreg + " " + this.Zflag);
             // Update the CPU display
