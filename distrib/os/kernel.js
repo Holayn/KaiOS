@@ -15,10 +15,11 @@ var TSOS;
 (function (TSOS) {
     var Kernel = /** @class */ (function () {
         function Kernel() {
+            //
+            // OS Startup and Shutdown Routines
+            //
+            this.bsod = false;
         }
-        //
-        // OS Startup and Shutdown Routines
-        //
         Kernel.prototype.krnBootstrap = function () {
             TSOS.Control.hostLog("bootstrap", "host"); // Use hostLog because we ALWAYS want this, even if _Trace is off.
             // Initialize our global queues.
@@ -97,8 +98,14 @@ var TSOS;
                 // On each clock pulse, check to see if there is anything in the ready queue.
                 _ProcessManager.checkReadyQueue();
             }
-            // Rotate the background
-            TSOS.Control.rotateBackground();
+            // If there is a blue screen of death, spin the entire screen like cray cray
+            if (this.bsod) {
+                TSOS.Control.crazySpin();
+            }
+            else {
+                // Rotate the background when OS is running
+                TSOS.Control.rotateBackground();
+            }
         };
         //
         // Interrupt Handling
@@ -138,6 +145,7 @@ var TSOS;
                 default:
                     this.krnTrapError("Invalid Interrupt Request. irq=" + irq + " params=[" + params + "]");
                     _StdOut.putText("RIP IN POTATOES UR OPERATING SYSTEM IS DED L0L");
+                    this.bsod = true;
             }
         };
         Kernel.prototype.krnTimerISR = function () {

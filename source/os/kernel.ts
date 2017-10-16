@@ -19,6 +19,7 @@ module TSOS {
         //
         // OS Startup and Shutdown Routines
         //
+        public bsod: boolean = false;
         public krnBootstrap() {      // Page 8. {
             Control.hostLog("bootstrap", "host");  // Use hostLog because we ALWAYS want this, even if _Trace is off.
 
@@ -109,8 +110,14 @@ module TSOS {
                 // On each clock pulse, check to see if there is anything in the ready queue.
                 _ProcessManager.checkReadyQueue();
             }
-            // Rotate the background
-            Control.rotateBackground();
+            // If there is a blue screen of death, spin the entire screen like cray cray
+            if(this.bsod){
+                Control.crazySpin();
+            }
+            else{
+                // Rotate the background when OS is running
+                Control.rotateBackground();
+            }
         }
 
 
@@ -155,6 +162,7 @@ module TSOS {
                 default:
                     this.krnTrapError("Invalid Interrupt Request. irq=" + irq + " params=[" + params + "]");
                     _StdOut.putText("RIP IN POTATOES UR OPERATING SYSTEM IS DED L0L");
+                    this.bsod = true;
             }
         }
 

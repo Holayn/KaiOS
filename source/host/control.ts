@@ -319,5 +319,16 @@ module TSOS {
             document.getElementsByTagName('head')[0].appendChild(style);
             document.getElementById("background").classList.add("transform");
         }
+
+        // Do a crazy spin when a BSOD occurs
+        public static crazySpin(): void {
+            document.getElementsByTagName('head')[0].removeChild(document.getElementsByTagName('head')[0].lastChild);
+            var style = document.createElement('style');
+            rotate += 30;
+            style.type = "text/css";
+            style.innerHTML = ".derp { transform: rotate(" + rotate + "deg); -webkit-transform: rotate(" + rotate + "deg); }";
+            document.getElementsByTagName('head')[0].appendChild(style);
+            document.getElementById("background").classList.add("derp");
+        }
     }
 }
