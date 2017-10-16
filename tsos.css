@@ -155,11 +155,17 @@ nav {
   left: 0;
   width: 100%;
   height: 100%;
+  min-height: 1500px;
   opacity : 0.1;
   z-index: -1;
   background: #909193 url(distrib/images/spiral.jpg);
   background-size: cover;
 }
+
+/*.transform:after {
+  transform: rotate(30deg);
+  -webkit-transform: rotate(30deg);
+}*/
 
 label .label-header{
   color: black;

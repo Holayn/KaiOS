@@ -26,7 +26,6 @@
 module TSOS {
 
     export class Control {
-
         public static hostInit(): void {
             // This is called from index.html's onLoad event via the onDocumentLoad function pointer.
 
@@ -305,6 +304,20 @@ module TSOS {
         // Goes to the next step in single step mode
         public static hostBtnNextStep_click(btn): void {
             _NextStep = true;
+        }
+
+        // Rotates the background on every clock pulse
+        // One does not simply rotate a background image
+        // So we have to do this tricky dynamic class/stylesheet creation, which we add to the div with the background image
+        // We also have to delete the dynamic class previously created, or we get wayyyyy to many stylesheets
+        public static rotateBackground(): void {
+            document.getElementsByTagName('head')[0].removeChild(document.getElementsByTagName('head')[0].lastChild);
+            var style = document.createElement('style');
+            rotate += .1;
+            style.type = "text/css";
+            style.innerHTML = ".transform:after { transform: rotate(" + rotate + "deg); -webkit-transform: rotate(" + rotate + "deg); }";
+            document.getElementsByTagName('head')[0].appendChild(style);
+            document.getElementById("background").classList.add("transform");
         }
     }
 }

@@ -280,6 +280,19 @@ var TSOS;
         Control.hostBtnNextStep_click = function (btn) {
             _NextStep = true;
         };
+        // Rotates the background on every clock pulse
+        // One does not simply rotate a background image
+        // So we have to do this tricky dynamic class/stylesheet creation, which we add to the div with the background image
+        // We also have to delete the dynamic class previously created, or we get wayyyyy to many stylesheets
+        Control.rotateBackground = function () {
+            document.getElementsByTagName('head')[0].removeChild(document.getElementsByTagName('head')[0].lastChild);
+            var style = document.createElement('style');
+            rotate += .1;
+            style.type = "text/css";
+            style.innerHTML = ".transform:after { transform: rotate(" + rotate + "deg); -webkit-transform: rotate(" + rotate + "deg); }";
+            document.getElementsByTagName('head')[0].appendChild(style);
+            document.getElementById("background").classList.add("transform");
+        };
         return Control;
     }());
     TSOS.Control = Control;

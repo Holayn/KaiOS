@@ -97,6 +97,8 @@ var TSOS;
                 // On each clock pulse, check to see if there is anything in the ready queue.
                 _ProcessManager.checkReadyQueue();
             }
+            // Rotate the background
+            TSOS.Control.rotateBackground();
         };
         //
         // Interrupt Handling
