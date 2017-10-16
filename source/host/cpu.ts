@@ -38,12 +38,12 @@ module TSOS {
         }
 
         public cycle(): void {
-            _Kernel.krnTrace('CPU cycle');
             // TODO: Accumulate CPU usage and profiling statistics here.
             // Do the real work here. Be sure to set this.isExecuting appropriately.
             // Let's have a giant switch statement for the opcodes.
             // Based on program counter, get op code, do it, then set program counter accordingly
             let opCode = _MemoryManager.readMemory(this.PC);
+            _Kernel.krnTrace('CPU cycle: executing ' + opCode);
             switch(opCode){
                 case "A9": // load the accumulator with value in next area of memory
                     // Load accumulator with decimal (but of course we display it as hex)

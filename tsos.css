@@ -10,7 +10,7 @@ body {
 
 h1 {
   color: black;
-  font-size: 10px;
+  font-size: 20px;
   font-weight: normal;
   font-style: normal;
   border-bottom: 1px solid black;
@@ -18,7 +18,7 @@ h1 {
 
 h2 {
   color: black;
-  font-size: 10px;
+  font-size: 20px;
   font-weight: normal;
   font-style: normal;
 }
@@ -52,6 +52,7 @@ h3 {
   background: rgba(255,255,255,0.6);
 }
 #taskBar {
+  margin-left: 50px;
   font-size: 10px;
 }
 nav {
@@ -161,11 +162,6 @@ nav {
   background: #909193 url(distrib/images/spiral.jpg);
   background-size: cover;
 }
-
-/*.transform:after {
-  transform: rotate(30deg);
-  -webkit-transform: rotate(30deg);
-}*/
 
 label .label-header{
   color: black;
