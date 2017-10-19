@@ -144,10 +144,14 @@ module TSOS {
                         // First, get the number of bytes to branch by looking at next decimal value in memory
                         var branch = parseInt(_MemoryManager.readMemory(this.PC+1), 16); 
                         // Then, set the program counter to the number of bytes.
-                        // If it goes beyond the limit, then loop back around.
+                        // If it goes beyond the limit, then loop back around to the BASE.
                         console.log("PC: " + this.PC);
                         console.log("Branch: " + branch);
-                        this.PC = (this.PC + branch + 2)%256;
+                        // We have to loop back around based on the partition size.
+                        // Ofc in our project, the size will always be 256
+                        // But I want to implement it anyways
+                        var partition = _MemoryManager.getCurrentPartition(this.PC);
+                        this.PC = _MemoryManager.getBaseRegister(partition) + (this.PC + branch + 2)%_MemoryManager.getLimitRegister(partition);
                         console.log("PC IS NOW " + this.PC);
                         console.log("branched");
                     }

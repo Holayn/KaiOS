@@ -71,7 +71,7 @@ module TSOS {
             this.krnTrace("begin shutdown OS");
             // TODO: Check for running processes.  If there are some, alert and stop. Else...
             if(_ProcessManager.isRunning()){
-
+                _ProcessManager.exitProcess();
             }
             // ... Disable the Interrupts.
             this.krnTrace("Disabling the interrupts.");

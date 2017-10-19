@@ -29,7 +29,6 @@ var TSOS;
             for (var i = loadCounter; i < this.partitions[partition].limit; i++) {
                 _Memory.memoryArray[i] = "00";
             }
-            console.log(_Memory.memoryArray);
             // Set the partition isEmpty flag to true so that we know the partition is unavailable
             this.partitions[partition].isEmpty = false;
             // Update the display accordingly
@@ -37,9 +36,9 @@ var TSOS;
             TSOS.Control.hostMemory();
         };
         // Checks to see if there is an available partition in memory
-        // For now, we'll only check the first partition to see if it's available
-        MemoryManager.prototype.checkMemory = function () {
-            if (this.partitions[0].isEmpty) {
+        // For now, we'll only check the first partition to see if it's available (Project 2)
+        MemoryManager.prototype.checkMemory = function (opcodesLength) {
+            if (this.partitions[0].isEmpty && this.partitions[0].limit >= opcodesLength) {
                 return true;
             }
             else {
@@ -54,10 +53,10 @@ var TSOS;
             // return true;
         };
         // Returns a reference to an available partition in memory 
-        // For now, only checks to see if the first partition is available
+        // For now, only checks to see if the first partition is available (Project 2)
         // If it is, return a reference to it
-        MemoryManager.prototype.getFreePartition = function () {
-            if (this.partitions[0].isEmpty) {
+        MemoryManager.prototype.getFreePartition = function (opcodesLength) {
+            if (this.partitions[0].isEmpty && this.partitions[0].limit >= opcodesLength) {
                 return 0;
             }
             else {
@@ -80,6 +79,17 @@ var TSOS;
         };
         MemoryManager.prototype.getLimitRegister = function (partition) {
             return this.partitions[partition].limit;
+        };
+        // Gets the current partition the CPU is executing in by checking where
+        // in memory the program counter is currently executing
+        MemoryManager.prototype.getCurrentPartition = function (pc) {
+            for (var i = 0; i < this.partitions.length; i++) {
+                var base = this.partitions[i].base;
+                var limit = this.partitions[i].limit;
+                if (pc > base && pc < base + limit) {
+                    return i;
+                }
+            }
         };
         // This reads the memory based on a given address in memory
         // Returns the hex string value stored in memory

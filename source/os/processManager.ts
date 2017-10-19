@@ -18,12 +18,13 @@
 
         public createProcess(opcodes): void {
             // Check to see if there is an available partition in memory to put program in.
+            // Make sure the program can fit into that partition
             // If there is no available memory, then display appropriate output to the user.
-            if(_MemoryManager.checkMemory()){
+            if(_MemoryManager.checkMemory(opcodes.length)){
                 let pcb = new ProcessControlBlock(_Pid);
-                // Have the memory manager load the new program into memory
-                // We have to get an available partition in memory and load the program into there
-                var partition = _MemoryManager.getFreePartition();
+                // Have the memory manager load the new program into memory.
+                // We have to get an available partition in memory and load the program into there.
+                var partition = _MemoryManager.getFreePartition(opcodes.length);
                 pcb.init(partition);
                 // Put the new PCB onto the resident queue where it waits for CPU time
                 this.residentQueue.enqueue(pcb);
@@ -32,7 +33,7 @@
                 _Pid++;
             }
             else{
-                _StdOut.putText("Loading of program failed!");
+                _StdOut.putText("Loading of program failed! No memory available.");
             }
         }
 

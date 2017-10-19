@@ -28,7 +28,6 @@
             for(var i=loadCounter; i<this.partitions[partition].limit; i++){
                 _Memory.memoryArray[i] = "00";
             }
-            console.log(_Memory.memoryArray);
             // Set the partition isEmpty flag to true so that we know the partition is unavailable
             this.partitions[partition].isEmpty = false;
             // Update the display accordingly
@@ -37,9 +36,9 @@
         }
 
         // Checks to see if there is an available partition in memory
-        // For now, we'll only check the first partition to see if it's available
-        public checkMemory(): boolean {
-            if(this.partitions[0].isEmpty){
+        // For now, we'll only check the first partition to see if it's available (Project 2)
+        public checkMemory(opcodesLength): boolean {
+            if(this.partitions[0].isEmpty && this.partitions[0].limit >= opcodesLength){
                 return true;
             }
             else{
@@ -55,10 +54,10 @@
         }
 
         // Returns a reference to an available partition in memory 
-        // For now, only checks to see if the first partition is available
+        // For now, only checks to see if the first partition is available (Project 2)
         // If it is, return a reference to it
-        public getFreePartition(): number {
-            if(this.partitions[0].isEmpty){
+        public getFreePartition(opcodesLength): number {
+            if(this.partitions[0].isEmpty && this.partitions[0].limit >= opcodesLength){
                 return 0;
             }
             else{
@@ -76,12 +75,25 @@
             this.partitions[partition].isEmpty = true;
             Control.hostMemory();
         }
+
         // These return the base and limit registers based on the partition number given
         public getBaseRegister(partition): number {
             return this.partitions[partition].base;
         }
         public getLimitRegister(partition): number {
             return this.partitions[partition].limit;
+        }
+
+        // Gets the current partition the CPU is executing in by checking where
+        // in memory the program counter is currently executing
+        public getCurrentPartition(pc): number {
+            for(var i=0; i<this.partitions.length; i++){
+                var base = this.partitions[i].base;
+                var limit = this.partitions[i].limit;
+                if(pc > base && pc < base + limit){
+                    return i;
+                }
+            }
         }
 
         // This reads the memory based on a given address in memory
