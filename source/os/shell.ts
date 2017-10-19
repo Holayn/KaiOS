@@ -386,39 +386,38 @@ module TSOS {
             _PianoTime = !_PianoTime;
         }
 
-        //Validates by making sure the op codes are valid (hex, 2 long each)
-        //Handles the case where the user enters newlines.
-        //A user has to enter a program for load to return valid
+        // Validates by making sure the op codes are valid (hex, 2 long each)
+        // Handles the case where the user enters newlines.
+        // A user has to enter a program for load to return valid
         public shellLoad() {
             let re = /[0-9A-Fa-f]{2}/i;
             let foundError = false;
             let userInput = (<HTMLInputElement>document.getElementById("taProgramInput")).value;
-                userInput = userInput.replace(/\r?\n|\r/g, " "); //removes newlines
-                userInput = userInput.replace(/\s+/g, " ").trim(); //removes sequential spaces
-                userInput = userInput.trim(); //remove leading and trailing spaces
-                let userArr = userInput.split(" ");
-                console.log(userArr);
-                for(let opCode of userArr){
-                    if((opCode.length != 2 || !re.test(opCode))){
-                        _StdOut.putText("Syntax error in user program!");
-                        foundError = true;
-                        break;
-                    }
+            userInput = userInput.replace(/\r?\n|\r/g, " "); //removes newlines
+            userInput = userInput.replace(/\s+/g, " ").trim(); //removes sequential spaces
+            userInput = userInput.trim(); //remove leading and trailing spaces
+            let userArr = userInput.split(" ");
+            for(let opCode of userArr){
+                if((opCode.length != 2 || !re.test(opCode))){
+                    _StdOut.putText("Syntax error in user program!");
+                    foundError = true;
+                    break;
                 }
+            }
             if(!foundError){
-                // Call the kernel to create a new process
-                 _Kernel.krnCreateProcess(userArr);
+                // Do a system call to create a new process
+                 _ProcessManager.createProcess(userArr);
             }
         }
 
         public shellSeppuku() {
-            //This simulates an interrupt that the kernel doesn't know how to handle
-            //Execute order 66
+            // This simulates an interrupt that the kernel doesn't know how to handle
+            // Execute order 66
             _KernelInterruptQueue.enqueue(66);
         }
 
-        //This allows the user to change their status by setting the global user status variable to
-        //whatever their input was
+        // This allows the user to change their status by setting the global user status variable to
+        // whatever their input was
         public shellStatus(args) {
             if(args.length > 0) {
                 _UserStatus = "";
@@ -431,13 +430,12 @@ module TSOS {
             }
         }
 
-        //Runs a program in memory
-        //Clear memory after done
+        // Runs a program in memory
+        // Clear memory after done
         public shellRun(args) {
             if(args.length == 1){
                 // Find the process with the correct pid in the resident queue
                 var foundPid = false;
-                //Change to incr loop
                 for(var i=0; i<_ProcessManager.residentQueue.getSize(); i++){
                     var pcb = _ProcessManager.residentQueue.dequeue();
                     if(pcb.Pid == args[0]){
@@ -446,7 +444,7 @@ module TSOS {
                         foundPid = true;
                     }
                     else{
-                        // If it's not the pcb Gotham needed, put it back in resident queue
+                        // If it's not the poop chicken butt needed, put it back in resident queue
                         _ProcessManager.residentQueue.enqueue(pcb);
                     }
                 }

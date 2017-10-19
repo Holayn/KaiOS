@@ -8,15 +8,17 @@
 
    module TSOS {
     export class ProcessManager {
+
         constructor(public residentQueue: any,
                     public readyQueue: any,
                     public running: TSOS.ProcessControlBlock) {     // Keeps track of running PCB
-            this.residentQueue = new Queue();           // Where we load the program into memory, where it waits to be run.
-            this.readyQueue = new Queue();              // Where a program is put when marked for CPU to move its program counter forward.
+            this.residentQueue = new Queue();                       // Where we load the program into memory, where it waits to be run.
+            this.readyQueue = new Queue();                          // Where a program is put when marked for CPU to move its program counter forward.
         }
+
         public createProcess(opcodes): void {
             // Check to see if there is an available partition in memory to put program in.
-            // If there is no available memory, then let the shell know so it can display appropriate output to the user.
+            // If there is no available memory, then display appropriate output to the user.
             if(_MemoryManager.checkMemory()){
                 let pcb = new ProcessControlBlock(_Pid);
                 // Have the memory manager load the new program into memory
@@ -33,22 +35,21 @@
                 _StdOut.putText("Loading of program failed!");
             }
         }
-        // This stops the CPU from executing whatever it is executing. Let's just call CPU.init() to reset it, which will
-        // set isExecuting to false.
+
+        // This exits a process from the CPU. Let's just call CPU.init() to reset it, which will
+        // set isExecuting to false and all registers to 0.
         // We also need to reset the memory partition the process was running in. Look in PCB to see which partition to reset
         // We also need to remove the process from the ready queue display
         // We also need to update the CPU and memory display
         public exitProcess(): void {
-            _MemoryManager.clearMemoryPartition(this.running.Partition);
             _CPU.init();
+            _MemoryManager.clearMemoryPartition(this.running.Partition);
             this.running = null;
             Control.hostProcesses();
-            Control.hostCPU();
-            Control.hostMemory();
         }
 
         // On each clock pulse, check to see if there is anything in the ready queue.
-        // If so, make the CPU run user process by setting isExecuting to true
+        // If so, make the CPU run user process.
         public checkReadyQueue(): void {
             if(!this.readyQueue.isEmpty()){
                 this.runProcess();
@@ -60,16 +61,8 @@
         
         // This runs a process that is stored in memory
         public runProcess(): void {
-            // Set CPU's stuff to PCB's stored info. We need a way to keep track what is running. 
-            // How to tell CPU is not executing anymore? Break opcode
-            // Ok, so dequeue from the ready queue. This ready queue will later be reordered by scheduler.
-            // You'll get a PCB.
-            // Start executing the op codes based on its program counter.
-            // One op code at a time.
-            // For now, if there is currently a process being executed, let it run
-            // to its full completion.
-            // Need to keep track somehow if process currently executing. If program counter 0, no process running. NOPE.
-            // Also, how do we update PCB info?
+            // Take a PCB off the ready queue, and set the CPU to its info.
+            // Starts the CPU executing by setting isExecuting to true.
             this.running = this.readyQueue.dequeue();
             // Put all stuff from PCB to CPU
             _CPU.PC = this.running.PC;
@@ -86,6 +79,18 @@
             Control.hostCPU();
             // Update the memory as well
             Control.hostMemory();
+        }
+
+        // This checks if a process is running
+        public isRunning(): boolean {
+            return this.running != null;
+        }
+
+        // For now, we don't do context switching.
+        // Therefore, the PCB will never get updated
+        public contextSwitch(): void {
+            // placeholder for later
+            // most likely will implement a scheduler.ts
         }
     }
 }

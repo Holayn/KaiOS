@@ -26,6 +26,9 @@
 module TSOS {
 
     export class Control {
+
+        public static rotate = 0;      // Used for rotating the background
+
         public static hostInit(): void {
             // This is called from index.html's onLoad event via the onDocumentLoad function pointer.
 
@@ -130,7 +133,7 @@ module TSOS {
                 var index = _CPU.PC;
                 this.colorMemory(table, index, "bold");
                 // Color the bytes of memory the instruction is referring to
-                // This stores the bytes number of bytes the opcode refers to after itself in memory
+                // This stores the number of bytes the opcode refers to after itself in memory
                 var instructionMem = {
                     "A9":1,
                     "AD":2,
@@ -153,18 +156,17 @@ module TSOS {
                 }
             }
         }
+        
         // Helper method to color memory
         private static colorMemory(table, index, weight): void {
-            var row = Math.floor(index / (table.rows[0].cells.length-1)); // Gets the row the address is in
-            var col = (index % (table.rows[0].cells.length-1))+1; // Gets the column the address is in
-            console.log(row + " " + col);
+            var row = Math.floor(index / (table.rows[0].cells.length-1));   // Gets the row the address is in
+            var col = (index % (table.rows[0].cells.length-1))+1;           // Gets the column the address is in
             if(weight == "bold"){
                 table.rows[row].cells.item(col).style = "color: blue; font-weight: bold";
             }
             else{
                 table.rows[row].cells.item(col).style = "color: blue;";
             }
-            
         }
 
         // This will update and display the processes in execution in the ready queue display
@@ -174,7 +176,6 @@ module TSOS {
             // Create a clone of the ready queue so we don't mess around with the actual ready queue
             // Dequeue each PCB in this copy of the ready queue and display its info
             var readyQueue = Object.assign({},_ProcessManager.readyQueue);
-            console.log(readyQueue);
             for(var i=0; i<table.rows.length-1; i++){
                 table.deleteRow(-1);
             }
@@ -207,6 +208,7 @@ module TSOS {
                 cell = row.insertCell();
                 cell.innerHTML = running.Zflag;
             }
+            // Now display all the other PCBs sitting in the ready queue
             while(readyQueue.length > 0){
                 var pcb = readyQueue.pop();
                 var row = table.insertRow(-1); // New row appended to table
@@ -306,16 +308,16 @@ module TSOS {
             _NextStep = true;
         }
 
-        // Rotates the background on every clock pulse
-        // One does not simply rotate a background image
-        // So we have to do this tricky dynamic class/stylesheet creation, which we add to the div with the background image
-        // We also have to delete the dynamic class previously created, or we get wayyyyy to many stylesheets
+        // Rotates the background on every clock pulse.
+        // One does not simply rotate a background image.
+        // So we have to do this tricky dynamic class/stylesheet creation, which we add to the div with the background image.
+        // We also have to delete the dynamic class previously created, or we get wayyyyy to many stylesheets.
         public static rotateBackground(): void {
             document.getElementsByTagName('head')[0].removeChild(document.getElementsByTagName('head')[0].lastChild);
             var style = document.createElement('style');
-            rotate += .1;
+            this.rotate += .1;
             style.type = "text/css";
-            style.innerHTML = ".transform:after { transform: rotate(" + rotate + "deg); -webkit-transform: rotate(" + rotate + "deg); }";
+            style.innerHTML = ".transform:after { transform: rotate(" + this.rotate + "deg); -webkit-transform: rotate(" + this.rotate + "deg); }";
             document.getElementsByTagName('head')[0].appendChild(style);
             document.getElementById("background").classList.add("transform");
         }
@@ -324,9 +326,9 @@ module TSOS {
         public static crazySpin(): void {
             document.getElementsByTagName('head')[0].removeChild(document.getElementsByTagName('head')[0].lastChild);
             var style = document.createElement('style');
-            rotate += 30;
+            this.rotate += 30;
             style.type = "text/css";
-            style.innerHTML = ".derp { transform: rotate(" + rotate + "deg); -webkit-transform: rotate(" + rotate + "deg); }";
+            style.innerHTML = ".derp { transform: rotate(" + this.rotate + "deg); -webkit-transform: rotate(" + this.rotate + "deg); }";
             document.getElementsByTagName('head')[0].appendChild(style);
             document.getElementById("background").classList.add("derp");
         }

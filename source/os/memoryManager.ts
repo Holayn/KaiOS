@@ -38,7 +38,6 @@
 
         // Checks to see if there is an available partition in memory
         // For now, we'll only check the first partition to see if it's available
-        // If there is, we should keep track what the base register is
         public checkMemory(): boolean {
             if(this.partitions[0].isEmpty){
                 return true;
@@ -93,6 +92,9 @@
 
         // This writes to memory based on an address and value given
         public writeMemory(addr, value): void {
+            if(parseInt(value, 16) < 16){
+                value = "0" + value;
+            }
             _Memory.memoryArray[addr] = value;
         }
 

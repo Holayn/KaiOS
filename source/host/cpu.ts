@@ -35,6 +35,8 @@ module TSOS {
             this.Yreg = 0;
             this.Zflag = 0;
             this.isExecuting = false;
+            // Update the CPU display
+            Control.hostCPU();
         }
 
         public cycle(): void {
@@ -68,9 +70,6 @@ module TSOS {
                     // Get the value stored in the accumulator (convert to hex string) and put it at the address in memory
                     // Also, check to see if we need to have a leading zero...only numbers below 16 need a leading zero
                     var value = this.Acc.toString(16);
-                    if(this.Acc < 16){
-                        value = "0" + value;
-                    }
                     _MemoryManager.writeMemory(address, value);
                     this.PC = this.PC+3;
                     break;
@@ -130,7 +129,7 @@ module TSOS {
                     var address = parseInt(hexString, 16);
                     // Gets the byte from the address in memory
                     var byte = _MemoryManager.readMemory(address);
-                    // Compare the decimal value of it to the value of the X register, set Z flag to zero if equal. 
+                    // Compare the decimal value of it to the value of the X register, set Z flag to one if equal. 
                     // Else, set it to 1.
                     if(parseInt(byte.toString(), 16) == this.Xreg){
                         this.Zflag = 1;
@@ -148,7 +147,6 @@ module TSOS {
                         // If it goes beyond the limit, then loop back around.
                         console.log("PC: " + this.PC);
                         console.log("Branch: " + branch);
-                        // this.PC = (this.PC + branch)%254;
                         this.PC = (this.PC + branch + 2)%256;
                         console.log("PC IS NOW " + this.PC);
                         console.log("branched");
@@ -174,7 +172,6 @@ module TSOS {
                 case "FF": // System call: if 1 in X reg, make syscall to print integer store in Y reg. if 2, then print 00-terminated string stored at address in Y register.
                     if(this.Xreg == 1){
                         _KernelInterruptQueue.enqueue(new Interrupt(CONSOLE_WRITE_IR, ""+this.Yreg))
-                        // _Kernel.krnWriteConsole(this.Yreg);
                     }
                     else if(this.Xreg == 2){
                         var address = this.Yreg;
@@ -189,7 +186,6 @@ module TSOS {
                             address++;
                         }
                         _KernelInterruptQueue.enqueue(new Interrupt(CONSOLE_WRITE_IR, string))
-                        // _Kernel.krnWriteConsole(string);
                     }
                     this.PC++;
                     break;

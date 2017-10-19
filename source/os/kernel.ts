@@ -70,6 +70,9 @@ module TSOS {
         public krnShutdown() {
             this.krnTrace("begin shutdown OS");
             // TODO: Check for running processes.  If there are some, alert and stop. Else...
+            if(_ProcessManager.isRunning()){
+
+            }
             // ... Disable the Interrupts.
             this.krnTrace("Disabling the interrupts.");
             this.krnDisableInterrupts();
@@ -93,8 +96,8 @@ module TSOS {
                 // TODO: Implement a priority queue based on the IRQ number/id to enforce interrupt priority.
                 var interrupt = _KernelInterruptQueue.dequeue();
                 this.krnInterruptHandler(interrupt.irq, interrupt.params);
-            } else if (_CPU.isExecuting) { // If there are no interrupts then run one CPU cycle if there is anything being processed. {
-                // Waits for the user to click on the next step button before cycling once
+            } else if (_CPU.isExecuting) { // If there are no interrupts then run one CPU cycle if there is anything being processed.
+                // Waits for the user to click on the next step button before cycling once, if single step mode is active.
                 if(_SingleStepMode){
                     if(_NextStep){
                         _CPU.cycle();
@@ -104,8 +107,8 @@ module TSOS {
                 else{
                     _CPU.cycle();
                 }
-            } else {                      // If there are no interrupts and there is nothing being executed then just be idle. {
-                _NextStep = false; // Handles the case for if the user presses next step in single step mode when nothing is executing
+            } else {                        // If there are no interrupts and there is nothing being executed then just be idle. 
+                _NextStep = false;          // Handles the case for if the user presses next step in single step mode when nothing is executing
                 this.krnTrace("Idle");
                 // On each clock pulse, check to see if there is anything in the ready queue.
                 _ProcessManager.checkReadyQueue();
@@ -119,7 +122,6 @@ module TSOS {
                 Control.rotateBackground();
             }
         }
-
 
         //
         // Interrupt Handling
@@ -154,10 +156,12 @@ module TSOS {
                     _StdIn.handleInput();
                     break;
                 case PROCESS_EXIT:
-                    this.krnExitProcess();
+                    _ProcessManager.exitProcess();
                     break;
+                case CONTEXT_SWITCH:                  // Placeholder for context switching. We only update the PCB when there is a context switch!!!
+                    break;                            // Therefore, in project 2, the PCB for the running process is never updated
                 case CONSOLE_WRITE_IR:
-                    this.krnWriteConsole(params);
+                    _StdOut.putText(params);
                     break;
                 default:
                     this.krnTrapError("Invalid Interrupt Request. irq=" + irq + " params=[" + params + "]");
@@ -185,21 +189,6 @@ module TSOS {
         // - ReadFile
         // - WriteFile
         // - CloseFile
-
-        // Creates a process by creating a PCB for the program, loading the program into memory, and putting the PCB onto the resident queue.
-        // Done by generating the software interrupt for it
-        public krnCreateProcess(opcodes){
-            _ProcessManager.createProcess(opcodes);
-        }
-
-        // Stops the CPU from executing whatever it's executing.
-        public krnExitProcess(){
-            _ProcessManager.exitProcess();
-        }
-
-        public krnWriteConsole(string){
-            _StdOut.putText(string);
-        }
 
         //
         // OS Utility Routines

@@ -38,7 +38,6 @@ var TSOS;
         };
         // Checks to see if there is an available partition in memory
         // For now, we'll only check the first partition to see if it's available
-        // If there is, we should keep track what the base register is
         MemoryManager.prototype.checkMemory = function () {
             if (this.partitions[0].isEmpty) {
                 return true;
@@ -89,6 +88,9 @@ var TSOS;
         };
         // This writes to memory based on an address and value given
         MemoryManager.prototype.writeMemory = function (addr, value) {
+            if (parseInt(value, 16) < 16) {
+                value = "0" + value;
+            }
             _Memory.memoryArray[addr] = value;
         };
         return MemoryManager;

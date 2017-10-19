@@ -59,6 +59,8 @@ var TSOS;
         Kernel.prototype.krnShutdown = function () {
             this.krnTrace("begin shutdown OS");
             // TODO: Check for running processes.  If there are some, alert and stop. Else...
+            if (_ProcessManager.isRunning()) {
+            }
             // ... Disable the Interrupts.
             this.krnTrace("Disabling the interrupts.");
             this.krnDisableInterrupts();
@@ -81,7 +83,7 @@ var TSOS;
                 this.krnInterruptHandler(interrupt.irq, interrupt.params);
             }
             else if (_CPU.isExecuting) {
-                // Waits for the user to click on the next step button before cycling once
+                // Waits for the user to click on the next step button before cycling once, if single step mode is active.
                 if (_SingleStepMode) {
                     if (_NextStep) {
                         _CPU.cycle();
@@ -137,10 +139,12 @@ var TSOS;
                     _StdIn.handleInput();
                     break;
                 case PROCESS_EXIT:
-                    this.krnExitProcess();
+                    _ProcessManager.exitProcess();
                     break;
+                case CONTEXT_SWITCH:// Placeholder for context switching. We only update the PCB when there is a context switch!!!
+                    break; // Therefore, in project 2, the PCB for the running process is never updated
                 case CONSOLE_WRITE_IR:
-                    this.krnWriteConsole(params);
+                    _StdOut.putText(params);
                     break;
                 default:
                     this.krnTrapError("Invalid Interrupt Request. irq=" + irq + " params=[" + params + "]");
@@ -166,18 +170,6 @@ var TSOS;
         // - ReadFile
         // - WriteFile
         // - CloseFile
-        // Creates a process by creating a PCB for the program, loading the program into memory, and putting the PCB onto the resident queue.
-        // Done by generating the software interrupt for it
-        Kernel.prototype.krnCreateProcess = function (opcodes) {
-            _ProcessManager.createProcess(opcodes);
-        };
-        // Stops the CPU from executing whatever it's executing.
-        Kernel.prototype.krnExitProcess = function () {
-            _ProcessManager.exitProcess();
-        };
-        Kernel.prototype.krnWriteConsole = function (string) {
-            _StdOut.putText(string);
-        };
         //
         // OS Utility Routines
         //

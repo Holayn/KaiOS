@@ -11,13 +11,13 @@
 // Global CONSTANTS (TypeScript 1.5 introduced const. Very cool.)
 //
 var APP_NAME = "KaiOS"; // 'cause Bob and I were at a loss for a better name.
-var APP_VERSION = "11"; // What did you expect?
+var APP_VERSION = "11"; // https://www.youtube.com/watch?v=R1ZXOOLMJ8s
 var CPU_CLOCK_INTERVAL = 100; // This is in ms (milliseconds) so 1000 = 1 second.
 var TIMER_IRQ = 0; // Pages 23 (timer), 9 (interrupts), and 561 (interrupt priority).
 // NOTE: The timer is different from hardware/host clock pulses. Don't confuse these.
 var KEYBOARD_IRQ = 1;
 var PROCESS_EXIT = 2;
-var PROCESS_CREATE = 3;
+var CONTEXT_SWITCH = 3;
 var CONSOLE_WRITE_IR = 4;
 //
 // Global Variables
@@ -68,4 +68,3 @@ var _GLaDOS = null; // If the above is linked in, this is the instantiated insta
 var onDocumentLoad = function () {
     TSOS.Control.hostInit();
 };
-var rotate = 0;

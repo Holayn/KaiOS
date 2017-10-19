@@ -89,6 +89,10 @@ nav {
 #tableMemory {
   font-family: Courier;
 }
+#tableMemory .memoryCell {
+  max-width: 30px;
+  overflow-x: hidden;
+}
 #divConsole {
   background-color: rgba(0,0,0,.2);
   border: 2px;
@@ -123,10 +127,10 @@ nav {
   content : "";
   display: block;
   position: absolute;
-  top: -20px;
+  top: -50px;
   left: 0;
   width: 100%;
-  height: 100%;
+  height: 155px;
   opacity : 0.2;
   background-image: url('distrib/images/keyboard.png');
   /*background-size: cover;*/

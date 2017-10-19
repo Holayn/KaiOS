@@ -45,6 +45,7 @@ module TSOS {
                 for(var j=1; j<9; j++){
                     var cell = row.insertCell(j);
                     cell.innerHTML = "00";
+                    cell.classList.add("memoryCell");
                 }
             }
         }

@@ -12,7 +12,7 @@
 // Global CONSTANTS (TypeScript 1.5 introduced const. Very cool.)
 //
 const APP_NAME: string    = "KaiOS";   // 'cause Bob and I were at a loss for a better name.
-const APP_VERSION: string = "11";   // What did you expect?
+const APP_VERSION: string = "11";   // https://www.youtube.com/watch?v=R1ZXOOLMJ8s
 
 const CPU_CLOCK_INTERVAL: number = 100;   // This is in ms (milliseconds) so 1000 = 1 second.
 
@@ -22,7 +22,7 @@ const KEYBOARD_IRQ: number = 1;
 
 const PROCESS_EXIT: number = 2;
 
-const PROCESS_CREATE: number = 3;
+const CONTEXT_SWITCH: number = 3;
 
 const CONSOLE_WRITE_IR: number = 4;
 
@@ -93,5 +93,3 @@ var _GLaDOS: any = null; // If the above is linked in, this is the instantiated 
 var onDocumentLoad = function() {
 	TSOS.Control.hostInit();
 };
-
-var rotate: number = 0;

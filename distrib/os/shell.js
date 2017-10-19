@@ -324,9 +324,9 @@ var TSOS;
                 _StdOut.putText("Your keyboard is not a piano anymore.");
             _PianoTime = !_PianoTime;
         };
-        //Validates by making sure the op codes are valid (hex, 2 long each)
-        //Handles the case where the user enters newlines.
-        //A user has to enter a program for load to return valid
+        // Validates by making sure the op codes are valid (hex, 2 long each)
+        // Handles the case where the user enters newlines.
+        // A user has to enter a program for load to return valid
         Shell.prototype.shellLoad = function () {
             var re = /[0-9A-Fa-f]{2}/i;
             var foundError = false;
@@ -335,7 +335,6 @@ var TSOS;
             userInput = userInput.replace(/\s+/g, " ").trim(); //removes sequential spaces
             userInput = userInput.trim(); //remove leading and trailing spaces
             var userArr = userInput.split(" ");
-            console.log(userArr);
             for (var _i = 0, userArr_1 = userArr; _i < userArr_1.length; _i++) {
                 var opCode = userArr_1[_i];
                 if ((opCode.length != 2 || !re.test(opCode))) {
@@ -345,17 +344,17 @@ var TSOS;
                 }
             }
             if (!foundError) {
-                // Call the kernel to create a new process
-                _Kernel.krnCreateProcess(userArr);
+                // Do a system call to create a new process
+                _ProcessManager.createProcess(userArr);
             }
         };
         Shell.prototype.shellSeppuku = function () {
-            //This simulates an interrupt that the kernel doesn't know how to handle
-            //Execute order 66
+            // This simulates an interrupt that the kernel doesn't know how to handle
+            // Execute order 66
             _KernelInterruptQueue.enqueue(66);
         };
-        //This allows the user to change their status by setting the global user status variable to
-        //whatever their input was
+        // This allows the user to change their status by setting the global user status variable to
+        // whatever their input was
         Shell.prototype.shellStatus = function (args) {
             if (args.length > 0) {
                 _UserStatus = "";
@@ -368,13 +367,12 @@ var TSOS;
                 _StdOut.putText("Usage: status <message>  Please supply a message.");
             }
         };
-        //Runs a program in memory
-        //Clear memory after done
+        // Runs a program in memory
+        // Clear memory after done
         Shell.prototype.shellRun = function (args) {
             if (args.length == 1) {
                 // Find the process with the correct pid in the resident queue
                 var foundPid = false;
-                //Change to incr loop
                 for (var i = 0; i < _ProcessManager.residentQueue.getSize(); i++) {
                     var pcb = _ProcessManager.residentQueue.dequeue();
                     if (pcb.Pid == args[0]) {
@@ -383,7 +381,7 @@ var TSOS;
                         foundPid = true;
                     }
                     else {
-                        // If it's not the pcb Gotham needed, put it back in resident queue
+                        // If it's not the poop chicken butt needed, put it back in resident queue
                         _ProcessManager.residentQueue.enqueue(pcb);
                     }
                 }
