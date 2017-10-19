@@ -91,7 +91,7 @@ module TSOS {
             // IR
             cell = row.insertCell();
             if(_CPU.isExecuting){
-                cell.innerHTML = _MemoryManager.readMemory(_CPU.PC); 
+                cell.innerHTML = _Memory.memoryArray[_CPU.PC].toString(); 
             }
             else{
                 cell.innerHTML = "0";
@@ -116,12 +116,12 @@ module TSOS {
             var memoryPtr = 0;
             for(var i=0; i<table.rows.length; i++){
                 for(var j=1; j<9; j++){
-                    table.rows[i].cells.item(j).innerHTML = _MemoryManager.readMemory(memoryPtr);
+                    table.rows[i].cells.item(j).innerHTML = _Memory.memoryArray[memoryPtr].toString();
                     table.rows[i].cells.item(j).style = "color: black; font-weight: normal";
                     // Check to see if the hex needs a leading zero.
                     // If it does, then convert the hex to decimal, then back to hex, and add a leading zero.
                     // We do that seemingly dumb step because if the value stored in memory already has a leading 0, will make display look gross.
-                    var dec = parseInt(_MemoryManager.readMemory(memoryPtr), 16);
+                    var dec = parseInt(_Memory.memoryArray[memoryPtr].toString(), 16);
                     if(dec < 16 && dec > 0){
                         table.rows[i].cells.item(j).innerHTML = "0" + dec.toString(16);
                     }
@@ -150,7 +150,7 @@ module TSOS {
                     "EE":2,
                     "FF":0
                 }
-                var opCode = _MemoryManager.readMemory(_CPU.PC);
+                var opCode = _Memory.memoryArray[_CPU.PC].toString();
                 for(var i=1; i<=instructionMem[opCode]; i++){
                     this.colorMemory(table, index+i, "normal");
                 }

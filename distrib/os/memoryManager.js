@@ -80,28 +80,46 @@ var TSOS;
         MemoryManager.prototype.getLimitRegister = function (partition) {
             return this.partitions[partition].limit;
         };
-        // Gets the current partition the CPU is executing in by checking where
-        // in memory the program counter is currently executing
+        // Gets the current partition the CPU is executing in by checking what
+        // partition the running process is in via process manager
         MemoryManager.prototype.getCurrentPartition = function (pc) {
-            for (var i = 0; i < this.partitions.length; i++) {
-                var base = this.partitions[i].base;
-                var limit = this.partitions[i].limit;
-                if (pc > base && pc < base + limit) {
-                    return i;
-                }
-            }
+            return _ProcessManager.running.Partition;
         };
         // This reads the memory based on a given address in memory
         // Returns the hex string value stored in memory
+        // Enforce memory out of bounds rule
         MemoryManager.prototype.readMemory = function (addr) {
-            return _Memory.memoryArray[addr].toString();
+            if (this.inBounds(addr)) {
+                return _Memory.memoryArray[addr].toString();
+            }
+            else {
+                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(PROCESS_EXIT, 0));
+                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(CONSOLE_WRITE_IR, "Out of bounds memory access error..."));
+            }
         };
         // This writes to memory based on an address and value given
+        // Enforce memory out of bounds rule
         MemoryManager.prototype.writeMemory = function (addr, value) {
-            if (parseInt(value, 16) < 16) {
-                value = "0" + value;
+            if (this.inBounds(addr)) {
+                if (parseInt(value, 16) < 16) {
+                    value = "0" + value;
+                }
+                _Memory.memoryArray[addr] = value;
             }
-            _Memory.memoryArray[addr] = value;
+            else {
+                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(PROCESS_EXIT, 0));
+                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(CONSOLE_WRITE_IR, "Out of bounds memory access error..."));
+            }
+        };
+        // Checks to make sure the memory being accessed is within the range specified by the base/limit
+        MemoryManager.prototype.inBounds = function (addr) {
+            var partition = _ProcessManager.running.Partition;
+            if (addr >= this.partitions[partition].base && addr < this.partitions[partition].base + this.partitions[partition].limit) {
+                return true;
+            }
+            else {
+                return false;
+            }
         };
         return MemoryManager;
     }());
