@@ -43,78 +43,78 @@ module TSOS {
             // Let's have a giant switch statement for the opcodes.
             // Based on program counter, get op code, do it, then set program counter accordingly
             // Also, check to make sure the PC is not out of bounds in memory
-            if(!_MemoryManager.inBounds(this.PC)){
+            if(!_MemoryAccessor.inBounds(this.PC)){
                 _KernelInterruptQueue.enqueue(new Interrupt(PROCESS_EXIT, 0));
                 _KernelInterruptQueue.enqueue(new Interrupt(CONSOLE_WRITE_IR, "Out of bounds memory access error..."));
             }
             else{
-                let opCode = _MemoryManager.readMemory(this.PC);
+                let opCode = _MemoryAccessor.readMemory(this.PC);
                 _Kernel.krnTrace('CPU cycle: executing ' + opCode);
                 switch(opCode){
                     case "A9": // load the accumulator with value in next area of memory
                         // Load accumulator with decimal (but of course we display it as hex)
-                        this.Acc = parseInt(_MemoryManager.readMemory(this.PC+1), 16); 
+                        this.Acc = parseInt(_MemoryAccessor.readMemory(this.PC+1), 16); 
                         this.PC = this.PC+2;
                         break;
                     case "AD": // load the accumulator with a value from memory
                         // Get the hex memory address by looking at the next two values in memory and swapping because of little-endian format
-                        var hexString = _MemoryManager.readMemory(this.PC+1); 
-                        hexString = _MemoryManager.readMemory(this.PC+2) + hexString;
+                        var hexString = _MemoryAccessor.readMemory(this.PC+1); 
+                        hexString = _MemoryAccessor.readMemory(this.PC+2) + hexString;
                         // Convert it to decimal and store it in the accumulator
                         var address = parseInt(hexString, 16);
-                        this.Acc = _MemoryManager.readMemory(address);
+                        this.Acc = _MemoryAccessor.readMemory(address);
                         this.PC = this.PC+3;
                         break;
                     case "8D": // store the accumulator in memory
                         // Gets the hex memory address to store in by looking at the next two values in memory and swapping because of little-endian format
-                        var hexString = _MemoryManager.readMemory(this.PC+1) 
-                        hexString = _MemoryManager.readMemory(this.PC+2) + hexString;
+                        var hexString = _MemoryAccessor.readMemory(this.PC+1) 
+                        hexString = _MemoryAccessor.readMemory(this.PC+2) + hexString;
                         // Convert to get the decimal address in memory
                         var address = parseInt(hexString, 16);
                         // Get the value stored in the accumulator (convert to hex string) and put it at the address in memory
                         // Also, check to see if we need to have a leading zero...only numbers below 16 need a leading zero
                         var value = this.Acc.toString(16);
-                        _MemoryManager.writeMemory(address, value);
+                        _MemoryAccessor.writeMemory(address, value);
                         this.PC = this.PC+3;
                         break;
                     case "6D": // add with carry (add contents of address to accumulator and store result in accumulator)
                         // Gets the hex memory address to store in by looking at the next two values in memory and swapping because of little-endian format
-                        var hexString = _MemoryManager.readMemory(this.PC+1);
-                        hexString = _MemoryManager.readMemory(this.PC+2) + hexString;
+                        var hexString = _MemoryAccessor.readMemory(this.PC+1);
+                        hexString = _MemoryAccessor.readMemory(this.PC+2) + hexString;
                         // Convert to get the decimal address in memory
                         var address = parseInt(hexString, 16);
                         // Now, get the value stored at the address in memory, then add it to the accumulator
-                        var value = _MemoryManager.readMemory(address);
+                        var value = _MemoryAccessor.readMemory(address);
                         this.Acc += parseInt(value, 16);
                         this.PC = this.PC+3;
                         break;
                     case "A2": // load the X register with a constant
                         // Load X register with decimal (but of course we display it as hex in memory)
-                        this.Xreg = parseInt(_MemoryManager.readMemory(this.PC+1), 16); 
+                        this.Xreg = parseInt(_MemoryAccessor.readMemory(this.PC+1), 16); 
                         this.PC = this.PC+2;
                         break;
                     case "AE": // load the X register from memory
                         // Get the hex memory address by looking at the next two values in memory and swapping because of little-endian format
-                        var hexString = _MemoryManager.readMemory(this.PC+1); 
-                        hexString = _MemoryManager.readMemory(this.PC+2) + hexString;
+                        var hexString = _MemoryAccessor.readMemory(this.PC+1); 
+                        hexString = _MemoryAccessor.readMemory(this.PC+2) + hexString;
                         // Convert it to decimal and use that as the address
                         var address = parseInt(hexString, 16);
                         // Convert value at address to decimal and store in X register
-                        this.Xreg = parseInt(_MemoryManager.readMemory(address), 16);
+                        this.Xreg = parseInt(_MemoryAccessor.readMemory(address), 16);
                         this.PC = this.PC+3;
                         break;
                     case "A0": // load the Y register with a constant
                         // Load Y register with decimal (but of course we display it as hex in memory)
-                        this.Yreg = parseInt(_MemoryManager.readMemory(this.PC+1), 16); 
+                        this.Yreg = parseInt(_MemoryAccessor.readMemory(this.PC+1), 16); 
                         this.PC = this.PC+2;
                         break;
                     case "AC": // load the Y register from memory
                         // Get the hex memory address by looking at the next two values in memory and swapping because of little-endian format
-                        var hexString = _MemoryManager.readMemory(this.PC+1);
-                        hexString = _MemoryManager.readMemory(this.PC+2) + hexString;
+                        var hexString = _MemoryAccessor.readMemory(this.PC+1);
+                        hexString = _MemoryAccessor.readMemory(this.PC+2) + hexString;
                         // Convert it to decimal and use that as the address
                         var address = parseInt(hexString, 16);
-                        this.Yreg = parseInt(_MemoryManager.readMemory(address), 16);
+                        this.Yreg = parseInt(_MemoryAccessor.readMemory(address), 16);
                         this.PC = this.PC+3;
                         break;
                     case "EA": // no operation
@@ -127,12 +127,12 @@ module TSOS {
                         break;
                     case "EC": // compare byte in memory to X register. Sets the Z flag to zero if equal
                         // Gets the hex memory address by looking at the next two values in memory and swapping because of little-endian format
-                        var hexString = _MemoryManager.readMemory(this.PC+1);
-                        hexString = _MemoryManager.readMemory(this.PC+2) + hexString;
+                        var hexString = _MemoryAccessor.readMemory(this.PC+1);
+                        hexString = _MemoryAccessor.readMemory(this.PC+2) + hexString;
                         // Convert to get the decimal address in memory
                         var address = parseInt(hexString, 16);
                         // Gets the byte from the address in memory
-                        var byte = _MemoryManager.readMemory(address);
+                        var byte = _MemoryAccessor.readMemory(address);
                         // Compare the decimal value of it to the value of the X register, set Z flag to one if equal. 
                         // Else, set it to 1.
                         if(parseInt(byte.toString(), 16) == this.Xreg){
@@ -146,7 +146,7 @@ module TSOS {
                     case "D0": // branch n bytes if Z flag = 0
                         if(this.Zflag == 0){
                             // First, get the number of bytes to branch by looking at next decimal value in memory
-                            var branch = parseInt(_MemoryManager.readMemory(this.PC+1), 16); 
+                            var branch = parseInt(_MemoryAccessor.readMemory(this.PC+1), 16); 
                             // Then, set the program counter to the number of bytes.
                             // If it goes beyond the limit, then loop back around to the BASE.
                             console.log("PC: " + this.PC);
@@ -155,8 +155,8 @@ module TSOS {
                             // Ofc in our project, the size will always be 256
                             // But I want to implement it anyways
                             var partition = _MemoryManager.getCurrentPartition();
-                            //mwemorymanager does mma
-                            this.PC = _MemoryManager.getBaseRegister(partition) + (this.PC + branch + 2)%_MemoryManager.getLimitRegister(partition);
+                            // Memory accessor does translation
+                            this.PC = _MemoryAccessor.bneLoop(this.PC, branch);
                             console.log("PC IS NOW " + this.PC);
                             console.log("branched");
                         }
@@ -166,16 +166,16 @@ module TSOS {
                         break;
                     case "EE": // Increment the value of a byte
                         // Get the hex memory address by looking at the next two values in memory and swapping because of little-endian format
-                        var hexString = _MemoryManager.readMemory(this.PC+1);
-                        hexString = _MemoryManager.readMemory(this.PC+2) + hexString;
+                        var hexString = _MemoryAccessor.readMemory(this.PC+1);
+                        hexString = _MemoryAccessor.readMemory(this.PC+2) + hexString;
                         // Convert it to decimal, then use the result as the address for the byte to increment
                         var address = parseInt(hexString, 16);
                         // Convert the byte from hex to decimal so we can increment it
-                        var byteValue = parseInt(_MemoryManager.readMemory(address), 16);
+                        var byteValue = parseInt(_MemoryAccessor.readMemory(address), 16);
                         byteValue++;
                         // Then convert the byte back to hex, and set it back to that address in memory
                         var hexByteValue = byteValue.toString(16);
-                        _MemoryManager.writeMemory(address, hexByteValue);
+                        _MemoryAccessor.writeMemory(address, hexByteValue);
                         this.PC = this.PC+3;
                         break;
                     case "FF": // System call: if 1 in X reg, make syscall to print integer store in Y reg. if 2, then print 00-terminated string stored at address in Y register.
@@ -187,7 +187,7 @@ module TSOS {
                             var string = "";
                             // Gets the ASCII from the address, converts it to characters, then passes to console's putText.
                             while(_Memory.memoryArray[address] != "00"){
-                                var ascii = _MemoryManager.readMemory(address);
+                                var ascii = _MemoryAccessor.readMemory(address);
                                 // Convert hex to decimal
                                 var dec = parseInt(ascii.toString(), 16);
                                 var chr = String.fromCharCode(dec);

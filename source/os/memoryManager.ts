@@ -89,51 +89,5 @@
         public getCurrentPartition(): number {
             return _ProcessManager.running.Partition;
         }
-
-        // This reads the memory based on a given address in memory
-        // Returns the hex string value stored in memory
-        // Enforce memory out of bounds rule
-        // Also do address translation!
-        public readMemory(addr): string {
-            if(this.inBounds(addr)){
-                var partition = _ProcessManager.running.Partition;
-                return _Memory.memoryArray[this.partitions[partition].base + addr].toString();
-            }
-            else{
-                _KernelInterruptQueue.enqueue(new Interrupt(PROCESS_EXIT, 0));
-                _KernelInterruptQueue.enqueue(new Interrupt(CONSOLE_WRITE_IR, "Out of bounds memory access error..."));
-            }
-            
-        }
-
-        // This writes to memory based on an address and value given
-        // Enforce memory out of bounds rule
-        // Also do address translation!
-        public writeMemory(addr, value): void {
-            if(this.inBounds(addr)){
-                if(parseInt(value, 16) < 16){
-                    value = "0" + value;
-                }
-                var partition = _ProcessManager.running.Partition;
-                _Memory.memoryArray[this.partitions[partition].base + addr] = value;
-            }
-            else{
-                _KernelInterruptQueue.enqueue(new Interrupt(PROCESS_EXIT, 0));
-                _KernelInterruptQueue.enqueue(new Interrupt(CONSOLE_WRITE_IR, "Out of bounds memory access error..."));
-            }
-        }
-
-        // Checks to make sure the memory being accessed is within the range specified by the base/limit
-        // Do address translation based on PCB being run
-        public inBounds(addr): boolean {
-            var partition = _ProcessManager.running.Partition;
-            if(this.partitions[partition].base + addr < this.partitions[partition].base + this.partitions[partition].limit){
-                return true;
-            }
-            else{
-                return false;
-            }
-        }
-
     }
 }

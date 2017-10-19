@@ -260,10 +260,12 @@ var TSOS;
             _CPU = new TSOS.Cpu(); // Note: We could simulate multi-core systems by instantiating more than one instance of the CPU here.
             _CPU.init(); //       There's more to do, like dealing with scheduling and such, but this would be a start. Pretty cool.
             Control.hostCPU(); // Update the CPU display
-            //Create and initialize the memory and its display
+            // Create and initialize the memory and its display
             _Memory = new TSOS.Memory();
             _Memory.init();
             Control.initMemoryDisplay();
+            // Create the memory accessor
+            _MemoryAccessor = new TSOS.MemoryAccessor();
             // ... then set the host clock pulse ...
             _hardwareClockID = setInterval(TSOS.Devices.hostClockPulse, CPU_CLOCK_INTERVAL);
             // .. and call the OS Kernel Bootstrap routine.
