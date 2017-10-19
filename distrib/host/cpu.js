@@ -45,7 +45,6 @@ var TSOS;
             // Based on program counter, get op code, do it, then set program counter accordingly
             // Also, check to make sure the PC is not out of bounds in memory
             if (!_MemoryAccessor.inBounds(this.PC)) {
-                console.log('test');
                 _KernelInterruptQueue.enqueue(new TSOS.Interrupt(PROCESS_EXIT, 0));
                 _KernelInterruptQueue.enqueue(new TSOS.Interrupt(CONSOLE_WRITE_IR, "Out of bounds memory access error..."));
             }

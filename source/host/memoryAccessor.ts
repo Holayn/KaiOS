@@ -62,8 +62,6 @@ module TSOS {
         // Do address translation based on PCB being run
         public inBounds(addr): boolean {
             var partition = _ProcessManager.running.Partition;
-            console.log(addr);
-            console.log(partition);
             if(addr + _MemoryManager.partitions[partition].base < _MemoryManager.partitions[partition].base + _MemoryManager.partitions[partition].limit && addr + _MemoryManager.partitions[partition].base >= _MemoryManager.partitions[partition].base){
                 return true;
             }
