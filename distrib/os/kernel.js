@@ -143,7 +143,7 @@ var TSOS;
                     _ProcessManager.exitProcess();
                     break;
                 case CONTEXT_SWITCH:// Placeholder for context switching. We only update the PCB when there is a context switch!!!
-                    break; // Therefore, in project 2, the PCB for the running process is never updated
+                    break; // Therefore, in project 2, the PCB for the running process is never updated!!!
                 case CONSOLE_WRITE_IR:
                     _StdOut.putText(params);
                     break;

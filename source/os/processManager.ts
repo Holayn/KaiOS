@@ -4,6 +4,7 @@
    This is the client OS implementation of a process manager.
    This is responsible for keeping track of all the processes in the OS,
    as well as creating, saving, and exiting them.
+   PROJECT 2: NOT UPDATING PCB BECAUSE WE NEVER DO A CONTEXT SWITCH.
    ------------ */
 
    module TSOS {
