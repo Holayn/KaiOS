@@ -109,6 +109,10 @@ var TSOS;
                 // Rotate the background when OS is running
                 TSOS.Control.rotateBackground();
             }
+            // Update the CPU display
+            TSOS.Control.hostCPU();
+            // Update the memory display
+            TSOS.Control.hostMemory();
         };
         //
         // Interrupt Handling

@@ -48,6 +48,8 @@
             _MemoryManager.clearMemoryPartition(this.running.Partition);
             this.running = null;
             Control.hostProcesses();
+            // Control.hostCPU();
+            // Control.hostMemory();
         }
 
         // On each clock pulse, check to see if there is anything in the ready queue.

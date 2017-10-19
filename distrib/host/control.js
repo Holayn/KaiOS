@@ -220,6 +220,29 @@ var TSOS;
                 cell.innerHTML = pcb.Zflag;
             }
         };
+        Control.initMemoryDisplay = function () {
+            var table = document.getElementById('tableMemory');
+            // We assume each row will hold 8 memory values
+            for (var i = 0; i < _Memory.memoryArray.length / 8; i++) {
+                var row = table.insertRow(i);
+                var memoryAddrCell = row.insertCell(0);
+                var address = i * 8;
+                // Display address in proper memory hex notation
+                // Adds leading 0s if necessary
+                var displayAddress = "0x";
+                for (var k = 0; k < 3 - address.toString(16).length; k++) {
+                    displayAddress += "0";
+                }
+                displayAddress += address.toString(16).toUpperCase();
+                memoryAddrCell.innerHTML = displayAddress;
+                // Fill all the cells with 00s
+                for (var j = 1; j < 9; j++) {
+                    var cell = row.insertCell(j);
+                    cell.innerHTML = "00";
+                    cell.classList.add("memoryCell");
+                }
+            }
+        };
         //
         // Host Events
         //
@@ -236,9 +259,11 @@ var TSOS;
             // ... Create and initialize the CPU (because it's part of the hardware)  ...
             _CPU = new TSOS.Cpu(); // Note: We could simulate multi-core systems by instantiating more than one instance of the CPU here.
             _CPU.init(); //       There's more to do, like dealing with scheduling and such, but this would be a start. Pretty cool.
-            //Create and initialize the memory
+            Control.hostCPU(); // Update the CPU display
+            //Create and initialize the memory and its display
             _Memory = new TSOS.Memory();
             _Memory.init();
+            Control.initMemoryDisplay();
             // ... then set the host clock pulse ...
             _hardwareClockID = setInterval(TSOS.Devices.hostClockPulse, CPU_CLOCK_INTERVAL);
             // .. and call the OS Kernel Bootstrap routine.

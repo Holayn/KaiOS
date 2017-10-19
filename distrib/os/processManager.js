@@ -46,6 +46,8 @@ var TSOS;
             _MemoryManager.clearMemoryPartition(this.running.Partition);
             this.running = null;
             TSOS.Control.hostProcesses();
+            // Control.hostCPU();
+            // Control.hostMemory();
         };
         // On each clock pulse, check to see if there is anything in the ready queue.
         // If so, make the CPU run user process.

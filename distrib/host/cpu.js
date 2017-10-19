@@ -37,8 +37,6 @@ var TSOS;
             this.Yreg = 0;
             this.Zflag = 0;
             this.isExecuting = false;
-            // Update the CPU display
-            TSOS.Control.hostCPU();
         };
         Cpu.prototype.cycle = function () {
             // TODO: Accumulate CPU usage and profiling statistics here.
@@ -206,10 +204,6 @@ var TSOS;
                         _KernelInterruptQueue.enqueue(new TSOS.Interrupt(CONSOLE_WRITE_IR, "Invalid op code, exiting..."));
                 }
                 console.log(opCode + " " + this.PC + " " + this.Acc + " " + this.Xreg + " " + this.Yreg + " " + this.Zflag);
-                // Update the CPU display
-                TSOS.Control.hostCPU();
-                // Update the memory display
-                TSOS.Control.hostMemory();
             }
         };
         return Cpu;

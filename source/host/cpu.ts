@@ -35,8 +35,6 @@ module TSOS {
             this.Yreg = 0;
             this.Zflag = 0;
             this.isExecuting = false;
-            // Update the CPU display
-            Control.hostCPU();
         }
 
         public cycle(): void {
@@ -205,10 +203,6 @@ module TSOS {
                         _KernelInterruptQueue.enqueue(new Interrupt(CONSOLE_WRITE_IR, "Invalid op code, exiting..."));
                 }
                 console.log(opCode + " " + this.PC + " " + this.Acc + " " + this.Xreg + " " + this.Yreg + " " + this.Zflag);
-                // Update the CPU display
-                Control.hostCPU();
-                // Update the memory display
-                Control.hostMemory();
             }
         }
     }

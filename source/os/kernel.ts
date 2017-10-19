@@ -121,6 +121,10 @@ module TSOS {
                 // Rotate the background when OS is running
                 Control.rotateBackground();
             }
+            // Update the CPU display
+            Control.hostCPU();
+            // Update the memory display
+            Control.hostMemory();
         }
 
         //
