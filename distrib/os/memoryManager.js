@@ -82,15 +82,17 @@ var TSOS;
         };
         // Gets the current partition the CPU is executing in by checking what
         // partition the running process is in via process manager
-        MemoryManager.prototype.getCurrentPartition = function (pc) {
+        MemoryManager.prototype.getCurrentPartition = function () {
             return _ProcessManager.running.Partition;
         };
         // This reads the memory based on a given address in memory
         // Returns the hex string value stored in memory
         // Enforce memory out of bounds rule
+        // Also do address translation!
         MemoryManager.prototype.readMemory = function (addr) {
             if (this.inBounds(addr)) {
-                return _Memory.memoryArray[addr].toString();
+                var partition = _ProcessManager.running.Partition;
+                return _Memory.memoryArray[this.partitions[partition].base + addr].toString();
             }
             else {
                 _KernelInterruptQueue.enqueue(new TSOS.Interrupt(PROCESS_EXIT, 0));
@@ -99,12 +101,14 @@ var TSOS;
         };
         // This writes to memory based on an address and value given
         // Enforce memory out of bounds rule
+        // Also do address translation!
         MemoryManager.prototype.writeMemory = function (addr, value) {
             if (this.inBounds(addr)) {
                 if (parseInt(value, 16) < 16) {
                     value = "0" + value;
                 }
-                _Memory.memoryArray[addr] = value;
+                var partition = _ProcessManager.running.Partition;
+                _Memory.memoryArray[this.partitions[partition].base + addr] = value;
             }
             else {
                 _KernelInterruptQueue.enqueue(new TSOS.Interrupt(PROCESS_EXIT, 0));
@@ -112,9 +116,10 @@ var TSOS;
             }
         };
         // Checks to make sure the memory being accessed is within the range specified by the base/limit
+        // Do address translation based on PCB being run
         MemoryManager.prototype.inBounds = function (addr) {
             var partition = _ProcessManager.running.Partition;
-            if (addr >= this.partitions[partition].base && addr < this.partitions[partition].base + this.partitions[partition].limit) {
+            if (this.partitions[partition].base + addr < this.partitions[partition].base + this.partitions[partition].limit) {
                 return true;
             }
             else {
