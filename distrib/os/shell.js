@@ -67,13 +67,17 @@ var TSOS;
             sc = new TSOS.ShellCommand(this.shellSeppuku, "seppuku", "- Commit seppuku (trigger the BSOD message)");
             this.commandList[this.commandList.length] = sc;
             // status
-            sc = new TSOS.ShellCommand(this.shellStatus, "status", "<pid> - Changes the status message.");
+            sc = new TSOS.ShellCommand(this.shellStatus, "status", "<string> - Changes the status message.");
             this.commandList[this.commandList.length] = sc;
             // run
             sc = new TSOS.ShellCommand(this.shellRun, "run", "- Runs a program already in memory.");
             this.commandList[this.commandList.length] = sc;
+            // run all
+            sc = new TSOS.ShellCommand(this.shellRunAll, "runall", "- Runs all programs in memory.");
             // ps  - list the running processes and their IDs
+            sc = new TSOS.ShellCommand(this.shellPS, "ps", "- Lists all the running processes and their IDs");
             // kill <id> - kills the specified process id.
+            sc = new TSOS.ShellCommand(this.shellKill, "kill", "<pid> - Kills a specified process id");
             //
             // Display the initial prompt.
             this.putPrompt();
@@ -260,6 +264,15 @@ var TSOS;
                     case "run":
                         _StdOut.putText("Run allows the user to run a program loaded into memory.");
                         break;
+                    case "runall":
+                        _StdOut.putText("Runs all the processes in memory.");
+                        break;
+                    case "ps":
+                        _StdOut.putText("Lists all the processes in memory and their PIDs");
+                        break;
+                    case "kill":
+                        _StdOut.putText("Kills a specified process");
+                        break;
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
                 }
@@ -392,6 +405,15 @@ var TSOS;
             else {
                 _StdOut.putText("Usage: run <pid>  Please supply a process ID.");
             }
+        };
+        // Runs all the programs in memory
+        Shell.prototype.shellRunAll = function () {
+        };
+        // Lists all the processes and their associated PIDs
+        Shell.prototype.shellPS = function () {
+        };
+        // Kills a specified process
+        Shell.prototype.shellKill = function (args) {
         };
         return Shell;
     }());

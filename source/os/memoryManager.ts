@@ -36,14 +36,13 @@
         }
 
         // Checks to see if there is an available partition in memory
-        // For now, we'll only check the first partition to see if it's available (Project 2)
         public checkMemory(opcodesLength): boolean {
-            if(this.partitions[0].isEmpty && this.partitions[0].limit >= opcodesLength){
-                return true;
+            for(var i=0; i<this.partitions.length; i++){
+                if(this.partitions[i].isEmpty && this.partitions[i].limit >= opcodesLength){
+                    return true;
+                }
             }
-            else{
-                return false;
-            }
+            return false;
             // for(var i=this.partitions[0].base; i<this.partitions[0].limit; i++){
             //     if(_Memory.memoryArray[i] != "00"){
             //         this.partitions[0].isEmpty = false;
@@ -54,15 +53,13 @@
         }
 
         // Returns a reference to an available partition in memory 
-        // For now, only checks to see if the first partition is available (Project 2)
-        // If it is, return a reference to it
         public getFreePartition(opcodesLength): number {
-            if(this.partitions[0].isEmpty && this.partitions[0].limit >= opcodesLength){
-                return 0;
+            for(var i=0; i<this.partitions.length; i++){
+                if(this.partitions[i].isEmpty && this.partitions[i].limit >= opcodesLength){
+                    return i;
+                }
             }
-            else{
-                return -1;
-            }
+            return -1;
         }
 
         // Clears a memory partition, given the partition, and marks the partition as available.

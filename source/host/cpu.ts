@@ -44,6 +44,7 @@ module TSOS {
             // Based on program counter, get op code, do it, then set program counter accordingly
             // Also, check to make sure the PC is not out of bounds in memory
             if(!_MemoryAccessor.inBounds(this.PC)){
+                console.log('test')
                 _KernelInterruptQueue.enqueue(new Interrupt(PROCESS_EXIT, 0));
                 _KernelInterruptQueue.enqueue(new Interrupt(CONSOLE_WRITE_IR, "Out of bounds memory access error..."));
             }
@@ -186,7 +187,7 @@ module TSOS {
                             var address = this.Yreg;
                             var string = "";
                             // Gets the ASCII from the address, converts it to characters, then passes to console's putText.
-                            while(_Memory.memoryArray[address] != "00"){
+                            while(_MemoryAccessor.readMemory(address) != "00"){
                                 var ascii = _MemoryAccessor.readMemory(address);
                                 // Convert hex to decimal
                                 var dec = parseInt(ascii.toString(), 16);

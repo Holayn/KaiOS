@@ -27,6 +27,8 @@ var TSOS;
         MemoryAccessor.prototype.readMemory = function (addr) {
             if (this.inBounds(addr)) {
                 var partition = _ProcessManager.running.Partition;
+                // console.log(_MemoryManager.partitions[partition].base);
+                // console.log(addr);
                 return _Memory.memoryArray[_MemoryManager.partitions[partition].base + addr].toString();
             }
             else {
@@ -54,7 +56,9 @@ var TSOS;
         // Do address translation based on PCB being run
         MemoryAccessor.prototype.inBounds = function (addr) {
             var partition = _ProcessManager.running.Partition;
-            if (_MemoryManager.partitions[partition].base + addr < _MemoryManager.partitions[partition].base + _MemoryManager.partitions[partition].limit) {
+            console.log(addr);
+            console.log(partition);
+            if (addr + _MemoryManager.partitions[partition].base < _MemoryManager.partitions[partition].base + _MemoryManager.partitions[partition].limit && addr + _MemoryManager.partitions[partition].base >= _MemoryManager.partitions[partition].base) {
                 return true;
             }
             else {
@@ -63,7 +67,7 @@ var TSOS;
         };
         // Loops address and enforces base/limit constraints
         MemoryAccessor.prototype.bneLoop = function (pc, branch) {
-            return _MemoryManager.getBaseRegister(_ProcessManager.running.Partition) + (pc + branch + 2) % _MemoryManager.getLimitRegister(_ProcessManager.running.Partition);
+            return (pc + branch + 2) % _MemoryManager.getLimitRegister(_ProcessManager.running.Partition);
         };
         return MemoryAccessor;
     }());

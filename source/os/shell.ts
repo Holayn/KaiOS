@@ -113,7 +113,7 @@ module TSOS {
             // status
             sc = new ShellCommand(this.shellStatus,
                                   "status",
-                                  "<pid> - Changes the status message.");
+                                  "<string> - Changes the status message.");
             this.commandList[this.commandList.length] = sc;
 
             // run
@@ -122,8 +122,20 @@ module TSOS {
                 "- Runs a program already in memory.");
             this.commandList[this.commandList.length] = sc;
 
+            // run all
+            sc = new ShellCommand(this.shellRunAll,
+                                  "runall",
+                                  "- Runs all programs in memory.");
+
             // ps  - list the running processes and their IDs
+            sc = new ShellCommand(this.shellPS,
+                                  "ps",
+                                  "- Lists all the running processes and their IDs");
+
             // kill <id> - kills the specified process id.
+            sc = new ShellCommand(this.shellKill,
+                                  "kill",
+                                  "<pid> - Kills a specified process id");
 
             //
             // Display the initial prompt.
@@ -322,6 +334,15 @@ module TSOS {
                     case "run":
                         _StdOut.putText("Run allows the user to run a program loaded into memory.");
                         break;
+                    case "runall":
+                        _StdOut.putText("Runs all the processes in memory.");
+                        break;
+                    case "ps":
+                        _StdOut.putText("Lists all the processes in memory and their PIDs");
+                        break;
+                    case "kill":
+                        _StdOut.putText("Kills a specified process");
+                        break;
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
                 }
@@ -455,6 +476,21 @@ module TSOS {
             else{
                 _StdOut.putText("Usage: run <pid>  Please supply a process ID.");
             }
+        }
+
+        // Runs all the programs in memory
+        public shellRunAll() {
+
+        }
+
+        // Lists all the processes and their associated PIDs
+        public shellPS() {
+
+        }
+
+        // Kills a specified process
+        public shellKill(args) {
+
         }
 
     }

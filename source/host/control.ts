@@ -130,7 +130,7 @@ module TSOS {
             }
             // Color the instruction that is being executed by the CPU
             if(_CPU.isExecuting){
-                var index = _CPU.PC;
+                var index = _CPU.PC + _MemoryManager.partitions[_ProcessManager.running.Partition].base;
                 this.colorMemory(table, index, "bold");
                 // Color the bytes of memory the instruction is referring to
                 // This stores the number of bytes the opcode refers to after itself in memory
