@@ -431,6 +431,12 @@ var TSOS;
         // Kills a specified process
         Shell.prototype.shellKill = function (args) {
         };
+        // Sets the quantum for round robin scheduling
+        Shell.prototype.shellQuantum = function (args) {
+        };
+        // Clears all memory partitions
+        Shell.prototype.clearMem = function () {
+        };
         return Shell;
     }());
     TSOS.Shell = Shell;
