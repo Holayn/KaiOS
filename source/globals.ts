@@ -60,6 +60,8 @@ var _KernelBuffers: any[] = null;   // when clearly 'any' is not what we want. T
 var _MemoryManager: any = null;
 // The OS's process manager
 var _ProcessManager: any = null;
+// The OS's scheduler
+var _Scheduler: any = null;
 
 // Standard input and output
 var _StdIn;    // Same "to null or not to null" issue as above.

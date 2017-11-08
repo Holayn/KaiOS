@@ -8,11 +8,8 @@
    ------------ */
 var TSOS;
 (function (TSOS) {
-    var ProcessManager = /** @class */ (function () {
-        function ProcessManager(residentQueue, readyQueue, running) {
-            this.residentQueue = residentQueue;
-            this.readyQueue = readyQueue;
-            this.running = running;
+    var ProcessManager = (function () {
+        function ProcessManager() {
             this.residentQueue = new TSOS.Queue(); // Where we load the program into memory, where it waits to be run.
             this.readyQueue = new TSOS.Queue(); // Where a program is put when marked for CPU to move its program counter forward.
         }
@@ -83,6 +80,13 @@ var TSOS;
         // This checks if a process is running
         ProcessManager.prototype.isRunning = function () {
             return this.running != null;
+        };
+        // This runs all the programs in memory by moving all the PCBs
+        // in the resident queue to the ready queue
+        ProcessManager.prototype.runAll = function () {
+            while (!this.residentQueue.isEmpty) {
+                this.readyQueue.enqueue(this.residentQueue.dequeue());
+            }
         };
         // For now, we don't do context switching.
         // Therefore, the PCB will never get updated

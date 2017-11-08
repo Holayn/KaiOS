@@ -5,7 +5,7 @@
    -------- */
 var TSOS;
 (function (TSOS) {
-    var Utils = /** @class */ (function () {
+    var Utils = (function () {
         function Utils() {
         }
         Utils.trim = function (str) {

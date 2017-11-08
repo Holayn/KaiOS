@@ -126,16 +126,19 @@ module TSOS {
             sc = new ShellCommand(this.shellRunAll,
                                   "runall",
                                   "- Runs all programs in memory.");
+            this.commandList[this.commandList.length] = sc;
 
             // ps  - list the running processes and their IDs
             sc = new ShellCommand(this.shellPS,
                                   "ps",
                                   "- Lists all the running processes and their IDs");
+            this.commandList[this.commandList.length] = sc;
 
             // kill <id> - kills the specified process id.
             sc = new ShellCommand(this.shellKill,
                                   "kill",
                                   "<pid> - Kills a specified process id");
+            this.commandList[this.commandList.length] = sc;
 
             //
             // Display the initial prompt.
@@ -480,7 +483,7 @@ module TSOS {
 
         // Runs all the programs in memory
         public shellRunAll() {
-
+            console.log("hi");
         }
 
         // Lists all the processes and their associated PIDs

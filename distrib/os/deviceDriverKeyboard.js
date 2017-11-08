@@ -20,7 +20,7 @@ var __extends = (this && this.__extends) || (function () {
 var TSOS;
 (function (TSOS) {
     // Extends DeviceDriver
-    var DeviceDriverKeyboard = /** @class */ (function (_super) {
+    var DeviceDriverKeyboard = (function (_super) {
         __extends(DeviceDriverKeyboard, _super);
         function DeviceDriverKeyboard() {
             // Override the base method pointers.
@@ -46,7 +46,7 @@ var TSOS;
             var chr = "";
             var audio;
             // Check to see if we even want to deal with the key that was pressed.
-            if (((keyCode >= 65) && (keyCode <= 90)) || // A..Z
+            if (((keyCode >= 65) && (keyCode <= 90)) ||
                 ((keyCode >= 97) && (keyCode <= 123))) {
                 // Determine the character we want to display.
                 // Assume it's lowercase...
@@ -88,7 +88,7 @@ var TSOS;
                 }
                 _KernelInputQueue.enqueue(chr);
             }
-            else if (((keyCode == 32) || // space
+            else if (((keyCode == 32) ||
                 (keyCode == 13))) {
                 chr = String.fromCharCode(keyCode);
                 _KernelInputQueue.enqueue(chr);

@@ -1,5 +1,9 @@
 ///<reference path="../globals.ts" />
 ///<reference path="../os/canvastext.ts" />
+///<reference path="./cpu.ts" />
+///<reference path="./memory.ts" />
+///<reference path="./memoryAccessor.ts" />
+///<reference path="./devices.ts" />
 /* ------------
      Control.ts
 
@@ -23,7 +27,7 @@
 //
 var TSOS;
 (function (TSOS) {
-    var Control = /** @class */ (function () {
+    var Control = (function () {
         function Control() {
         }
         Control.hostInit = function () {
@@ -101,7 +105,8 @@ var TSOS;
             for (var i = 0; i < table.rows.length; i++) {
                 for (var j = 1; j < 9; j++) {
                     table.rows[i].cells.item(j).innerHTML = _Memory.memoryArray[memoryPtr].toString();
-                    table.rows[i].cells.item(j).style = "color: black; font-weight: normal";
+                    table.rows[i].cells.item(j).style.color = "black";
+                    table.rows[i].cells.item(j).style['font-weight'] = "normal";
                     // Check to see if the hex needs a leading zero.
                     // If it does, then convert the hex to decimal, then back to hex, and add a leading zero.
                     // We do that seemingly dumb step because if the value stored in memory already has a leading 0, will make display look gross.
@@ -267,7 +272,8 @@ var TSOS;
             // Create the memory accessor
             _MemoryAccessor = new TSOS.MemoryAccessor();
             // ... then set the host clock pulse ...
-            _hardwareClockID = setInterval(TSOS.Devices.hostClockPulse, CPU_CLOCK_INTERVAL);
+            // _hardwareClockID = setInterval(Devices.hostClockPulse, CPU_CLOCK_INTERVAL);
+            setInterval(TSOS.Devices.hostClockPulse, CPU_CLOCK_INTERVAL);
             // .. and call the OS Kernel Bootstrap routine.
             _Kernel = new TSOS.Kernel();
             _Kernel.krnBootstrap(); // _GLaDOS.afterStartup() will get called in there, if configured.
@@ -292,13 +298,13 @@ var TSOS;
         Control.hostBtnSingleStep_click = function (btn) {
             _SingleStepMode = !_SingleStepMode;
             if (_SingleStepMode) {
-                document.getElementById("btnSingleStep").style = "background-color: #42f450";
-                document.getElementById("btnNextStep").style = "background-color: green";
+                document.getElementById("btnSingleStep").style['background-color'] = "#42f450";
+                document.getElementById("btnNextStep").style['background-color'] = "green";
                 document.getElementById("btnNextStep").disabled = false;
             }
             else {
-                document.getElementById("btnSingleStep").style = "color: white";
-                document.getElementById("btnNextStep").style = "background-color: lightgrey;";
+                document.getElementById("btnSingleStep").style.color = "white";
+                document.getElementById("btnNextStep").style['background-color'] = "lightgrey;";
                 document.getElementById("btnNextStep").disabled = true;
             }
         };
@@ -329,8 +335,8 @@ var TSOS;
             document.getElementsByTagName('head')[0].appendChild(style);
             document.getElementById("background").classList.add("derp");
         };
-        Control.rotate = 0; // Used for rotating the background
         return Control;
     }());
+    Control.rotate = 0; // Used for rotating the background
     TSOS.Control = Control;
 })(TSOS || (TSOS = {}));

@@ -1,5 +1,12 @@
 ///<reference path="../globals.ts" />
 ///<reference path="queue.ts" />
+///<reference path="../host/control.ts" />
+///<reference path="../host/devices.ts" />
+///<reference path="deviceDriverKeyboard.ts" />
+///<reference path="memoryManager.ts" />
+///<reference path="processManager.ts" />
+///<reference path="scheduler.ts" />
+///<reference path="shell.ts" />
 
 /* ------------
      Kernel.ts
@@ -52,6 +59,9 @@ module TSOS {
             // Load the process manager
             _ProcessManager = new ProcessManager();
 
+            // Load the scheduler
+            _Scheduler = new Scheduler();
+
             // Enable the OS Interrupts.  (Not the CPU clock interrupt, as that is done in the hardware sim.)
             this.krnTrace("Enabling the interrupts.");
             this.krnEnableInterrupts();
@@ -102,10 +112,15 @@ module TSOS {
                     if(_NextStep){
                         _CPU.cycle();
                         _NextStep = false;
+                        // Big brother scheduler is watching you...and your CPU cycles
+
                     }
                 }
                 else{
                     _CPU.cycle();
+                    // Big brother scheduler is watching you...and your CPU cycles
+
+
                 }
             } else {                        // If there are no interrupts and there is nothing being executed then just be idle. 
                 _NextStep = false;          // Handles the case for if the user presses next step in single step mode when nothing is executing

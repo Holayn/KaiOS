@@ -3,7 +3,7 @@
    ------------ */
 var TSOS;
 (function (TSOS) {
-    var Interrupt = /** @class */ (function () {
+    var Interrupt = (function () {
         function Interrupt(irq, params) {
             this.irq = irq;
             this.params = params;

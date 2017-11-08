@@ -15,7 +15,7 @@
 // TODO: Write a base class / prototype for system services and let Shell inherit from it.
 var TSOS;
 (function (TSOS) {
-    var Shell = /** @class */ (function () {
+    var Shell = (function () {
         function Shell() {
             // Properties
             this.promptStr = ">";
@@ -74,10 +74,13 @@ var TSOS;
             this.commandList[this.commandList.length] = sc;
             // run all
             sc = new TSOS.ShellCommand(this.shellRunAll, "runall", "- Runs all programs in memory.");
+            this.commandList[this.commandList.length] = sc;
             // ps  - list the running processes and their IDs
             sc = new TSOS.ShellCommand(this.shellPS, "ps", "- Lists all the running processes and their IDs");
+            this.commandList[this.commandList.length] = sc;
             // kill <id> - kills the specified process id.
             sc = new TSOS.ShellCommand(this.shellKill, "kill", "<pid> - Kills a specified process id");
+            this.commandList[this.commandList.length] = sc;
             //
             // Display the initial prompt.
             this.putPrompt();
@@ -408,6 +411,7 @@ var TSOS;
         };
         // Runs all the programs in memory
         Shell.prototype.shellRunAll = function () {
+            console.log("hi");
         };
         // Lists all the processes and their associated PIDs
         Shell.prototype.shellPS = function () {

@@ -44,6 +44,8 @@ var _KernelBuffers = null; // when clearly 'any' is not what we want. There is l
 var _MemoryManager = null;
 // The OS's process manager
 var _ProcessManager = null;
+// The OS's scheduler
+var _Scheduler = null;
 // Standard input and output
 var _StdIn; // Same "to null or not to null" issue as above.
 var _StdOut;

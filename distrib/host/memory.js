@@ -13,10 +13,9 @@
      ------------ */
 var TSOS;
 (function (TSOS) {
-    var Memory = /** @class */ (function () {
+    var Memory = (function () {
         // Let's just represent the memory as an array of size 768 bytes, 3 partitions of 256
-        function Memory(memoryArray) {
-            this.memoryArray = memoryArray;
+        function Memory() {
         }
         // Initialize the memory and the memory display
         Memory.prototype.init = function () {

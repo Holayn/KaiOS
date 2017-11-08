@@ -1,5 +1,9 @@
 ///<reference path="../globals.ts" />
 ///<reference path="../os/canvastext.ts" />
+///<reference path="./cpu.ts" />
+///<reference path="./memory.ts" />
+///<reference path="./memoryAccessor.ts" />
+///<reference path="./devices.ts" />
 
 /* ------------
      Control.ts
@@ -117,7 +121,8 @@ module TSOS {
             for(var i=0; i<table.rows.length; i++){
                 for(var j=1; j<9; j++){
                     table.rows[i].cells.item(j).innerHTML = _Memory.memoryArray[memoryPtr].toString();
-                    table.rows[i].cells.item(j).style = "color: black; font-weight: normal";
+                    table.rows[i].cells.item(j).style.color = "black"; 
+                    table.rows[i].cells.item(j).style['font-weight'] = "normal";
                     // Check to see if the hex needs a leading zero.
                     // If it does, then convert the hex to decimal, then back to hex, and add a leading zero.
                     // We do that seemingly dumb step because if the value stored in memory already has a leading 0, will make display look gross.
@@ -175,7 +180,7 @@ module TSOS {
             // For each PCB in ready queue, print out a new row for it
             // Create a clone of the ready queue so we don't mess around with the actual ready queue
             // Dequeue each PCB in this copy of the ready queue and display its info
-            var readyQueue = Object.assign({},_ProcessManager.readyQueue);
+            var readyQueue = (<any>Object).assign({},_ProcessManager.readyQueue);
             for(var i=0; i<table.rows.length-1; i++){
                 table.deleteRow(-1);
             }
@@ -293,7 +298,8 @@ module TSOS {
             _MemoryAccessor = new MemoryAccessor();
 
             // ... then set the host clock pulse ...
-            _hardwareClockID = setInterval(Devices.hostClockPulse, CPU_CLOCK_INTERVAL);
+            // _hardwareClockID = setInterval(Devices.hostClockPulse, CPU_CLOCK_INTERVAL);
+            setInterval(Devices.hostClockPulse, CPU_CLOCK_INTERVAL);
             // .. and call the OS Kernel Bootstrap routine.
             _Kernel = new Kernel();
             _Kernel.krnBootstrap();  // _GLaDOS.afterStartup() will get called in there, if configured.
@@ -321,13 +327,13 @@ module TSOS {
         public static hostBtnSingleStep_click(btn): void {
             _SingleStepMode = !_SingleStepMode;
             if(_SingleStepMode){
-                (<HTMLButtonElement>document.getElementById("btnSingleStep")).style = "background-color: #42f450";
-                (<HTMLButtonElement>document.getElementById("btnNextStep")).style = "background-color: green";
+                (<HTMLButtonElement>document.getElementById("btnSingleStep")).style['background-color'] = "#42f450";
+                (<HTMLButtonElement>document.getElementById("btnNextStep")).style['background-color'] = "green";
                 (<HTMLButtonElement>document.getElementById("btnNextStep")).disabled = false;
             }
             else{
-                (<HTMLButtonElement>document.getElementById("btnSingleStep")).style = "color: white";
-                (<HTMLButtonElement>document.getElementById("btnNextStep")).style = "background-color: lightgrey;";
+                (<HTMLButtonElement>document.getElementById("btnSingleStep")).style.color = "white";
+                (<HTMLButtonElement>document.getElementById("btnNextStep")).style['background-color'] = "lightgrey;";
                 (<HTMLButtonElement>document.getElementById("btnNextStep")).disabled = true;
             }
         }

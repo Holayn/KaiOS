@@ -9,7 +9,7 @@
      ------------ */
 var TSOS;
 (function (TSOS) {
-    var Console = /** @class */ (function () {
+    var Console = (function () {
         function Console(currentFont, currentFontSize, currentXPosition, currentYPosition, buffer, commandHistory, //Stores a history of all commands the user has typed in
             commandMatches, //Stores the matches of tab completion
             commandMatchCounter, //Counter to keep track of tab cycle

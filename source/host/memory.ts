@@ -16,10 +16,9 @@
 module TSOS {
 
     export class Memory {
-
+        public memoryArray: Array<String>
         // Let's just represent the memory as an array of size 768 bytes, 3 partitions of 256
-        constructor(public memoryArray: Array<String>) {}
-
+        constructor() {}
         // Initialize the memory and the memory display
         public init(): void {
             this.memoryArray = new Array<String>(768);

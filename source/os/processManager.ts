@@ -9,10 +9,10 @@
 
    module TSOS {
     export class ProcessManager {
-
-        constructor(public residentQueue: any,
-                    public readyQueue: any,
-                    public running: TSOS.ProcessControlBlock) {     // Keeps track of running PCB
+        public residentQueue: any;
+        public readyQueue: any;
+        public running: TSOS.ProcessControlBlock;
+        constructor() {     // Keeps track of running PCB
             this.residentQueue = new Queue();                       // Where we load the program into memory, where it waits to be run.
             this.readyQueue = new Queue();                          // Where a program is put when marked for CPU to move its program counter forward.
         }
@@ -88,6 +88,14 @@
         // This checks if a process is running
         public isRunning(): boolean {
             return this.running != null;
+        }
+
+        // This runs all the programs in memory by moving all the PCBs
+        // in the resident queue to the ready queue
+        public runAll(): void {
+            while(!this.residentQueue.isEmpty){
+                this.readyQueue.enqueue(this.residentQueue.dequeue());
+            }
         }
 
         // For now, we don't do context switching.

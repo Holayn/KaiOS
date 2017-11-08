@@ -1,4 +1,5 @@
 ///<reference path="../globals.ts" />
+///<reference path="../os/interrupt.ts" />
 /* ------------
      memoryAccesor.ts
 
@@ -17,7 +18,7 @@
      ------------ */
 var TSOS;
 (function (TSOS) {
-    var MemoryAccessor = /** @class */ (function () {
+    var MemoryAccessor = (function () {
         function MemoryAccessor() {
         }
         // This reads the memory based on a given address in memory

@@ -5,7 +5,7 @@
      ------------------------------ */
 var TSOS;
 (function (TSOS) {
-    var DeviceDriver = /** @class */ (function () {
+    var DeviceDriver = (function () {
         function DeviceDriver() {
             this.version = '0.07';
             this.status = 'unloaded';

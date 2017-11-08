@@ -9,7 +9,7 @@
    ------------ */
 var TSOS;
 (function (TSOS) {
-    var Queue = /** @class */ (function () {
+    var Queue = (function () {
         function Queue(q) {
             if (q === void 0) { q = new Array(); }
             this.q = q;

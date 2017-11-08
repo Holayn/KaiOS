@@ -1,5 +1,12 @@
 ///<reference path="../globals.ts" />
 ///<reference path="queue.ts" />
+///<reference path="../host/control.ts" />
+///<reference path="../host/devices.ts" />
+///<reference path="deviceDriverKeyboard.ts" />
+///<reference path="memoryManager.ts" />
+///<reference path="processManager.ts" />
+///<reference path="scheduler.ts" />
+///<reference path="shell.ts" />
 /* ------------
      Kernel.ts
 
@@ -13,7 +20,7 @@
      ------------ */
 var TSOS;
 (function (TSOS) {
-    var Kernel = /** @class */ (function () {
+    var Kernel = (function () {
         function Kernel() {
             //
             // OS Startup and Shutdown Routines
@@ -44,6 +51,8 @@ var TSOS;
             _MemoryManager = new TSOS.MemoryManager();
             // Load the process manager
             _ProcessManager = new TSOS.ProcessManager();
+            // Load the scheduler
+            _Scheduler = new TSOS.Scheduler();
             // Enable the OS Interrupts.  (Not the CPU clock interrupt, as that is done in the hardware sim.)
             this.krnTrace("Enabling the interrupts.");
             this.krnEnableInterrupts();
@@ -89,10 +98,12 @@ var TSOS;
                     if (_NextStep) {
                         _CPU.cycle();
                         _NextStep = false;
+                        // Big brother scheduler is watching you...and your CPU cycles
                     }
                 }
                 else {
                     _CPU.cycle();
+                    // Big brother scheduler is watching you...and your CPU cycles
                 }
             }
             else {
@@ -146,7 +157,7 @@ var TSOS;
                 case PROCESS_EXIT:
                     _ProcessManager.exitProcess();
                     break;
-                case CONTEXT_SWITCH:// Placeholder for context switching. We only update the PCB when there is a context switch!!!
+                case CONTEXT_SWITCH:
                     break; // Therefore, in project 2, the PCB for the running process is never updated!!!
                 case CONSOLE_WRITE_IR:
                     _StdOut.putText(params);

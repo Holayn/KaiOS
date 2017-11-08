@@ -6,7 +6,8 @@
 
    module TSOS {
     export class MemoryManager {
-        constructor(public partitions: Array<Object>){
+        public partitions: Array<any>
+        constructor(){
             // We'll have three partitions in memory, each of 256 bytes in size
             // We'll also store a flag for each partition representing if the partition is available
             this.partitions = [

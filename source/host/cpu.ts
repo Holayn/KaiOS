@@ -62,7 +62,7 @@ module TSOS {
                         hexString = _MemoryAccessor.readMemory(this.PC+2) + hexString;
                         // Convert it to decimal and store it in the accumulator
                         var address = parseInt(hexString, 16);
-                        this.Acc = _MemoryAccessor.readMemory(address);
+                        this.Acc = parseInt(_MemoryAccessor.readMemory(address), 16);
                         this.PC = this.PC+3;
                         break;
                     case "8D": // store the accumulator in memory
