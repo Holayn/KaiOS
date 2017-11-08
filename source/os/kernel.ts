@@ -113,7 +113,7 @@ module TSOS {
                         _CPU.cycle();
                         _NextStep = false;
                         // Big brother scheduler is watching you...and your CPU cycles
-
+                        
                     }
                 }
                 else{

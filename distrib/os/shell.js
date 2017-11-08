@@ -81,6 +81,12 @@ var TSOS;
             // kill <id> - kills the specified process id.
             sc = new TSOS.ShellCommand(this.shellKill, "kill", "<pid> - Kills a specified process id");
             this.commandList[this.commandList.length] = sc;
+            // quantum <int> - sets the quantum for round robin scheduling
+            sc = new TSOS.ShellCommand(this.shellQuantum, "quantum", "<int> - Sets the quantum for round robin scheduling");
+            this.commandList[this.commandList.length] = sc;
+            // clearmem - clears all memory partitions
+            sc = new TSOS.ShellCommand(this.shellClearMem, "clearmem", "- Clears all memory partitions");
+            this.commandList[this.commandList.length] = sc;
             //
             // Display the initial prompt.
             this.putPrompt();
@@ -275,6 +281,12 @@ var TSOS;
                         break;
                     case "kill":
                         _StdOut.putText("Kills a specified process");
+                        break;
+                    case "quantum":
+                        _StdOut.putText("Sets the quantum for round robin scheduling");
+                        break;
+                    case "clearmem":
+                        _StdOut.putText("Clears all memory partitions");
                         break;
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
