@@ -84,9 +84,14 @@ var TSOS;
         // This runs all the programs in memory by moving all the PCBs
         // in the resident queue to the ready queue
         ProcessManager.prototype.runAll = function () {
-            while (!this.residentQueue.isEmpty) {
+            TSOS.Control.hostLog("Running all programs", "os");
+            console.log(this.residentQueue);
+            console.log(this.readyQueue);
+            while (!this.residentQueue.isEmpty()) {
                 this.readyQueue.enqueue(this.residentQueue.dequeue());
+                console.log("ADS");
             }
+            console.log(this.readyQueue);
         };
         // For now, we don't do context switching.
         // Therefore, the PCB will never get updated

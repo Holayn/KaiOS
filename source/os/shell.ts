@@ -483,7 +483,7 @@ module TSOS {
 
         // Runs all the programs in memory
         public shellRunAll() {
-            console.log("hi");
+            _ProcessManager.runAll();
         }
 
         // Lists all the processes and their associated PIDs

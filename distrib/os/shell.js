@@ -411,7 +411,7 @@ var TSOS;
         };
         // Runs all the programs in memory
         Shell.prototype.shellRunAll = function () {
-            console.log("hi");
+            _ProcessManager.runAll();
         };
         // Lists all the processes and their associated PIDs
         Shell.prototype.shellPS = function () {
