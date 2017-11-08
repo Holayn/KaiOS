@@ -75,8 +75,8 @@ var TSOS;
             // run all
             sc = new TSOS.ShellCommand(this.shellRunAll, "runall", "- Runs all programs in memory.");
             this.commandList[this.commandList.length] = sc;
-            // ps  - list the running processes and their IDs
-            sc = new TSOS.ShellCommand(this.shellPS, "ps", "- Lists all the running processes and their IDs");
+            // ps  - list the running processes' IDs
+            sc = new TSOS.ShellCommand(this.shellPS, "ps", "- Lists all the running processes' IDs");
             this.commandList[this.commandList.length] = sc;
             // kill <id> - kills the specified process id.
             sc = new TSOS.ShellCommand(this.shellKill, "kill", "<pid> - Kills a specified process id");
@@ -87,7 +87,6 @@ var TSOS;
             // clearmem - clears all memory partitions
             sc = new TSOS.ShellCommand(this.shellClearMem, "clearmem", "- Clears all memory partitions");
             this.commandList[this.commandList.length] = sc;
-            //
             // Display the initial prompt.
             this.putPrompt();
         };
@@ -277,7 +276,7 @@ var TSOS;
                         _StdOut.putText("Runs all the processes in memory.");
                         break;
                     case "ps":
-                        _StdOut.putText("Lists all the processes in memory and their PIDs");
+                        _StdOut.putText("Lists all the active processes' PIDs");
                         break;
                     case "kill":
                         _StdOut.putText("Kills a specified process");
@@ -425,8 +424,19 @@ var TSOS;
         Shell.prototype.shellRunAll = function () {
             _ProcessManager.runAll();
         };
-        // Lists all the processes and their associated PIDs
+        // Lists all the active processes' PIDs
         Shell.prototype.shellPS = function () {
+            var arr = _ProcessManager.listAll();
+            _StdOut.putText("Active processes' PIDs: ");
+            while (arr.length > 0) {
+                _StdOut.putText(arr.pop());
+                if (arr.length != 0) {
+                    _StdOut.putText(", ");
+                }
+                else {
+                    _StdOut.putText(".");
+                }
+            }
         };
         // Kills a specified process
         Shell.prototype.shellKill = function (args) {
@@ -435,7 +445,7 @@ var TSOS;
         Shell.prototype.shellQuantum = function (args) {
         };
         // Clears all memory partitions
-        Shell.prototype.clearMem = function () {
+        Shell.prototype.shellClearMem = function () {
         };
         return Shell;
     }());

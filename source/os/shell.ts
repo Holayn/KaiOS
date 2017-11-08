@@ -128,10 +128,10 @@ module TSOS {
                                   "- Runs all programs in memory.");
             this.commandList[this.commandList.length] = sc;
 
-            // ps  - list the running processes and their IDs
+            // ps  - list the running processes' IDs
             sc = new ShellCommand(this.shellPS,
                                   "ps",
-                                  "- Lists all the running processes and their IDs");
+                                  "- Lists all the running processes' IDs");
             this.commandList[this.commandList.length] = sc;
 
             // kill <id> - kills the specified process id.
@@ -152,7 +152,6 @@ module TSOS {
                                   "- Clears all memory partitions");
             this.commandList[this.commandList.length] = sc;
 
-            //
             // Display the initial prompt.
             this.putPrompt();
         }
@@ -353,7 +352,7 @@ module TSOS {
                         _StdOut.putText("Runs all the processes in memory.");
                         break;
                     case "ps":
-                        _StdOut.putText("Lists all the processes in memory and their PIDs");
+                        _StdOut.putText("Lists all the active processes' PIDs");
                         break;
                     case "kill":
                         _StdOut.putText("Kills a specified process");
@@ -504,9 +503,19 @@ module TSOS {
             _ProcessManager.runAll();
         }
 
-        // Lists all the processes and their associated PIDs
+        // Lists all the active processes' PIDs
         public shellPS() {
-
+            let arr: Array<String> = _ProcessManager.listAll();
+            _StdOut.putText("Active processes' PIDs: ");
+            while(arr.length > 0){
+                _StdOut.putText(arr.pop());
+                if(arr.length != 0){
+                    _StdOut.putText(", ");
+                }
+                else{
+                    _StdOut.putText(".");
+                }
+            }
         }
 
         // Kills a specified process
@@ -520,7 +529,7 @@ module TSOS {
         }
 
         // Clears all memory partitions
-        public clearMem() {
+        public shellClearMem() {
 
         }
 
