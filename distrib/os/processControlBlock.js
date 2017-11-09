@@ -20,6 +20,8 @@ var TSOS;
             this.Yreg = 0;
             this.Zflag = 0;
             this.Partition = partition;
+            this.turnAroundTime = 0;
+            this.waitTime = 0;
         };
         return ProcessControlBlock;
     }());

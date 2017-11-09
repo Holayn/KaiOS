@@ -229,7 +229,6 @@ module TSOS {
                 cell = row.insertCell();
                 cell.innerHTML = displayPcb.Zflag.toString(16).toUpperCase();
             }
-            // console.log(table.rows.length);
         }
 
         public static initMemoryDisplay(): void {

@@ -100,6 +100,8 @@ var TSOS;
                         _NextStep = false;
                         // Big brother scheduler is watching you...and your CPU cycles
                         _Scheduler.watch();
+                        // Update the wait times and turnaround times for all processes
+                        _ProcessManager.processStats();
                     }
                     this.krnTrace("Idle");
                 }
@@ -107,6 +109,8 @@ var TSOS;
                     _CPU.cycle();
                     // Big brother scheduler is watching you...and your CPU cycles
                     _Scheduler.watch();
+                    // Update the wait times and turnaround times for all processes
+                    _ProcessManager.processStats();
                 }
             }
             else {
@@ -121,8 +125,6 @@ var TSOS;
             if (this.bsod) {
                 TSOS.Control.crazySpin();
             }
-            // Update the processes display
-            // Control.hostProcesses();
             // Update the CPU display
             TSOS.Control.hostCPU();
             // Update the memory display

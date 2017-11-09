@@ -15,6 +15,9 @@
         public Yreg: number;
         public Zflag: number;
         public Partition: number;
+        // This tracks turnaround and waittime for each process
+        public turnAroundTime: number;
+        public waitTime: number;
         constructor(public processId){
             this.Pid = processId;
         }
@@ -29,6 +32,8 @@
             this.Yreg = 0;
             this.Zflag = 0;
             this.Partition = partition;
+            this.turnAroundTime = 0;
+            this.waitTime = 0;
         }
     }
 }

@@ -48,13 +48,21 @@
             _MemoryManager.clearMemoryPartition(this.running.Partition);
             // Update host log
             Control.hostLog("Exiting process " + this.running.Pid, "os");
+            // Print out the wait time and turnaround time for that process
+            _StdOut.advanceLine();
+            _StdOut.putText("Process ID: " + this.running.Pid);
+            _StdOut.advanceLine();
+            _StdOut.putText("Turnaround time: " + this.running.turnAroundTime + " cycles.");
+            _StdOut.advanceLine();
+            _StdOut.putText("Wait time: " + this.running.waitTime + " cycles.");
+            _StdOut.advanceLine();
+            _OsShell.putPrompt();
+            // Clear out running process
             this.running = null;
             // Update processes display
             Control.hostProcesses();
             // Reset the scheduler's counter
             _Scheduler.unwatch();
-            // Control.hostCPU();
-            // Control.hostMemory();
         }
 
         // This exits a process from the ready queue.
@@ -166,6 +174,19 @@
             this.running.Zflag = _CPU.Zflag;
             this.running.State = "Waiting";
             this.running.IR = _Memory.memoryArray[_CPU.PC].toString(); 
+        }
+
+        // Update turnaround times and wait times for all processes
+        public processStats(): void {
+            // Increment the turnaround times for all processes
+            // Increment the wait times for all processes in the ready queue
+            this.running.turnAroundTime++;
+            for(var i=0; i<this.readyQueue.getSize(); i++){
+                var pcb = this.readyQueue.dequeue();
+                pcb.turnAroundTime++;
+                pcb.waitTime++;
+                this.readyQueue.enqueue(pcb);
+            }
         }
     }
 }

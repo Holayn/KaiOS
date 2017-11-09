@@ -114,6 +114,8 @@ module TSOS {
                         _NextStep = false;
                         // Big brother scheduler is watching you...and your CPU cycles
                         _Scheduler.watch();
+                        // Update the wait times and turnaround times for all processes
+                        _ProcessManager.processStats();
                     }
                     this.krnTrace("Idle");
                 }
@@ -121,6 +123,8 @@ module TSOS {
                     _CPU.cycle();
                     // Big brother scheduler is watching you...and your CPU cycles
                     _Scheduler.watch();
+                    // Update the wait times and turnaround times for all processes
+                    _ProcessManager.processStats();
                 }
             } else {                        // If there are no interrupts and there is nothing being executed then just be idle. 
                 _NextStep = false;          // Handles the case for if the user presses next step in single step mode when nothing is executing
@@ -134,8 +138,6 @@ module TSOS {
             if(this.bsod){
                 Control.crazySpin();
             }
-            // Update the processes display
-            // Control.hostProcesses();
             // Update the CPU display
             Control.hostCPU();
             // Update the memory display
