@@ -17,11 +17,15 @@ module TSOS {
         // This is called on every CPU cycle to count the number of clock 
         // cycles that the process was being executed for
         public watch() {
-            this.counter++;
-            // If the quantum has been used up, perform a context switch
-            if(this.counter == this.quantum){
-                _KernelInterruptQueue.enqueue(new Interrupt(CONTEXT_SWITCH, 0));
-                this.counter = 0;
+            // Don't actually do context switching if there is nothing in the ready 
+            // Why invoke additional overhead?
+            if(_ProcessManager.readyQueue.getSize() > 0){
+                this.counter++;
+                // If the quantum has been used up, perform a context switch
+                if(this.counter == this.quantum){
+                    _KernelInterruptQueue.enqueue(new Interrupt(CONTEXT_SWITCH, 0));
+                    this.counter = 0;
+                }
             }
         }
         // This resets the counter for the number of CPU cycles that have occurred
