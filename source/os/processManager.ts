@@ -156,17 +156,22 @@
         // Returns a list of all processes by returning array of
         // the ids of PCBs in ready queue and the running PCB
         public listAll(): Array<String> {
-            let result: Array<String> = [];
-            result.push(new String(this.running.Pid));
-            for(var i=0; i<this.readyQueue.getSize(); i++){
-                var pcb = this.readyQueue.dequeue();
-                result.push(new String(pcb.Pid));
-                this.readyQueue.enqueue(pcb);
+            if(this.running != null){
+                let result: Array<String> = [];
+                result.push(new String(this.running.Pid));
+                for(var i=0; i<this.readyQueue.getSize(); i++){
+                    var pcb = this.readyQueue.dequeue();
+                    result.push(new String(pcb.Pid));
+                    this.readyQueue.enqueue(pcb);
+                }
+                // while(readyQueue.length > 0){
+                //     result.push(new String(readyQueue.pop().Pid));
+                // }
+                return result;
             }
-            // while(readyQueue.length > 0){
-            //     result.push(new String(readyQueue.pop().Pid));
-            // }
-            return result;
+            else{
+                return [];
+            }
         }
 
         // Updates the PCB when performing a context switch

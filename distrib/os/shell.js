@@ -427,6 +427,10 @@ var TSOS;
         // Lists all the active processes' PIDs
         Shell.prototype.shellPS = function () {
             var arr = _ProcessManager.listAll();
+            if (arr.length == 0) {
+                _StdOut.putText("No active processes.");
+                return;
+            }
             _StdOut.putText("Active processes' PIDs: ");
             while (arr.length > 0) {
                 _StdOut.putText(arr.pop());
