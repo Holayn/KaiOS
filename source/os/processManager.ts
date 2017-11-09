@@ -117,11 +117,16 @@
             return result;
         }
 
-        // For now, we don't do context switching.
-        // Therefore, the PCB will never get updated
-        public contextSwitch(): void {
-            // placeholder for later
-            // most likely will implement a scheduler.ts
+        // Updates the PCB when performing a context switch
+        // Simply saves the CPU information into the running PCB
+        public updatePCB(): void {
+            this.running.PC = _CPU.PC;
+            this.running.Acc = _CPU.Acc;
+            this.running.Xreg = _CPU.Xreg; 
+            this.running.Yreg = _CPU.Yreg;
+            this.running.Zflag = _CPU.Zflag;
+            this.running.State = "Waiting";
+            this.running.IR = _Memory.memoryArray[_CPU.PC].toString(); 
         }
     }
 }

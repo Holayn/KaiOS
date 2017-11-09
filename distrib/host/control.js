@@ -158,18 +158,15 @@ var TSOS;
         };
         // This will update and display the processes in execution in the ready queue display
         Control.hostProcesses = function () {
-            console.log("UPDATING PROCESSES");
+            console.log("UPDATING PROCESSES DISPLAY");
             var table = document.getElementById('tableReady');
             // For each PCB in ready queue, print out a new row for it
             var readyQueue = [];
-            if (_ProcessManager.running != null) {
-                readyQueue.push(_ProcessManager.running);
-            }
-            // for(var i=0; i<_ProcessManager.readyQueue.getSize(); i++){
-            //     // Yay, let's violate the queue structure so we can display it properly!!!
-            //     var pcb = _ProcessManager.readyQueue.q[i];
-            //     readyQueue.push(pcb);
-            // }
+            /*for(var i=0; i<_ProcessManager.readyQueue.getSize(); i++){
+                // Yay, let's violate the queue structure so we can display it properly!!!
+                var pcb = _ProcessManager.readyQueue.q[i];
+                readyQueue.push(pcb);
+            }*/
             // Following queue structure convention could potentially mess things up
             // if something else i.e. the scheduler accesses the ready queue between the
             // dequeuing and enqueuing process below...proceed with caution
@@ -177,6 +174,9 @@ var TSOS;
                 var pcb = _ProcessManager.readyQueue.dequeue();
                 readyQueue.push(pcb);
                 _ProcessManager.readyQueue.enqueue(pcb);
+            }
+            if (_ProcessManager.running != null) {
+                readyQueue.push(_ProcessManager.running);
             }
             while (table.rows.length > 1) {
                 table.deleteRow(1);

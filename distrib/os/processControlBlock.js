@@ -14,7 +14,7 @@ var TSOS;
         ProcessControlBlock.prototype.init = function (partition) {
             this.State = "Waiting";
             this.PC = 0;
-            this.IR = 0;
+            this.IR = "00";
             this.Acc = 0;
             this.Xreg = 0;
             this.Yreg = 0;

@@ -31,6 +31,8 @@ module TSOS {
         // This performs the context switch
         public contextSwitch() {
             Control.hostLog("Performing context switch", "os");
+            // We need to update the PCB
+            _ProcessManager.updatePCB();
             this.counter = 0;
             // Take what is running, enqueue it to the process manager's ready queue
             _ProcessManager.readyQueue.enqueue(_ProcessManager.running);
