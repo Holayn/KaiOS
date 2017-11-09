@@ -28,6 +28,10 @@ module TSOS {
         public unwatch() {
             this.counter = 0;
         }
+        // This sets the quantum to the parameter passed
+        public setQuantum(num) {
+            this.quantum = num;
+        }
         // This performs the context switch
         public contextSwitch() {
             Control.hostLog("Performing context switch", "os");

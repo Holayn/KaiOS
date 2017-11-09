@@ -26,6 +26,10 @@ var TSOS;
         Scheduler.prototype.unwatch = function () {
             this.counter = 0;
         };
+        // This sets the quantum to the parameter passed
+        Scheduler.prototype.setQuantum = function (num) {
+            this.quantum = num;
+        };
         // This performs the context switch
         Scheduler.prototype.contextSwitch = function () {
             TSOS.Control.hostLog("Performing context switch", "os");

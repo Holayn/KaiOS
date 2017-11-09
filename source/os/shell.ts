@@ -537,7 +537,21 @@ module TSOS {
 
         // Sets the quantum for round robin scheduling
         public shellQuantum(args) {
-
+            if(args.length == 1){
+                var num = parseInt(args[0]);
+                if(isNaN(num)){
+                    _StdOut.putText("Usage: quantum <int>  Please supply a valid integer");
+                }
+                else{
+                    if(typeof num === "number"){
+                        _Scheduler.setQuantum(args[0]);
+                        _StdOut.putText("Round robin quantum set to " + num);
+                    }
+                }
+            }
+            else{
+                _StdOut.putText("Usage: quantum <int>  Please supply an integer")
+            }
         }
 
         // Clears all memory partitions
