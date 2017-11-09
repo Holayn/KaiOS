@@ -165,6 +165,7 @@ nav {
   to {  -moz-transform:rotate(360deg);}
 }
 
+/* https://stackoverflow.com/questions/7309110/css3-transition-on-a-background-image */
 .background:after {
   content : "";
   display: block;

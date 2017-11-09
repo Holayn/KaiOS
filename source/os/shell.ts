@@ -556,7 +556,8 @@ module TSOS {
 
         // Clears all memory partitions
         public shellClearMem() {
-
+            _MemoryManager.clearAllMemory();
+            _StdOut.putText("All memory partitions cleared!");
         }
 
     }

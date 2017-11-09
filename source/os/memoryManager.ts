@@ -67,10 +67,25 @@
         // Make sure to update the memory display
         public clearMemoryPartition(partition): void {
             console.log("Clearing memory partition " + partition);
-            for(var i=this.partitions[partition].base; i<this.partitions[partition].limit; i++){
+            var base = this.partitions[partition].base;
+            var limit = this.partitions[partition].limit + this.partitions[partition].base;
+            for(var i=base; i<limit; i++){
                 _Memory.memoryArray[i] = "00";
             }
             this.partitions[partition].isEmpty = true;
+            Control.hostMemory();
+        }
+
+        // Clears all memory partitions
+        public clearAllMemory(): void {
+            for(var j=0; j<this.partitions.length; j++){
+                var base = this.partitions[j].base;
+                var limit = this.partitions[j].limit + this.partitions[j].base;
+                for(var i=base; i<limit; i++){
+                    _Memory.memoryArray[i] = "00";
+                }
+                this.partitions[j].isEmpty = true;
+            }
             Control.hostMemory();
         }
 
