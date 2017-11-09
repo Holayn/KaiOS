@@ -36,7 +36,7 @@ module TSOS {
                 return _Memory.memoryArray[_MemoryManager.partitions[partition].base + addr].toString();
             }
             else{
-                _KernelInterruptQueue.enqueue(new Interrupt(PROCESS_EXIT, false));
+                _KernelInterruptQueue.enqueue(new Interrupt(PROCESS_EXIT, 0));
                 _KernelInterruptQueue.enqueue(new Interrupt(CONSOLE_WRITE_IR, "Out of bounds memory access error, exiting..."));
             }
             

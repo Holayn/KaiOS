@@ -81,7 +81,7 @@ module TSOS {
             this.krnTrace("begin shutdown OS");
             // TODO: Check for running processes.  If there are some, alert and stop. Else...
             if(_ProcessManager.isRunning()){
-                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(PROCESS_EXIT, false));
+                _ProcessManager.exitProcess();
             }
             // ... Disable the Interrupts.
             this.krnTrace("Disabling the interrupts.");
@@ -177,7 +177,7 @@ module TSOS {
                     _StdIn.handleInput();
                     break;
                 case PROCESS_EXIT:
-                    _ProcessManager.exitProcess(params);
+                    _ProcessManager.exitProcess();
                     break;
                 case CONTEXT_SWITCH:                  // Placeholder for context switching. We only update the PCB when there is a context switch!!!
                     _Scheduler.contextSwitch();
