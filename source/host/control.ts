@@ -172,6 +172,8 @@ module TSOS {
             else{
                 table.rows[row].cells.item(col).style = "color: blue;";
             }
+            // Scroll to that part of the table
+            table.rows[row].cells.item(col).scrollIntoView(false);
         }
 
         // This will update and display the processes in execution in the ready queue display
