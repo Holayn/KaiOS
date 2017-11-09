@@ -128,7 +128,7 @@ module TSOS {
                     // We do that seemingly dumb step because if the value stored in memory already has a leading 0, will make display look gross.
                     var dec = parseInt(_Memory.memoryArray[memoryPtr].toString(), 16);
                     if(dec < 16 && dec > 0){
-                        table.rows[i].cells.item(j).innerHTML = "0" + dec.toString(16);
+                        table.rows[i].cells.item(j).innerHTML = "0" + dec.toString(16).toUpperCase();
                     }
                     memoryPtr++;
                 }
