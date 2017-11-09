@@ -48,6 +48,8 @@
             _MemoryManager.clearMemoryPartition(this.running.Partition);
             this.running = null;
             Control.hostProcesses();
+            // Reset the scheduler's counter
+            _Scheduler.unwatch();
             // Control.hostCPU();
             // Control.hostMemory();
         }

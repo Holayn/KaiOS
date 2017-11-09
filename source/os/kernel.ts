@@ -113,20 +113,22 @@ module TSOS {
                         _CPU.cycle();
                         _NextStep = false;
                         // Big brother scheduler is watching you...and your CPU cycles
-                        
+                        _Scheduler.watch();
                     }
+                    this.krnTrace("Idle");
                 }
                 else{
                     _CPU.cycle();
                     // Big brother scheduler is watching you...and your CPU cycles
-
-
+                    _Scheduler.watch();
                 }
             } else {                        // If there are no interrupts and there is nothing being executed then just be idle. 
                 _NextStep = false;          // Handles the case for if the user presses next step in single step mode when nothing is executing
                 this.krnTrace("Idle");
                 // On each clock pulse, check to see if there is anything in the ready queue.
                 _ProcessManager.checkReadyQueue();
+                // Reset the scheduler counter
+                _Scheduler.unwatch();
             }
             // If there is a blue screen of death, spin the entire screen like cray cray
             if(this.bsod){
@@ -136,6 +138,8 @@ module TSOS {
                 // Rotate the background when OS is running
                 Control.rotateBackground();
             }
+            // Update the processes display
+            // Control.hostProcesses();
             // Update the CPU display
             Control.hostCPU();
             // Update the memory display
@@ -178,6 +182,7 @@ module TSOS {
                     _ProcessManager.exitProcess();
                     break;
                 case CONTEXT_SWITCH:                  // Placeholder for context switching. We only update the PCB when there is a context switch!!!
+                    _Scheduler.contextSwitch();
                     break;                            // Therefore, in project 2, the PCB for the running process is never updated!!!
                 case CONSOLE_WRITE_IR:
                     _StdOut.putText(params);

@@ -43,6 +43,8 @@ var TSOS;
             _MemoryManager.clearMemoryPartition(this.running.Partition);
             this.running = null;
             TSOS.Control.hostProcesses();
+            // Reset the scheduler's counter
+            _Scheduler.unwatch();
             // Control.hostCPU();
             // Control.hostMemory();
         };

@@ -76,7 +76,7 @@ var TSOS;
             var row = table.insertRow(-1); // New row appended to table
             // PC
             var cell = row.insertCell();
-            cell.innerHTML = _CPU.PC.toString();
+            cell.innerHTML = _CPU.PC.toString(16).toUpperCase();
             // IR
             cell = row.insertCell();
             if (_CPU.isExecuting) {
@@ -87,16 +87,16 @@ var TSOS;
             }
             // Acc
             cell = row.insertCell();
-            cell.innerHTML = _CPU.Acc.toString();
+            cell.innerHTML = _CPU.Acc.toString(16).toUpperCase();
             // Xreg
             cell = row.insertCell();
-            cell.innerHTML = _CPU.Xreg.toString();
+            cell.innerHTML = _CPU.Xreg.toString(16).toUpperCase();
             // Yreg
             cell = row.insertCell();
-            cell.innerHTML = _CPU.Yreg.toString();
+            cell.innerHTML = _CPU.Yreg.toString(16).toUpperCase();
             // Zflag
             cell = row.insertCell();
-            cell.innerHTML = _CPU.Zflag.toString();
+            cell.innerHTML = _CPU.Zflag.toString(16).toUpperCase();
         };
         // This will update and display the memory in real time
         Control.hostMemory = function () {
@@ -158,72 +158,60 @@ var TSOS;
         };
         // This will update and display the processes in execution in the ready queue display
         Control.hostProcesses = function () {
+            console.log("UPDATING PROCESSES");
             var table = document.getElementById('tableReady');
             // For each PCB in ready queue, print out a new row for it
-            // Create a clone of the ready queue so we don't mess around with the actual ready queue
-            // Dequeue each PCB in this copy of the ready queue and display its info
-            var readyQueue = Object.assign({}, _ProcessManager.readyQueue);
-            for (var i = 0; i < table.rows.length - 1; i++) {
-                table.deleteRow(-1);
-            }
-            // Include the PCB that is running
+            var readyQueue = [];
             if (_ProcessManager.running != null) {
-                var running = _ProcessManager.running;
-                var row = table.insertRow(-1); // New row appended to table
-                // PID
-                var cell = row.insertCell();
-                cell.innerHTML = running.Pid;
-                // State
-                cell = row.insertCell();
-                cell.innerHTML = running.State;
-                // PC
-                cell = row.insertCell();
-                cell.innerHTML = running.PC;
-                // IR
-                cell = row.insertCell();
-                cell.innerHTML = running.IR;
-                // Acc
-                cell = row.insertCell();
-                cell.innerHTML = running.Acc;
-                // Xreg
-                cell = row.insertCell();
-                cell.innerHTML = running.Xreg;
-                // Yreg
-                cell = row.insertCell();
-                cell.innerHTML = running.Yreg;
-                // Zflag
-                cell = row.insertCell();
-                cell.innerHTML = running.Zflag;
+                readyQueue.push(_ProcessManager.running);
             }
-            // Now display all the other PCBs sitting in the ready queue
+            // for(var i=0; i<_ProcessManager.readyQueue.getSize(); i++){
+            //     // Yay, let's violate the queue structure so we can display it properly!!!
+            //     var pcb = _ProcessManager.readyQueue.q[i];
+            //     readyQueue.push(pcb);
+            // }
+            // Following queue structure convention could potentially mess things up
+            // if something else i.e. the scheduler accesses the ready queue between the
+            // dequeuing and enqueuing process below...proceed with caution
+            for (var i = 0; i < _ProcessManager.readyQueue.getSize(); i++) {
+                var pcb = _ProcessManager.readyQueue.dequeue();
+                readyQueue.push(pcb);
+                _ProcessManager.readyQueue.enqueue(pcb);
+            }
+            while (table.rows.length > 1) {
+                table.deleteRow(1);
+            }
+            // Display all the other PCBs sitting in the ready queue
+            // Convert numbers to HEX
             while (readyQueue.length > 0) {
-                var pcb = readyQueue.pop();
+                var displayPcb = readyQueue.pop();
                 var row = table.insertRow(-1); // New row appended to table
                 // PID
                 var cell = row.insertCell();
-                cell.innerHTML = pcb.Pid;
+                cell.innerHTML = displayPcb.Pid.toString(16).toUpperCase();
                 // State
                 cell = row.insertCell();
-                cell.innerHTML = pcb.State;
+                cell.innerHTML = displayPcb.State;
                 // PC
                 cell = row.insertCell();
-                cell.innerHTML = pcb.PC;
+                cell.innerHTML = displayPcb.PC.toString(16).toUpperCase();
                 // IR
                 cell = row.insertCell();
-                cell.innerHTML = pcb.IR;
+                cell.innerHTML = displayPcb.IR.toString();
                 // Acc
                 cell = row.insertCell();
-                cell.innerHTML = pcb.Acc;
+                cell.innerHTML = displayPcb.Acc.toString(16).toUpperCase();
                 // Xreg
                 cell = row.insertCell();
-                cell.innerHTML = pcb.Xreg;
+                cell.innerHTML = displayPcb.Xreg.toString(16).toUpperCase();
                 // Yreg
                 cell = row.insertCell();
-                cell.innerHTML = pcb.Yreg;
+                cell.innerHTML = displayPcb.Yreg.toString(16).toUpperCase();
                 // Zflag
                 cell = row.insertCell();
-                cell.innerHTML = pcb.Zflag;
+                cell.innerHTML = displayPcb.Zflag.toString(16).toUpperCase();
             }
+            // console.log(table.rows.length);
         };
         Control.initMemoryDisplay = function () {
             var table = document.getElementById('tableMemory');
@@ -303,8 +291,8 @@ var TSOS;
                 document.getElementById("btnNextStep").disabled = false;
             }
             else {
-                document.getElementById("btnSingleStep").style.color = "white";
-                document.getElementById("btnNextStep").style['background-color'] = "lightgrey;";
+                document.getElementById("btnSingleStep").style['background-color'] = "#007bff";
+                document.getElementById("btnNextStep").style['background-color'] = "#808080";
                 document.getElementById("btnNextStep").disabled = true;
             }
         };

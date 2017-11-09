@@ -99,11 +99,14 @@ var TSOS;
                         _CPU.cycle();
                         _NextStep = false;
                         // Big brother scheduler is watching you...and your CPU cycles
+                        _Scheduler.watch();
                     }
+                    this.krnTrace("Idle");
                 }
                 else {
                     _CPU.cycle();
                     // Big brother scheduler is watching you...and your CPU cycles
+                    _Scheduler.watch();
                 }
             }
             else {
@@ -111,6 +114,8 @@ var TSOS;
                 this.krnTrace("Idle");
                 // On each clock pulse, check to see if there is anything in the ready queue.
                 _ProcessManager.checkReadyQueue();
+                // Reset the scheduler counter
+                _Scheduler.unwatch();
             }
             // If there is a blue screen of death, spin the entire screen like cray cray
             if (this.bsod) {
@@ -120,6 +125,8 @@ var TSOS;
                 // Rotate the background when OS is running
                 TSOS.Control.rotateBackground();
             }
+            // Update the processes display
+            // Control.hostProcesses();
             // Update the CPU display
             TSOS.Control.hostCPU();
             // Update the memory display
@@ -158,6 +165,7 @@ var TSOS;
                     _ProcessManager.exitProcess();
                     break;
                 case CONTEXT_SWITCH:
+                    _Scheduler.contextSwitch();
                     break; // Therefore, in project 2, the PCB for the running process is never updated!!!
                 case CONSOLE_WRITE_IR:
                     _StdOut.putText(params);
