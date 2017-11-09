@@ -69,7 +69,7 @@ var TSOS;
             this.krnTrace("begin shutdown OS");
             // TODO: Check for running processes.  If there are some, alert and stop. Else...
             if (_ProcessManager.isRunning()) {
-                _ProcessManager.exitProcess();
+                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(PROCESS_EXIT, false));
             }
             // ... Disable the Interrupts.
             this.krnTrace("Disabling the interrupts.");
@@ -160,7 +160,7 @@ var TSOS;
                     _StdIn.handleInput();
                     break;
                 case PROCESS_EXIT:
-                    _ProcessManager.exitProcess();
+                    _ProcessManager.exitProcess(params);
                     break;
                 case CONTEXT_SWITCH:
                     _Scheduler.contextSwitch();

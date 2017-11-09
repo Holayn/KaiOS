@@ -45,7 +45,7 @@ var TSOS;
             // Based on program counter, get op code, do it, then set program counter accordingly
             // Also, check to make sure the PC is not out of bounds in memory
             if (!_MemoryAccessor.inBounds(this.PC)) {
-                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(PROCESS_EXIT, 0));
+                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(PROCESS_EXIT, false));
                 _KernelInterruptQueue.enqueue(new TSOS.Interrupt(CONSOLE_WRITE_IR, "Out of bounds memory access error..."));
             }
             else {
@@ -124,7 +124,7 @@ var TSOS;
                         break;
                     case "00":
                         // Execute system call for a process exit by generating software interrupt
-                        _KernelInterruptQueue.enqueue(new TSOS.Interrupt(PROCESS_EXIT, 0));
+                        _KernelInterruptQueue.enqueue(new TSOS.Interrupt(PROCESS_EXIT, true));
                         break;
                     case "EC":
                         // Gets the hex memory address by looking at the next two values in memory and swapping because of little-endian format
@@ -200,7 +200,7 @@ var TSOS;
                         this.PC++;
                         break;
                     default:
-                        _KernelInterruptQueue.enqueue(new TSOS.Interrupt(PROCESS_EXIT, 0));
+                        _KernelInterruptQueue.enqueue(new TSOS.Interrupt(PROCESS_EXIT, false));
                         _KernelInterruptQueue.enqueue(new TSOS.Interrupt(CONSOLE_WRITE_IR, "Invalid op code, exiting..."));
                 }
                 console.log(opCode + " " + this.PC + " " + this.Acc + " " + this.Xreg + " " + this.Yreg + " " + this.Zflag);

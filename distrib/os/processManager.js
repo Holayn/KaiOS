@@ -38,20 +38,23 @@ var TSOS;
         // We also need to reset the memory partition the process was running in. Look in PCB to see which partition to reset
         // We also need to remove the process from the ready queue display
         // We also need to update the CPU and memory display
-        ProcessManager.prototype.exitProcess = function () {
+        // Displays stats depending if true or false is passed in
+        ProcessManager.prototype.exitProcess = function (displayStats) {
             _CPU.init();
             _MemoryManager.clearMemoryPartition(this.running.Partition);
             // Update host log
             TSOS.Control.hostLog("Exiting process " + this.running.Pid, "os");
-            // Print out the wait time and turnaround time for that process
-            _StdOut.advanceLine();
-            _StdOut.putText("Process ID: " + this.running.Pid);
-            _StdOut.advanceLine();
-            _StdOut.putText("Turnaround time: " + this.running.turnAroundTime + " cycles.");
-            _StdOut.advanceLine();
-            _StdOut.putText("Wait time: " + this.running.waitTime + " cycles.");
-            _StdOut.advanceLine();
-            _OsShell.putPrompt();
+            if (displayStats) {
+                // Print out the wait time and turnaround time for that process
+                _StdOut.advanceLine();
+                _StdOut.putText("Process ID: " + this.running.Pid);
+                _StdOut.advanceLine();
+                _StdOut.putText("Turnaround time: " + this.running.turnAroundTime + " cycles.");
+                _StdOut.advanceLine();
+                _StdOut.putText("Wait time: " + this.running.waitTime + " cycles.");
+                _StdOut.advanceLine();
+                _OsShell.putPrompt();
+            }
             // Clear out running process
             this.running = null;
             // Update processes display
@@ -75,10 +78,13 @@ var TSOS;
                 }
             }
             // Check the running PCB to see if it has the correct pid
-            if (this.running.Pid == pid) {
-                theChosenPcb = this.running;
-                // Slaughter it by calling exit process
-                this.exitProcess();
+            if (this.running != null) {
+                if (this.running.Pid == pid) {
+                    theChosenPcb = this.running;
+                    // Slaughter it by issuing an exit interrupt
+                    _KernelInterruptQueue.enqueue(new TSOS.Interrupt(PROCESS_EXIT, false));
+                    return true;
+                }
             }
             if (theChosenPcb == null) {
                 return false;
@@ -161,7 +167,7 @@ var TSOS;
             this.running.Yreg = _CPU.Yreg;
             this.running.Zflag = _CPU.Zflag;
             this.running.State = "Waiting";
-            this.running.IR = _Memory.memoryArray[_CPU.PC].toString();
+            this.running.IR = _MemoryAccessor.readMemory(_CPU.PC).toUpperCase();
         };
         // Update turnaround times and wait times for all processes
         ProcessManager.prototype.processStats = function () {
