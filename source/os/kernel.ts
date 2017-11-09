@@ -134,10 +134,6 @@ module TSOS {
             if(this.bsod){
                 Control.crazySpin();
             }
-            else{
-                // Rotate the background when OS is running
-                Control.rotateBackground();
-            }
             // Update the processes display
             // Control.hostProcesses();
             // Update the CPU display

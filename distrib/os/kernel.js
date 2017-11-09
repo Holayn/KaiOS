@@ -121,10 +121,6 @@ var TSOS;
             if (this.bsod) {
                 TSOS.Control.crazySpin();
             }
-            else {
-                // Rotate the background when OS is running
-                TSOS.Control.rotateBackground();
-            }
             // Update the processes display
             // Control.hostProcesses();
             // Update the CPU display

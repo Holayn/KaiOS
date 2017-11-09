@@ -440,6 +440,19 @@ var TSOS;
         };
         // Kills a specified process
         Shell.prototype.shellKill = function (args) {
+            if (args.length == 1) {
+                // Find the process with the correct pid in the ready queue
+                var foundPid = _ProcessManager.exitAProcess(args[0]);
+                if (!foundPid) {
+                    _StdOut.putText("Usage: kill <pid>  Please supply a valid process ID.");
+                }
+                else {
+                    _StdOut.putText("Process " + args[0] + " successfully murdered. You horrible person.");
+                }
+            }
+            else {
+                _StdOut.putText("Usage: kill <pid>  Please supply a process ID.");
+            }
         };
         // Sets the quantum for round robin scheduling
         Shell.prototype.shellQuantum = function (args) {

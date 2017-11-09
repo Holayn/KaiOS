@@ -331,20 +331,6 @@ module TSOS {
             _NextStep = true;
         }
 
-        // Rotates the background on every clock pulse.
-        // One does not simply rotate a background image.
-        // So we have to do this tricky dynamic class/stylesheet creation, which we add to the div with the background image.
-        // We also have to delete the dynamic class previously created, or we get wayyyyy to many stylesheets.
-        public static rotateBackground(): void {
-            document.getElementsByTagName('head')[0].removeChild(document.getElementsByTagName('head')[0].lastChild);
-            var style = document.createElement('style');
-            this.rotate += .1;
-            style.type = "text/css";
-            style.innerHTML = ".transform:after { transform: rotate(" + this.rotate + "deg); -webkit-transform: rotate(" + this.rotate + "deg); }";
-            document.getElementsByTagName('head')[0].appendChild(style);
-            document.getElementById("background").classList.add("transform");
-        }
-
         // Do a crazy spin when a BSOD occurs
         public static crazySpin(): void {
             document.getElementsByTagName('head')[0].removeChild(document.getElementsByTagName('head')[0].lastChild);

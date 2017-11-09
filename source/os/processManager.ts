@@ -47,11 +47,44 @@
             _CPU.init();
             _MemoryManager.clearMemoryPartition(this.running.Partition);
             this.running = null;
+            // Update processes display
             Control.hostProcesses();
             // Reset the scheduler's counter
             _Scheduler.unwatch();
             // Control.hostCPU();
             // Control.hostMemory();
+        }
+
+        // This exits a process from the ready queue.
+        // Removes it from the ready queue and clears the appropriate memory partition
+        public exitAProcess(pid): boolean {
+            var theChosenPcb;
+            for(var i=0; i<this.readyQueue.getSize(); i++){
+                var pcb = this.readyQueue.dequeue();
+                if(pcb.Pid == pid){
+                    // The chosen one
+                    theChosenPcb = pcb;
+                }
+                else{
+                    // If it's not the poop chicken butt needed, put it back in the ready queue
+                    this.readyQueue.enqueue(pcb);
+                }
+            }
+            // Check the running PCB to see if it has the correct pid
+            if(this.running.Pid == pid){
+                theChosenPcb = this.running;
+                // Slaughter it by calling exit process
+                this.exitProcess();
+            }
+            if(theChosenPcb == null){
+                return false;
+            }
+            else{
+                _MemoryManager.clearMemoryPartition(theChosenPcb.Partition);
+                // Update processes display
+                Control.hostProcesses();
+                return true;
+            }
         }
 
         // On each clock pulse, check to see if there is anything in the ready queue.
