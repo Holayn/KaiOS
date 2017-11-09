@@ -41,6 +41,8 @@ var TSOS;
         ProcessManager.prototype.exitProcess = function () {
             _CPU.init();
             _MemoryManager.clearMemoryPartition(this.running.Partition);
+            // Update host log
+            TSOS.Control.hostLog("Exiting process " + this.running.Pid, "os");
             this.running = null;
             // Update processes display
             TSOS.Control.hostProcesses();
@@ -74,6 +76,8 @@ var TSOS;
                 return false;
             }
             else {
+                // Update host log
+                TSOS.Control.hostLog("Exiting process " + pid, "os");
                 _MemoryManager.clearMemoryPartition(theChosenPcb.Partition);
                 // Update processes display
                 TSOS.Control.hostProcesses();
@@ -110,6 +114,8 @@ var TSOS;
             TSOS.Control.hostCPU();
             // Update the memory as well
             TSOS.Control.hostMemory();
+            // Update host log
+            TSOS.Control.hostLog("Running process " + this.running.Pid, "os");
         };
         // This checks if a process is running
         ProcessManager.prototype.isRunning = function () {

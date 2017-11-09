@@ -46,6 +46,8 @@
         public exitProcess(): void {
             _CPU.init();
             _MemoryManager.clearMemoryPartition(this.running.Partition);
+            // Update host log
+            Control.hostLog("Exiting process " + this.running.Pid, "os");
             this.running = null;
             // Update processes display
             Control.hostProcesses();
@@ -80,6 +82,8 @@
                 return false;
             }
             else{
+                // Update host log
+                Control.hostLog("Exiting process " + pid, "os");
                 _MemoryManager.clearMemoryPartition(theChosenPcb.Partition);
                 // Update processes display
                 Control.hostProcesses();
@@ -118,6 +122,8 @@
             Control.hostCPU();
             // Update the memory as well
             Control.hostMemory();
+            // Update host log
+            Control.hostLog("Running process " + this.running.Pid, "os");
         }
 
         // This checks if a process is running

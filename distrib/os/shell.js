@@ -474,8 +474,12 @@ var TSOS;
         };
         // Clears all memory partitions
         Shell.prototype.shellClearMem = function () {
-            _MemoryManager.clearAllMemory();
-            _StdOut.putText("All memory partitions cleared!");
+            if (_MemoryManager.clearAllMemory()) {
+                _StdOut.putText("All memory partitions cleared!");
+            }
+            else {
+                _StdOut.putText("Can't clear all memory partitions: program in memory is being run!");
+            }
         };
         return Shell;
     }());

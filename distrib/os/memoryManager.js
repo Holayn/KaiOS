@@ -62,7 +62,8 @@ var TSOS;
         // Clears a memory partition, given the partition, and marks the partition as available.
         // Make sure to update the memory display
         MemoryManager.prototype.clearMemoryPartition = function (partition) {
-            console.log("Clearing memory partition " + partition);
+            if (!this.canClearMemory(partition))
+                console.log("Clearing memory partition " + partition);
             var base = this.partitions[partition].base;
             var limit = this.partitions[partition].limit + this.partitions[partition].base;
             for (var i = base; i < limit; i++) {
@@ -73,6 +74,12 @@ var TSOS;
         };
         // Clears all memory partitions
         MemoryManager.prototype.clearAllMemory = function () {
+            if (_ProcessManager.readyQueue.length > 0) {
+                return false;
+            }
+            if (_ProcessManager.running != null) {
+                return false;
+            }
             for (var j = 0; j < this.partitions.length; j++) {
                 var base = this.partitions[j].base;
                 var limit = this.partitions[j].limit + this.partitions[j].base;
@@ -82,6 +89,25 @@ var TSOS;
                 this.partitions[j].isEmpty = true;
             }
             TSOS.Control.hostMemory();
+            return true;
+        };
+        // This performs a check to prevent user from clearing memory
+        // when the memory is being used in a program, by making sure the partition
+        // being cleared doesn't belong to a process
+        MemoryManager.prototype.canClearMemory = function (partition) {
+            if (_ProcessManager.readyQueue.length > 0) {
+                for (var i = 0; i < _ProcessManager.readyQueue.q.length; i++) {
+                    if (_ProcessManager.readyQueue.q[i].partition == partition) {
+                        return false;
+                    }
+                }
+            }
+            if (_ProcessManager.running != null) {
+                if (_ProcessManager.running.partition == partition) {
+                    return false;
+                }
+            }
+            return true;
         };
         // These return the base and limit registers based on the partition number given
         MemoryManager.prototype.getBaseRegister = function (partition) {
