@@ -125,6 +125,8 @@ var TSOS;
             if (this.bsod) {
                 TSOS.Control.crazySpin();
             }
+            // Update the processes display
+            TSOS.Control.hostProcesses();
             // Update the CPU display
             TSOS.Control.hostCPU();
             // Update the memory display

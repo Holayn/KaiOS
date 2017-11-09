@@ -62,8 +62,8 @@
             }
             // Clear out running process
             this.running = null;
-            // Update processes display
-            Control.hostProcesses();
+            // // Update processes display
+            // Control.hostProcesses();
             // Reset the scheduler's counter
             _Scheduler.unwatch();
         }
@@ -98,8 +98,8 @@
                 // Update host log
                 Control.hostLog("Exiting process " + pid, "os");
                 _MemoryManager.clearMemoryPartition(theChosenPcb.Partition);
-                // Update processes display
-                Control.hostProcesses();
+                // // Update processes display
+                // Control.hostProcesses();
                 return true;
             }
         }
@@ -129,8 +129,8 @@
             _CPU.isExecuting = true;
             // Set the PCB status to running
             this.running.State = "Running";
-            // Update the display for the PCB
-            Control.hostProcesses();
+            // // Update the display for the PCB
+            // Control.hostProcesses();
             // Update the CPU display as well
             Control.hostCPU();
             // Update the memory as well

@@ -138,6 +138,8 @@ module TSOS {
             if(this.bsod){
                 Control.crazySpin();
             }
+            // Update the processes display
+            Control.hostProcesses();
             // Update the CPU display
             Control.hostCPU();
             // Update the memory display

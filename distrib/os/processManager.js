@@ -57,8 +57,8 @@ var TSOS;
             }
             // Clear out running process
             this.running = null;
-            // Update processes display
-            TSOS.Control.hostProcesses();
+            // // Update processes display
+            // Control.hostProcesses();
             // Reset the scheduler's counter
             _Scheduler.unwatch();
         };
@@ -92,8 +92,8 @@ var TSOS;
                 // Update host log
                 TSOS.Control.hostLog("Exiting process " + pid, "os");
                 _MemoryManager.clearMemoryPartition(theChosenPcb.Partition);
-                // Update processes display
-                TSOS.Control.hostProcesses();
+                // // Update processes display
+                // Control.hostProcesses();
                 return true;
             }
         };
@@ -121,8 +121,8 @@ var TSOS;
             _CPU.isExecuting = true;
             // Set the PCB status to running
             this.running.State = "Running";
-            // Update the display for the PCB
-            TSOS.Control.hostProcesses();
+            // // Update the display for the PCB
+            // Control.hostProcesses();
             // Update the CPU display as well
             TSOS.Control.hostCPU();
             // Update the memory as well
