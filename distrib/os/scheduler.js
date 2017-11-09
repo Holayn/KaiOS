@@ -9,6 +9,7 @@ var TSOS;
 (function (TSOS) {
     var Scheduler = (function () {
         function Scheduler() {
+            this.algorithm = "Round Robin";
             this.counter = 0;
             this.quantum = 6; // Number of clock ticks until context switch for process
         }

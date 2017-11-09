@@ -168,6 +168,16 @@ var TSOS;
                 case CONSOLE_WRITE_IR:
                     _StdOut.putText(params);
                     break;
+                case BOUNDS_ERROR:
+                    _StdOut.putText("Out of bounds error in process " + _ProcessManager.running.Pid + ". Exiting that process...");
+                    _StdOut.advanceLine();
+                    _OsShell.putPrompt();
+                    break;
+                case INVALID_OP:
+                    _StdOut.putText("Invalid op code in process " + _ProcessManager.running.Pid + ". Exiting that process...");
+                    _StdOut.advanceLine();
+                    _OsShell.putPrompt();
+                    break;
                 default:
                     this.krnTrapError("Invalid Interrupt Request. irq=" + irq + " params=[" + params + "]");
                     _StdOut.putText("RIP IN POTATOES UR OPERATING SYSTEM IS DED L0L");

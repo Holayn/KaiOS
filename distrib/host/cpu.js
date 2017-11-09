@@ -45,8 +45,8 @@ var TSOS;
             // Based on program counter, get op code, do it, then set program counter accordingly
             // Also, check to make sure the PC is not out of bounds in memory
             if (!_MemoryAccessor.inBounds(this.PC)) {
+                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(BOUNDS_ERROR, 0));
                 _KernelInterruptQueue.enqueue(new TSOS.Interrupt(PROCESS_EXIT, false));
-                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(CONSOLE_WRITE_IR, "Out of bounds memory access error..."));
             }
             else {
                 var opCode = _MemoryAccessor.readMemory(this.PC);
@@ -201,7 +201,7 @@ var TSOS;
                         break;
                     default:
                         _KernelInterruptQueue.enqueue(new TSOS.Interrupt(PROCESS_EXIT, false));
-                        _KernelInterruptQueue.enqueue(new TSOS.Interrupt(CONSOLE_WRITE_IR, "Invalid op code, exiting..."));
+                        _KernelInterruptQueue.enqueue(new TSOS.Interrupt(INVALID_OP, 0));
                 }
                 console.log(opCode + " " + this.PC + " " + this.Acc + " " + this.Xreg + " " + this.Yreg + " " + this.Zflag);
             }

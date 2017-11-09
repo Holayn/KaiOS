@@ -19,6 +19,8 @@ var KEYBOARD_IRQ = 1;
 var PROCESS_EXIT = 2;
 var CONTEXT_SWITCH = 3;
 var CONSOLE_WRITE_IR = 4;
+var BOUNDS_ERROR = 5;
+var INVALID_OP = 6;
 //
 // Global Variables
 // TODO: Make a global object and use that instead of the "_" naming convention in the global namespace.

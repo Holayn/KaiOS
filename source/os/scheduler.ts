@@ -8,6 +8,7 @@
 
 module TSOS {
     export class Scheduler {
+        public algorithm: String = "Round Robin";
         public counter: number;
         public quantum: number;
         constructor() {

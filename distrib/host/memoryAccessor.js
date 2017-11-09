@@ -33,8 +33,8 @@ var TSOS;
                 return _Memory.memoryArray[_MemoryManager.partitions[partition].base + addr].toString();
             }
             else {
+                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(BOUNDS_ERROR, 0));
                 _KernelInterruptQueue.enqueue(new TSOS.Interrupt(PROCESS_EXIT, false));
-                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(CONSOLE_WRITE_IR, "Out of bounds memory access error, exiting..."));
             }
         };
         // This writes to memory based on an address and value given
@@ -49,8 +49,8 @@ var TSOS;
                 _Memory.memoryArray[_MemoryManager.partitions[partition].base + addr] = value;
             }
             else {
+                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(BOUNDS_ERROR, 0));
                 _KernelInterruptQueue.enqueue(new TSOS.Interrupt(PROCESS_EXIT, false));
-                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(CONSOLE_WRITE_IR, "Out of bounds memory access error, exiting..."));
             }
         };
         // Checks to make sure the memory being accessed is within the range specified by the base/limit

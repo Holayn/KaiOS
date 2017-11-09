@@ -26,6 +26,10 @@ const CONTEXT_SWITCH: number = 3;
 
 const CONSOLE_WRITE_IR: number = 4;
 
+const BOUNDS_ERROR: number = 5;
+
+const INVALID_OP: number = 6;
+
 //
 // Global Variables
 // TODO: Make a global object and use that instead of the "_" naming convention in the global namespace.

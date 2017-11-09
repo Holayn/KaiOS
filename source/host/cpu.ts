@@ -25,7 +25,6 @@ module TSOS {
                     public Yreg: number = 0,
                     public Zflag: number = 0,
                     public isExecuting: boolean = false) {
-
         }
 
         public init(): void {
@@ -44,8 +43,8 @@ module TSOS {
             // Based on program counter, get op code, do it, then set program counter accordingly
             // Also, check to make sure the PC is not out of bounds in memory
             if(!_MemoryAccessor.inBounds(this.PC)){
+                _KernelInterruptQueue.enqueue(new Interrupt(BOUNDS_ERROR, 0));
                 _KernelInterruptQueue.enqueue(new Interrupt(PROCESS_EXIT, false));
-                _KernelInterruptQueue.enqueue(new Interrupt(CONSOLE_WRITE_IR, "Out of bounds memory access error..."));
             }
             else{
                 let opCode = _MemoryAccessor.readMemory(this.PC);
@@ -200,7 +199,7 @@ module TSOS {
                         break;
                     default: // If the op code is invalid, exit the process
                         _KernelInterruptQueue.enqueue(new Interrupt(PROCESS_EXIT, false));
-                        _KernelInterruptQueue.enqueue(new Interrupt(CONSOLE_WRITE_IR, "Invalid op code, exiting..."));
+                        _KernelInterruptQueue.enqueue(new Interrupt(INVALID_OP, 0));
                 }
                 console.log(opCode + " " + this.PC + " " + this.Acc + " " + this.Xreg + " " + this.Yreg + " " + this.Zflag);
             }

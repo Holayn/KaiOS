@@ -166,7 +166,7 @@ var TSOS;
             this.running.Yreg = _CPU.Yreg;
             this.running.Zflag = _CPU.Zflag;
             this.running.State = "Waiting";
-            this.running.IR = _Memory.memoryArray[_CPU.PC].toString();
+            this.running.IR = _MemoryAccessor.readMemory(_CPU.PC).toUpperCase();
         };
         // Update turnaround times and wait times for all processes
         ProcessManager.prototype.processStats = function () {
