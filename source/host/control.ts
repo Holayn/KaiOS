@@ -120,7 +120,7 @@ module TSOS {
             var memoryPtr = 0;
             for(var i=0; i<table.rows.length; i++){
                 for(var j=1; j<9; j++){
-                    table.rows[i].cells.item(j).innerHTML = _Memory.memoryArray[memoryPtr].toString();
+                    table.rows[i].cells.item(j).innerHTML = _Memory.memoryArray[memoryPtr].toString().toUpperCase();
                     table.rows[i].cells.item(j).style.color = "black"; 
                     table.rows[i].cells.item(j).style['font-weight'] = "normal";
                     // Check to see if the hex needs a leading zero.
