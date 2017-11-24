@@ -53,7 +53,14 @@ module TSOS {
             // ... more?
             //
 
-            // Yeah, there's more. Load the memory manager.
+            // Yeah, there's more. 
+            // Load the Disk Device Driver
+            this.krnTrace("Loading the disk device driver");
+            _krnDiskDriver = new DeviceDriverKeyboard();
+            _krnDiskDriver.driverEntry();
+            this.krnTrace(_krnDiskDriver.status);
+            
+            // Load the memory manager.
             _MemoryManager = new MemoryManager();
 
             // Load the process manager

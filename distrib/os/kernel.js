@@ -47,7 +47,13 @@ var TSOS;
             //
             // ... more?
             //
-            // Yeah, there's more. Load the memory manager.
+            // Yeah, there's more. 
+            // Load the Disk Device Driver
+            this.krnTrace("Loading the disk device driver");
+            _krnDiskDriver = new TSOS.DeviceDriverKeyboard();
+            _krnDiskDriver.driverEntry();
+            this.krnTrace(_krnDiskDriver.status);
+            // Load the memory manager.
             _MemoryManager = new TSOS.MemoryManager();
             // Load the process manager
             _ProcessManager = new TSOS.ProcessManager();

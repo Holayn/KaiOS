@@ -40,6 +40,8 @@ var _Memory: TSOS.Memory;
 
 var _MemoryAccessor: TSOS.MemoryAccessor;
 
+var _Disk: TSOS.Disk;
+
 var _OSclock: number = 0;  // Page 23.
 
 var _Mode: number = 0;     // (currently unused)  0 = Kernel Mode, 1 = User Mode.  See page 21.
@@ -91,6 +93,7 @@ var _SarcasticMode: boolean = false;
 
 // Global Device Driver Objects - page 12
 var _krnKeyboardDriver; //  = null;
+var _krnDiskDriver; //  = null;
 
 var _hardwareClockID: number = null;
 

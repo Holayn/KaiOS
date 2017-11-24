@@ -4,6 +4,8 @@
 ///<reference path="./memory.ts" />
 ///<reference path="./memoryAccessor.ts" />
 ///<reference path="./devices.ts" />
+///<reference path="../os/kernel.ts" />
+///<reference path="./disk.ts" />
 /* ------------
      Control.ts
 
@@ -237,6 +239,8 @@ var TSOS;
                 }
             }
         };
+        Control.initDiskDisplay = function () {
+        };
         //
         // Host Events
         //
@@ -260,6 +264,10 @@ var TSOS;
             Control.initMemoryDisplay();
             // Create the memory accessor
             _MemoryAccessor = new TSOS.MemoryAccessor();
+            // Create the disk
+            _Disk = new TSOS.Disk();
+            _Disk.init();
+            Control.initDiskDisplay();
             // ... then set the host clock pulse ...
             // _hardwareClockID = setInterval(Devices.hostClockPulse, CPU_CLOCK_INTERVAL);
             setInterval(TSOS.Devices.hostClockPulse, CPU_CLOCK_INTERVAL);
