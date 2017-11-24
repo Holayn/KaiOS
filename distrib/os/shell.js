@@ -87,6 +87,30 @@ var TSOS;
             // clearmem - clears all memory partitions
             sc = new TSOS.ShellCommand(this.shellClearMem, "clearmem", "- Clears all memory partitions");
             this.commandList[this.commandList.length] = sc;
+            // create <filename> - creates a file
+            sc = new TSOS.ShellCommand(this.shellCreateFile, "create", "<filename> - Creates a file given a filename");
+            this.commandList[this.commandList.length] = sc;
+            // read <filename> - reads a file
+            sc = new TSOS.ShellCommand(this.shellReadFile, "read", "<filename> - Reads a file given a filename");
+            this.commandList[this.commandList.length] = sc;
+            // write <filename> - writes a file
+            sc = new TSOS.ShellCommand(this.shellWriteFile, "write", "<filename> - Writes to a file given a filename");
+            this.commandList[this.commandList.length] = sc;
+            // delete <filename> - deletes a file
+            sc = new TSOS.ShellCommand(this.shellDeleteFile, "delete", "<filename> - Deletes a file given a filename");
+            this.commandList[this.commandList.length] = sc;
+            // format - formats the disk
+            sc = new TSOS.ShellCommand(this.shellFormat, "format", "- Formats the disk");
+            this.commandList[this.commandList.length] = sc;
+            // ls - lists files on disk
+            sc = new TSOS.ShellCommand(this.shellList, "ls", "- Lists files on disk");
+            this.commandList[this.commandList.length] = sc;
+            // setschedule - sets the scheduler to an algorithm: RR, FCFS, Priority
+            sc = new TSOS.ShellCommand(this.shellSetSchedule, "setschedule", "<algorithm>- Sets the scheduler to an algorithm: RR, FCFS, Priority");
+            this.commandList[this.commandList.length] = sc;
+            // getschedule - gets current scheduling algorithm
+            sc = new TSOS.ShellCommand(this.shellGetSchedule, "getschedule", "- gets current scheduling algorithm");
+            this.commandList[this.commandList.length] = sc;
             // Display the initial prompt.
             this.putPrompt();
         };
@@ -287,6 +311,30 @@ var TSOS;
                     case "clearmem":
                         _StdOut.putText("Clears all memory partitions");
                         break;
+                    case "create":
+                        _StdOut.putText("Creates a file given a filename");
+                        break;
+                    case "read":
+                        _StdOut.putText("Reads a file given a filename");
+                        break;
+                    case "write":
+                        _StdOut.putText("Writes to a file given a filename");
+                        break;
+                    case "delete":
+                        _StdOut.putText("Deletes a file given a filename");
+                        break;
+                    case "format":
+                        _StdOut.putText("Formats the disk");
+                        break;
+                    case "ls":
+                        _StdOut.putText("Lists all files on the harddrive");
+                        break;
+                    case "setschedule":
+                        _StdOut.putText("Sets the scheduling algorithm: RR, FCFS, Priority");
+                        break;
+                    case "getschedule":
+                        _StdOut.putText("Gets the current scheduling algorithm");
+                        break;
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
                 }
@@ -484,6 +532,30 @@ var TSOS;
             else {
                 _StdOut.putText("Can't clear all memory partitions: program in memory is being run!");
             }
+        };
+        // Creates a file
+        Shell.prototype.shellCreateFile = function () {
+        };
+        // Reads a file
+        Shell.prototype.shellReadFile = function () {
+        };
+        // Writes to a file
+        Shell.prototype.shellWriteFile = function () {
+        };
+        // Deletes a file
+        Shell.prototype.shellDeleteFile = function () {
+        };
+        // Formats a file
+        Shell.prototype.shellFormat = function () {
+        };
+        // Lists files on disk
+        Shell.prototype.shellList = function () {
+        };
+        // Sets the scheduler algorithm
+        Shell.prototype.shellSetSchedule = function () {
+        };
+        // Returns the scheduler algorithm
+        Shell.prototype.shellGetSchedule = function () {
         };
         return Shell;
     }());
