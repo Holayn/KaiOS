@@ -17,9 +17,26 @@ var TSOS;
 (function (TSOS) {
     var Disk = (function () {
         function Disk() {
-            console.log("Init disk");
+            this.numOfTracks = 3;
+            this.numOfSectors = 8;
+            this.numOfBytes = 8;
         }
         Disk.prototype.init = function () {
+            // Init storage
+            // Key value of { "track:sector:byte"  : "00000..."}
+            for (var i = 0; i < this.numOfTracks; i++) {
+                for (var j = 0; j < this.numOfSectors; j++) {
+                    for (var k = 0; k < this.numOfBytes; k++) {
+                        var key = i + ":" + j + ":" + k;
+                        var zeroes = new Array();
+                        for (var l = 0; l < 64; l++) {
+                            zeroes.push(0);
+                        }
+                        sessionStorage.setItem(key, "");
+                    }
+                }
+            }
+            sessionStorage.setItem("0", "");
         };
         return Disk;
     }());

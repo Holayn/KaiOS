@@ -86,6 +86,12 @@ nav {
   border: 2px;
   border-radius: 5px;
 }
+#divDisk {
+  background-color: rgba(0,0,0,.2);
+  border: 2px;
+  border-radius: 5px;
+  min-width: 800px;
+}
 #tableMemory {
   font-family: Courier;
 }
