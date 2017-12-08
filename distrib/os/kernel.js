@@ -3,6 +3,7 @@
 ///<reference path="../host/control.ts" />
 ///<reference path="../host/devices.ts" />
 ///<reference path="deviceDriverKeyboard.ts" />
+///<reference path="deviceDriverDisk.ts" />
 ///<reference path="memoryManager.ts" />
 ///<reference path="processManager.ts" />
 ///<reference path="scheduler.ts" />
@@ -20,7 +21,7 @@
      ------------ */
 var TSOS;
 (function (TSOS) {
-    var Kernel = (function () {
+    var Kernel = /** @class */ (function () {
         function Kernel() {
             //
             // OS Startup and Shutdown Routines
@@ -50,7 +51,7 @@ var TSOS;
             // Yeah, there's more. 
             // Load the Disk Device Driver
             this.krnTrace("Loading the disk device driver");
-            _krnDiskDriver = new TSOS.DeviceDriverKeyboard();
+            _krnDiskDriver = new TSOS.DeviceDriverDisk();
             _krnDiskDriver.driverEntry();
             this.krnTrace(_krnDiskDriver.status);
             // Load the memory manager.
@@ -170,7 +171,7 @@ var TSOS;
                 case PROCESS_EXIT:
                     _ProcessManager.exitProcess(params);
                     break;
-                case CONTEXT_SWITCH:
+                case CONTEXT_SWITCH:// Placeholder for context switching. We only update the PCB when there is a context switch!!!
                     _Scheduler.contextSwitch();
                     break; // Therefore, in project 2, the PCB for the running process is never updated!!!
                 case CONSOLE_WRITE_IR:

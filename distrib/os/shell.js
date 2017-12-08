@@ -3,6 +3,7 @@
 ///<reference path="shellCommand.ts" />
 ///<reference path="userCommand.ts" />
 ///<reference path="processControlBlock.ts" />
+///<reference path="deviceDriverDisk.ts" />
 ///<reference path="memoryManager.ts" />
 /* ------------
    Shell.ts
@@ -15,7 +16,7 @@
 // TODO: Write a base class / prototype for system services and let Shell inherit from it.
 var TSOS;
 (function (TSOS) {
-    var Shell = (function () {
+    var Shell = /** @class */ (function () {
         function Shell() {
             // Properties
             this.promptStr = ">";
@@ -547,6 +548,10 @@ var TSOS;
         };
         // Formats a file
         Shell.prototype.shellFormat = function () {
+            // Call the disk device driver to format the disk
+            if (_krnDiskDriver.krnFormat()) {
+                _StdOut.putText("Disk formatted successfully!");
+            }
         };
         // Lists files on disk
         Shell.prototype.shellList = function () {

@@ -15,9 +15,9 @@
      ------------ */
 var TSOS;
 (function (TSOS) {
-    var Disk = (function () {
+    var Disk = /** @class */ (function () {
         function Disk() {
-            this.numOfTracks = 3;
+            this.numOfTracks = 4;
             this.numOfSectors = 8;
             this.numOfBytes = 8;
         }
@@ -29,14 +29,18 @@ var TSOS;
                     for (var k = 0; k < this.numOfBytes; k++) {
                         var key = i + ":" + j + ":" + k;
                         var zeroes = new Array();
-                        for (var l = 0; l < 64; l++) {
-                            zeroes.push(0);
+                        for (var l = 0; l < 60; l++) {
+                            zeroes.push("00");
                         }
-                        sessionStorage.setItem(key, "");
+                        var block = {
+                            availableBit: "0",
+                            pointer: ["0", "0", "0"],
+                            data: zeroes // Rest of 64 bytes is filled with data
+                        };
+                        sessionStorage.setItem(key, JSON.stringify(block));
                     }
                 }
             }
-            sessionStorage.setItem("0", "");
         };
         return Disk;
     }());

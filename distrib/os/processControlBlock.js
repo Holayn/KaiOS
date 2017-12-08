@@ -5,7 +5,7 @@
    ------------ */
 var TSOS;
 (function (TSOS) {
-    var ProcessControlBlock = (function () {
+    var ProcessControlBlock = /** @class */ (function () {
         function ProcessControlBlock(processId) {
             this.processId = processId;
             this.Pid = processId;

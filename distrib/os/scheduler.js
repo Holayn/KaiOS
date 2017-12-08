@@ -7,7 +7,7 @@
    ------------ */
 var TSOS;
 (function (TSOS) {
-    var Scheduler = (function () {
+    var Scheduler = /** @class */ (function () {
         function Scheduler() {
             this.algorithm = "Round Robin";
             this.counter = 0;

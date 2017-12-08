@@ -49,11 +49,22 @@
 
             }
 
-            // Performs a format on the disk
+            // Performs a format on the disk by initializing all blocks in all sectors in all tracks on disk
             public krnFormat() {
-
+                // For all values in session storage, set available bit to 0, pointer to 0,0,0, and fill data with 00s
+                let zeroes = new Array<String>();
+                for(var l=0; l<60; l++){
+                    zeroes.push("00");
+                }
+                for(var i=0; i<_Disk.numOfTracks*_Disk.numOfSectors*_Disk.numOfBytes; i++){
+                    // Get the JSON from the stored string
+                    let block = JSON.parse(sessionStorage.getItem(sessionStorage.key(i)));
+                    block.availableBit = "0";
+                    block.pointer = ["0","0","0"];
+                    block.data = zeroes;
+                }
+                return true;
             }
-    
         }
     }
     

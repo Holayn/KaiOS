@@ -18,7 +18,7 @@
      ------------ */
 var TSOS;
 (function (TSOS) {
-    var MemoryAccessor = (function () {
+    var MemoryAccessor = /** @class */ (function () {
         function MemoryAccessor() {
         }
         // This reads the memory based on a given address in memory

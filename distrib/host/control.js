@@ -29,7 +29,7 @@
 //
 var TSOS;
 (function (TSOS) {
-    var Control = (function () {
+    var Control = /** @class */ (function () {
         function Control() {
         }
         Control.hostInit = function () {
@@ -319,8 +319,8 @@ var TSOS;
             document.getElementsByTagName('head')[0].appendChild(style);
             document.getElementById("background").classList.add("derp");
         };
+        Control.rotate = 0; // Used for rotating the background
         return Control;
     }());
-    Control.rotate = 0; // Used for rotating the background
     TSOS.Control = Control;
 })(TSOS || (TSOS = {}));

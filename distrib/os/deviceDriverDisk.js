@@ -20,7 +20,7 @@ var __extends = (this && this.__extends) || (function () {
 var TSOS;
 (function (TSOS) {
     // Extends DeviceDriver
-    var DeviceDriverDisk = (function (_super) {
+    var DeviceDriverDisk = /** @class */ (function (_super) {
         __extends(DeviceDriverDisk, _super);
         function DeviceDriverDisk() {
             // Override the base method pointers.
@@ -48,8 +48,21 @@ var TSOS;
         // Performs a delete given a file name
         DeviceDriverDisk.prototype.krnDiskDelete = function () {
         };
-        // Performs a format on the disk
+        // Performs a format on the disk by initializing all blocks in all sectors in all tracks on disk
         DeviceDriverDisk.prototype.krnFormat = function () {
+            // For all values in session storage, set available bit to 0, pointer to 0,0,0, and fill data with 00s
+            var zeroes = new Array();
+            for (var l = 0; l < 60; l++) {
+                zeroes.push("00");
+            }
+            for (var i = 0; i < _Disk.numOfTracks * _Disk.numOfSectors * _Disk.numOfBytes; i++) {
+                // Get the JSON from the stored string
+                var block = JSON.parse(sessionStorage.getItem(sessionStorage.key(i)));
+                block.availableBit = "0";
+                block.pointer = ["0", "0", "0"];
+                block.data = zeroes;
+            }
+            return true;
         };
         return DeviceDriverDisk;
     }(TSOS.DeviceDriver));

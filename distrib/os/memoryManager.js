@@ -5,7 +5,7 @@
    ------------ */
 var TSOS;
 (function (TSOS) {
-    var MemoryManager = (function () {
+    var MemoryManager = /** @class */ (function () {
         function MemoryManager() {
             // We'll have three partitions in memory, each of 256 bytes in size
             // We'll also store a flag for each partition representing if the partition is available

@@ -15,7 +15,7 @@
      ------------ */
 var TSOS;
 (function (TSOS) {
-    var Cpu = (function () {
+    var Cpu = /** @class */ (function () {
         function Cpu(PC, Acc, Xreg, Yreg, Zflag, isExecuting) {
             if (PC === void 0) { PC = 0; }
             if (Acc === void 0) { Acc = 0; }
@@ -52,12 +52,12 @@ var TSOS;
                 var opCode = _MemoryAccessor.readMemory(this.PC);
                 _Kernel.krnTrace('CPU cycle: executing ' + opCode);
                 switch (opCode) {
-                    case "A9":
+                    case "A9":// load the accumulator with value in next area of memory
                         // Load accumulator with decimal (but of course we display it as hex)
                         this.Acc = parseInt(_MemoryAccessor.readMemory(this.PC + 1), 16);
                         this.PC = this.PC + 2;
                         break;
-                    case "AD":
+                    case "AD":// load the accumulator with a value from memory
                         // Get the hex memory address by looking at the next two values in memory and swapping because of little-endian format
                         var hexString = _MemoryAccessor.readMemory(this.PC + 1);
                         hexString = _MemoryAccessor.readMemory(this.PC + 2) + hexString;
@@ -66,7 +66,7 @@ var TSOS;
                         this.Acc = parseInt(_MemoryAccessor.readMemory(address), 16);
                         this.PC = this.PC + 3;
                         break;
-                    case "8D":
+                    case "8D":// store the accumulator in memory
                         // Gets the hex memory address to store in by looking at the next two values in memory and swapping because of little-endian format
                         var hexString = _MemoryAccessor.readMemory(this.PC + 1);
                         hexString = _MemoryAccessor.readMemory(this.PC + 2) + hexString;
@@ -78,7 +78,7 @@ var TSOS;
                         _MemoryAccessor.writeMemory(address, value);
                         this.PC = this.PC + 3;
                         break;
-                    case "6D":
+                    case "6D":// add with carry (add contents of address to accumulator and store result in accumulator)
                         // Gets the hex memory address to store in by looking at the next two values in memory and swapping because of little-endian format
                         var hexString = _MemoryAccessor.readMemory(this.PC + 1);
                         hexString = _MemoryAccessor.readMemory(this.PC + 2) + hexString;
@@ -89,12 +89,12 @@ var TSOS;
                         this.Acc += parseInt(value, 16);
                         this.PC = this.PC + 3;
                         break;
-                    case "A2":
+                    case "A2":// load the X register with a constant
                         // Load X register with decimal (but of course we display it as hex in memory)
                         this.Xreg = parseInt(_MemoryAccessor.readMemory(this.PC + 1), 16);
                         this.PC = this.PC + 2;
                         break;
-                    case "AE":
+                    case "AE":// load the X register from memory
                         // Get the hex memory address by looking at the next two values in memory and swapping because of little-endian format
                         var hexString = _MemoryAccessor.readMemory(this.PC + 1);
                         hexString = _MemoryAccessor.readMemory(this.PC + 2) + hexString;
@@ -104,12 +104,12 @@ var TSOS;
                         this.Xreg = parseInt(_MemoryAccessor.readMemory(address), 16);
                         this.PC = this.PC + 3;
                         break;
-                    case "A0":
+                    case "A0":// load the Y register with a constant
                         // Load Y register with decimal (but of course we display it as hex in memory)
                         this.Yreg = parseInt(_MemoryAccessor.readMemory(this.PC + 1), 16);
                         this.PC = this.PC + 2;
                         break;
-                    case "AC":
+                    case "AC":// load the Y register from memory
                         // Get the hex memory address by looking at the next two values in memory and swapping because of little-endian format
                         var hexString = _MemoryAccessor.readMemory(this.PC + 1);
                         hexString = _MemoryAccessor.readMemory(this.PC + 2) + hexString;
@@ -118,15 +118,15 @@ var TSOS;
                         this.Yreg = parseInt(_MemoryAccessor.readMemory(address), 16);
                         this.PC = this.PC + 3;
                         break;
-                    case "EA":
+                    case "EA":// no operation
                         // This is the NOP (no operation) op code. We don't do anything.
                         this.PC++;
                         break;
-                    case "00":
+                    case "00":// break (system call)
                         // Execute system call for a process exit by generating software interrupt
                         _KernelInterruptQueue.enqueue(new TSOS.Interrupt(PROCESS_EXIT, true));
                         break;
-                    case "EC":
+                    case "EC":// compare byte in memory to X register. Sets the Z flag to zero if equal
                         // Gets the hex memory address by looking at the next two values in memory and swapping because of little-endian format
                         var hexString = _MemoryAccessor.readMemory(this.PC + 1);
                         hexString = _MemoryAccessor.readMemory(this.PC + 2) + hexString;
@@ -144,7 +144,7 @@ var TSOS;
                         }
                         this.PC = this.PC + 3;
                         break;
-                    case "D0":
+                    case "D0":// branch n bytes if Z flag = 0
                         if (this.Zflag == 0) {
                             // First, get the number of bytes to branch by looking at next decimal value in memory
                             var branch = parseInt(_MemoryAccessor.readMemory(this.PC + 1), 16);
@@ -165,7 +165,7 @@ var TSOS;
                             this.PC = this.PC + 2;
                         }
                         break;
-                    case "EE":
+                    case "EE":// Increment the value of a byte
                         // Get the hex memory address by looking at the next two values in memory and swapping because of little-endian format
                         var hexString = _MemoryAccessor.readMemory(this.PC + 1);
                         hexString = _MemoryAccessor.readMemory(this.PC + 2) + hexString;
@@ -179,7 +179,7 @@ var TSOS;
                         _MemoryAccessor.writeMemory(address, hexByteValue);
                         this.PC = this.PC + 3;
                         break;
-                    case "FF":
+                    case "FF":// System call: if 1 in X reg, make syscall to print integer store in Y reg. if 2, then print 00-terminated string stored at address in Y register.
                         if (this.Xreg == 1) {
                             _KernelInterruptQueue.enqueue(new TSOS.Interrupt(CONSOLE_WRITE_IR, "" + this.Yreg));
                         }
@@ -199,7 +199,7 @@ var TSOS;
                         }
                         this.PC++;
                         break;
-                    default:
+                    default:// If the op code is invalid, exit the process
                         _KernelInterruptQueue.enqueue(new TSOS.Interrupt(PROCESS_EXIT, false));
                         _KernelInterruptQueue.enqueue(new TSOS.Interrupt(INVALID_OP, 0));
                 }

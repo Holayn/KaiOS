@@ -8,7 +8,7 @@
    ------------ */
 var TSOS;
 (function (TSOS) {
-    var ProcessManager = (function () {
+    var ProcessManager = /** @class */ (function () {
         function ProcessManager() {
             this.residentQueue = new TSOS.Queue(); // Where we load the program into memory, where it waits to be run.
             this.readyQueue = new TSOS.Queue(); // Where a program is put when marked for CPU to move its program counter forward.

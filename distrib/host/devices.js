@@ -19,7 +19,7 @@
      ------------ */
 var TSOS;
 (function (TSOS) {
-    var Devices = (function () {
+    var Devices = /** @class */ (function () {
         function Devices() {
             _hardwareClockID = -1;
         }

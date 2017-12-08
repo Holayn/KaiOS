@@ -3,6 +3,7 @@
 ///<reference path="shellCommand.ts" />
 ///<reference path="userCommand.ts" />
 ///<reference path="processControlBlock.ts" />
+///<reference path="deviceDriverDisk.ts" />
 ///<reference path="memoryManager.ts" />
 
 
@@ -662,7 +663,10 @@ module TSOS {
 
         // Formats a file
         public shellFormat() {
-
+            // Call the disk device driver to format the disk
+            if(_krnDiskDriver.krnFormat()){
+                _StdOut.putText("Disk formatted successfully!");
+            }
         }
 
         // Lists files on disk
@@ -679,6 +683,5 @@ module TSOS {
         public shellGetSchedule() {
 
         }
-
     }
 }

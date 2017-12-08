@@ -3,6 +3,7 @@
 ///<reference path="../host/control.ts" />
 ///<reference path="../host/devices.ts" />
 ///<reference path="deviceDriverKeyboard.ts" />
+///<reference path="deviceDriverDisk.ts" />
 ///<reference path="memoryManager.ts" />
 ///<reference path="processManager.ts" />
 ///<reference path="scheduler.ts" />
@@ -56,7 +57,7 @@ module TSOS {
             // Yeah, there's more. 
             // Load the Disk Device Driver
             this.krnTrace("Loading the disk device driver");
-            _krnDiskDriver = new DeviceDriverKeyboard();
+            _krnDiskDriver = new DeviceDriverDisk();
             _krnDiskDriver.driverEntry();
             this.krnTrace(_krnDiskDriver.status);
             
