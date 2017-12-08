@@ -21,6 +21,10 @@ var CONTEXT_SWITCH = 3;
 var CONSOLE_WRITE_IR = 4;
 var BOUNDS_ERROR = 5;
 var INVALID_OP = 6;
+var FILE_SUCCESS = 0;
+var FULL_DISK_SPACE = 1;
+var FILE_NAME_ALREADY_EXISTS = 2;
+var FILE_NAME_NO_EXIST = 3;
 //
 // Global Variables
 // TODO: Make a global object and use that instead of the "_" naming convention in the global namespace.

@@ -19,7 +19,7 @@ module TSOS {
         public memoryArray: Array<String>
         // Let's just represent the memory as an array of size 768 bytes, 3 partitions of 256
         constructor() {}
-        // Initialize the memory and the memory display
+        // Initialize the memory
         public init(): void {
             this.memoryArray = new Array<String>(768);
             // Initialize memory with all 00s

@@ -537,11 +537,15 @@ var TSOS;
         // Creates a file
         Shell.prototype.shellCreateFile = function (args) {
             if (args.length == 1) {
-                // TODO: Enforce file name length constraints
-                if (_krnDiskDriver.krnDiskCreate(args[0])) {
+                // TODO: Enforce file name constraints i.e. length, characters, etc
+                var status_1 = _krnDiskDriver.krnDiskCreate(args[0]);
+                if (status_1 == FILE_SUCCESS) {
                     _StdOut.putText("File successfully created: " + args[0]);
                 }
-                else {
+                else if (status_1 == FILE_NAME_ALREADY_EXISTS) {
+                    _StdOut.putText("File name already exists.");
+                }
+                else if (status_1 == FULL_DISK_SPACE) {
                     _StdOut.putText("File creation failure: No more space on disk.");
                 }
             }
@@ -553,7 +557,17 @@ var TSOS;
         Shell.prototype.shellReadFile = function () {
         };
         // Writes to a file
-        Shell.prototype.shellWriteFile = function () {
+        Shell.prototype.shellWriteFile = function (args) {
+            if (args.length == 2) {
+                // TODO: Enforce what can be written to file.
+                var status_2 = _krnDiskDriver.krnDiskWrite(args[0], args[1]);
+                if (status_2 == FILE_SUCCESS) {
+                    _StdOut.putText(args[0] + " successfully written to.");
+                }
+            }
+            else {
+                _StdOut.putText("Usage: write <filename> \"<text>\". Please supply a filename and text surrounded by quotes.");
+            }
         };
         // Deletes a file
         Shell.prototype.shellDeleteFile = function () {

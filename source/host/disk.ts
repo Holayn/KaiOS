@@ -18,31 +18,9 @@
 module TSOS {
 
     export class Disk {
-        public numOfTracks: number = 4;
-        public numOfSectors: number = 8;
-        public numOfBlocks: number = 8;
         constructor() {}
 
         public init() {
-            // Init storage
-            // Key value of { "track:sector:byte"  : "00000..."}
-            for(var i=0; i<this.numOfTracks; i++){
-                for(var j=0; j<this.numOfSectors; j++){
-                    for(var k=0; k<this.numOfBlocks; k++){
-                        let key = i + ":" + j + ":" + k;
-                        let zeroes = new Array<String>();
-                        for(var l=0; l<60; l++){
-                            zeroes.push("00");
-                        }
-                        let block = {
-                            availableBit : "0", // Flags a block as available or not
-                            pointer: ["0:0:0"], // Pointer to next data block
-                            data: zeroes // Rest of 64 bytes is filled with data
-                        }
-                        sessionStorage.setItem(key, JSON.stringify(block));
-                    }
-                }
-            }
         }
     }
 }

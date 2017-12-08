@@ -30,6 +30,14 @@ const BOUNDS_ERROR: number = 5;
 
 const INVALID_OP: number = 6;
 
+const FILE_SUCCESS: number = 0;
+
+const FULL_DISK_SPACE: number = 1;
+
+const FILE_NAME_ALREADY_EXISTS: number = 2;
+
+const FILE_NAME_NO_EXIST: number = 3;
+
 //
 // Global Variables
 // TODO: Make a global object and use that instead of the "_" naming convention in the global namespace.

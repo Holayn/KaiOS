@@ -17,7 +17,7 @@ var TSOS;
         // Let's just represent the memory as an array of size 768 bytes, 3 partitions of 256
         function Memory() {
         }
-        // Initialize the memory and the memory display
+        // Initialize the memory
         Memory.prototype.init = function () {
             this.memoryArray = new Array(768);
             // Initialize memory with all 00s

@@ -644,11 +644,15 @@ module TSOS {
         // Creates a file
         public shellCreateFile(args) {
             if(args.length == 1){
-                // TODO: Enforce file name length constraints
-                if(_krnDiskDriver.krnDiskCreate(args[0])){
+                // TODO: Enforce file name constraints i.e. length, characters, etc
+                let status = _krnDiskDriver.krnDiskCreate(args[0]);
+                if(status == FILE_SUCCESS){
                     _StdOut.putText("File successfully created: " + args[0]);
                 }
-                else{
+                else if(status == FILE_NAME_ALREADY_EXISTS){
+                    _StdOut.putText("File name already exists.");
+                }
+                else if(status == FULL_DISK_SPACE){
                     _StdOut.putText("File creation failure: No more space on disk.");
                 }
             }
@@ -663,8 +667,17 @@ module TSOS {
         }
 
         // Writes to a file
-        public shellWriteFile() {
-            
+        public shellWriteFile(args) {
+            if(args.length == 2){
+                // TODO: Enforce what can be written to file.
+                let status = _krnDiskDriver.krnDiskWrite(args[0], args[1]);
+                if(status == FILE_SUCCESS){
+                    _StdOut.putText(args[0] + " successfully written to.");
+                }
+            }
+            else{
+                _StdOut.putText("Usage: write <filename> \"<text>\". Please supply a filename and text surrounded by quotes.");
+            }
         }
 
         // Deletes a file
