@@ -536,6 +536,12 @@ var TSOS;
         };
         // Creates a file
         Shell.prototype.shellCreateFile = function () {
+            // TODO: Enforce file name length constraints
+            if (_krnDiskDriver.krnDiskCreate()) {
+            }
+            else {
+                _StdOut.putText("File creation failure: No more space on disk.");
+            }
         };
         // Reads a file
         Shell.prototype.shellReadFile = function () {
@@ -551,6 +557,9 @@ var TSOS;
             // Call the disk device driver to format the disk
             if (_krnDiskDriver.krnFormat()) {
                 _StdOut.putText("Disk formatted successfully!");
+            }
+            else {
+                _StdOut.putText("Can't format disk right now. :(");
             }
         };
         // Lists files on disk

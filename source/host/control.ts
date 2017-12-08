@@ -259,8 +259,31 @@ module TSOS {
             }
         }
 
-        public static initDiskDisplay(): void {
+        // This will update the disk display with contents of session storage
+        public static hostDisk(): void {
+            var table = (<HTMLTableElement>document.getElementById('tableDisk'));
+            // For each row, insert the TSB, available bit, pointer, and data into separate cells
+            for(var i=0; i<_Disk.numOfTracks*_Disk.numOfSectors*_Disk.numOfBytes; i++){
+                var row = table.insertRow(i);
+                row.style.backgroundColor = "white";
+                var tsb = row.insertCell(0);
+                tsb.innerHTML = sessionStorage.key(i);
+                tsb.style.color = "lightcoral";
+                var availableBit = row.insertCell(1);
+                availableBit.innerHTML = JSON.parse(sessionStorage.getItem(sessionStorage.key(i))).availableBit;
+                availableBit.style.color = "lightgreen";
+                var pointer = row.insertCell(2);
+                var pointerVal = JSON.parse(sessionStorage.getItem(sessionStorage.key(i))).pointer;
+                pointer.innerHTML = pointerVal[0] + pointerVal[1] + pointerVal[2];
+                pointer.style.color = "lightgray";
+                var data = row.insertCell(3);
+                data.innerHTML = JSON.parse(sessionStorage.getItem(sessionStorage.key(i))).data.join("");
+                data.style.color = "lightblue";
+            }
+        }
 
+        public static initDiskDisplay(): void {
+            this.hostDisk();
         }
 
         //

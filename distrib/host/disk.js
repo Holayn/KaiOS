@@ -42,6 +42,7 @@ var TSOS;
                 }
             }
         };
+        Disk.directoryStructureTrack = 0;
         return Disk;
     }());
     TSOS.Disk = Disk;

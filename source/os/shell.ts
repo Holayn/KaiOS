@@ -643,7 +643,13 @@ module TSOS {
 
         // Creates a file
         public shellCreateFile() {
-            
+            // TODO: Enforce file name length constraints
+            if(_krnDiskDriver.krnDiskCreate()){
+                
+            }
+            else{
+                _StdOut.putText("File creation failure: No more space on disk.");
+            }
         }
 
         // Reads a file
@@ -666,6 +672,9 @@ module TSOS {
             // Call the disk device driver to format the disk
             if(_krnDiskDriver.krnFormat()){
                 _StdOut.putText("Disk formatted successfully!");
+            }
+            else{
+                _StdOut.putText("Can't format disk right now. :(");
             }
         }
 

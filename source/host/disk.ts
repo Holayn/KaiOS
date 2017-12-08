@@ -21,6 +21,7 @@ module TSOS {
         public numOfTracks: number = 4;
         public numOfSectors: number = 8;
         public numOfBytes: number = 8;
+        public static directoryStructureTrack: number = 0;
         constructor() {}
 
         public init() {

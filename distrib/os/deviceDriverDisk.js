@@ -38,9 +38,13 @@ var TSOS;
         };
         // Performs a create given a file name
         DeviceDriverDisk.prototype.krnDiskCreate = function () {
+            // TODO: Return false if there is no more space on the disk
+            // Look for free block in directory data structure
+            // Set the filename
         };
         // Performs a write given a file name
         DeviceDriverDisk.prototype.krnDiskWrite = function () {
+            // Look for free block in data structure
         };
         // Performs a read given a file name
         DeviceDriverDisk.prototype.krnDiskRead = function () {
@@ -62,6 +66,9 @@ var TSOS;
                 block.pointer = ["0", "0", "0"];
                 block.data = zeroes;
             }
+            // Update disk display
+            TSOS.Control.hostDisk();
+            // TODO: Return false if a format can't be performed at that time
             return true;
         };
         return DeviceDriverDisk;

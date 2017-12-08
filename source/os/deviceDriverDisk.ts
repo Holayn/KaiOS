@@ -31,11 +31,15 @@
 
             // Performs a create given a file name
             public krnDiskCreate() {
+                // TODO: Return false if there is no more space on the disk
+                // Look for free block in directory data structure
 
+                // Set the filename
             }
 
             // Performs a write given a file name
             public krnDiskWrite() {
+                // Look for free block in data structure
 
             }
 
@@ -63,6 +67,9 @@
                     block.pointer = ["0","0","0"];
                     block.data = zeroes;
                 }
+                // Update disk display
+                Control.hostDisk();
+                // TODO: Return false if a format can't be performed at that time
                 return true;
             }
         }
