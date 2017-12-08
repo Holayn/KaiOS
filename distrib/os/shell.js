@@ -535,12 +535,18 @@ var TSOS;
             }
         };
         // Creates a file
-        Shell.prototype.shellCreateFile = function () {
-            // TODO: Enforce file name length constraints
-            if (_krnDiskDriver.krnDiskCreate()) {
+        Shell.prototype.shellCreateFile = function (args) {
+            if (args.length == 1) {
+                // TODO: Enforce file name length constraints
+                if (_krnDiskDriver.krnDiskCreate(args[0])) {
+                    _StdOut.putText("File successfully created: " + args[0]);
+                }
+                else {
+                    _StdOut.putText("File creation failure: No more space on disk.");
+                }
             }
             else {
-                _StdOut.putText("File creation failure: No more space on disk.");
+                _StdOut.putText("Usage: create <filename>. Please supply a filename");
             }
         };
         // Reads a file

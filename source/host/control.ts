@@ -263,7 +263,7 @@ module TSOS {
         public static hostDisk(): void {
             var table = (<HTMLTableElement>document.getElementById('tableDisk'));
             // For each row, insert the TSB, available bit, pointer, and data into separate cells
-            for(var i=0; i<_Disk.numOfTracks*_Disk.numOfSectors*_Disk.numOfBytes; i++){
+            for(var i=0; i<_Disk.numOfTracks*_Disk.numOfSectors*_Disk.numOfBlocks; i++){
                 var row = table.insertRow(i);
                 row.style.backgroundColor = "white";
                 var tsb = row.insertCell(0);
@@ -274,7 +274,7 @@ module TSOS {
                 availableBit.style.color = "lightgreen";
                 var pointer = row.insertCell(2);
                 var pointerVal = JSON.parse(sessionStorage.getItem(sessionStorage.key(i))).pointer;
-                pointer.innerHTML = pointerVal[0] + pointerVal[1] + pointerVal[2];
+                pointer.innerHTML = pointerVal;
                 pointer.style.color = "lightgray";
                 var data = row.insertCell(3);
                 data.innerHTML = JSON.parse(sessionStorage.getItem(sessionStorage.key(i))).data.join("");

@@ -627,7 +627,7 @@ module TSOS {
                 }
             }
             else{
-                _StdOut.putText("Usage: quantum <int>  Please supply an integer")
+                _StdOut.putText("Usage: quantum <int>  Please supply an integer");
             }
         }
 
@@ -642,13 +642,18 @@ module TSOS {
         }
 
         // Creates a file
-        public shellCreateFile() {
-            // TODO: Enforce file name length constraints
-            if(_krnDiskDriver.krnDiskCreate()){
-                
+        public shellCreateFile(args) {
+            if(args.length == 1){
+                // TODO: Enforce file name length constraints
+                if(_krnDiskDriver.krnDiskCreate(args[0])){
+                    _StdOut.putText("File successfully created: " + args[0]);
+                }
+                else{
+                    _StdOut.putText("File creation failure: No more space on disk.");
+                }
             }
             else{
-                _StdOut.putText("File creation failure: No more space on disk.");
+                _StdOut.putText("Usage: create <filename>. Please supply a filename");
             }
         }
 
