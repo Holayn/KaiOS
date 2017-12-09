@@ -550,7 +550,7 @@ var TSOS;
                 }
             }
             else {
-                _StdOut.putText("Usage: create <filename>. Please supply a filename");
+                _StdOut.putText("Usage: create <filename>  Please supply a filename");
             }
         };
         // Reads a file
@@ -583,11 +583,24 @@ var TSOS;
                 }
             }
             else {
-                _StdOut.putText("Usage: write <filename> \"<text>\". Please supply a filename and text surrounded by quotes.");
+                _StdOut.putText("Usage: write <filename> \"<text>\"  Please supply a filename and text surrounded by quotes.");
             }
         };
         // Deletes a file
-        Shell.prototype.shellDeleteFile = function () {
+        Shell.prototype.shellDeleteFile = function (args) {
+            if (args.length == 1) {
+                // TODO: Enforce file name constraints
+                var status_4 = _krnDiskDriver.krnDiskDelete(args[0]);
+                if (status_4 == FILE_SUCCESS) {
+                    _StdOut.putText("The file: " + args[0] + " has been successfully deleted.");
+                }
+                else if (status_4 == FILE_NAME_NO_EXIST) {
+                    _StdOut.putText("The file: " + args[0] + " does not exist.");
+                }
+            }
+            else {
+                _StdOut.putText("Usage: delete <filename>  Please supply a filename.");
+            }
         };
         // Formats a file
         Shell.prototype.shellFormat = function () {

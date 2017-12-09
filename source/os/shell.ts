@@ -657,7 +657,7 @@ module TSOS {
                 }
             }
             else{
-                _StdOut.putText("Usage: create <filename>. Please supply a filename");
+                _StdOut.putText("Usage: create <filename>  Please supply a filename");
             }
         }
 
@@ -692,13 +692,25 @@ module TSOS {
                 }
             }
             else{
-                _StdOut.putText("Usage: write <filename> \"<text>\". Please supply a filename and text surrounded by quotes.");
+                _StdOut.putText("Usage: write <filename> \"<text>\"  Please supply a filename and text surrounded by quotes.");
             }
         }
 
         // Deletes a file
-        public shellDeleteFile() {
-
+        public shellDeleteFile(args) {
+            if(args.length == 1){
+                // TODO: Enforce file name constraints
+                let status = _krnDiskDriver.krnDiskDelete(args[0]);
+                if(status == FILE_SUCCESS){
+                    _StdOut.putText("The file: " + args[0] + " has been successfully deleted.");
+                }
+                else if(status == FILE_NAME_NO_EXIST){
+                    _StdOut.putText("The file: " + args[0] + " does not exist.");
+                }
+            }
+            else{
+                _StdOut.putText("Usage: delete <filename>  Please supply a filename.");
+            }
         }
 
         // Formats a file

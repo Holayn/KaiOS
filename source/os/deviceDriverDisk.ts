@@ -75,6 +75,8 @@
                             dirBlock.pointer = sessionStorage.key(datBlockIndex); // set pointer to space in memory
                             // Convert filename to ASCII/hex and store in data
                             let hexArr = this.stringToASCII(filename);
+                            // Clear the directory block's data first a.k.a the filename if it was there before
+                            dirBlock = this.clearData(dirBlock);
                             // We only replace the bytes needed, not the entire data array
                             for(var k=0; k<hexArr.length; k++){
                                 dirBlock.data[k] = hexArr[k];
@@ -290,8 +292,38 @@
             }
 
             // Performs a delete given a file name
-            public krnDiskDelete() {
-                
+            public krnDiskDelete(filename) {
+                let hexArr = this.stringToASCII(filename);
+                for(var i=1; i<_Disk.numOfSectors*_Disk.numOfBlocks; i++){
+                    let dirBlock = JSON.parse(sessionStorage.getItem(sessionStorage.key(i)));
+                    let matchingFileName = true;
+                    // Don't look in blocks not in use
+                    if(dirBlock.availableBit == "1"){
+                        for(var j=0; j<hexArr.length; j++){
+                            if(hexArr[j] != dirBlock.data[j]){
+                                matchingFileName = false
+                            }
+                        }
+                        // If reach end of hexArr but dirBlock data still more?
+                        if(dirBlock.data[hexArr.length] != "00"){
+                            matchingFileName = false;
+                        }
+                        // We found the filename
+                        if(matchingFileName){
+                            // Perform recursive delete given first TSB
+                            this.recurseDelete(dirBlock.pointer);
+                            // Update directory block
+                            dirBlock.availableBit = "0"
+                            dirBlock.pointer = "0:0:0";
+                            // Set in storage
+                            sessionStorage.setItem(sessionStorage.key(i), JSON.stringify(dirBlock));
+                            // Update display
+                            Control.hostDisk();
+                            return FILE_SUCCESS;
+                        }
+                    }
+                }
+                return FILE_NAME_NO_EXIST;
             }
 
             // Performs a format on the disk by initializing all blocks in all sectors in all tracks on disk
