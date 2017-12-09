@@ -736,7 +736,7 @@ module TSOS {
 
         // Returns the scheduler algorithm
         public shellGetSchedule() {
-
+            _StdOut.putText("Scheduling algorithm: " + _Scheduler.algorithm);
         }
     }
 }

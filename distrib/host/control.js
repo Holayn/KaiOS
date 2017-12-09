@@ -162,7 +162,9 @@ var TSOS;
         };
         // This will update and display the processes in execution in the ready queue display
         Control.hostProcesses = function () {
-            console.log("UPDATING PROCESSES DISPLAY");
+            // Show scheduling algorithm
+            var scheduleName = document.getElementById('scheduleName');
+            scheduleName.innerHTML = _Scheduler.algorithm;
             var table = document.getElementById('tableReady');
             // For each PCB in ready queue, print out a new row for it
             var readyQueue = [];

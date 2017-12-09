@@ -327,6 +327,7 @@ var TSOS;
         };
         // Performs a format on the disk by initializing all blocks in all sectors in all tracks on disk
         DeviceDriverDisk.prototype.krnFormat = function () {
+            // TODO: Return false if a format can't be performed at that time
             // For all values in session storage, set available bit to 0, pointer to 0,0,0, and fill data with 00s
             var zeroes = new Array();
             for (var l = 0; l < 60; l++) {
@@ -341,7 +342,6 @@ var TSOS;
             }
             // Update disk display
             TSOS.Control.hostDisk();
-            // TODO: Return false if a format can't be performed at that time
             return true;
         };
         // Helper method to convert string to ASCII to hex

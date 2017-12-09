@@ -180,7 +180,9 @@ module TSOS {
 
         // This will update and display the processes in execution in the ready queue display
         public static hostProcesses(): void {
-            console.log("UPDATING PROCESSES DISPLAY");
+            // Show scheduling algorithm
+            var scheduleName = (<HTMLTableElement>document.getElementById('scheduleName'));
+            scheduleName.innerHTML = _Scheduler.algorithm;
             var table = (<HTMLTableElement>document.getElementById('tableReady'));
             // For each PCB in ready queue, print out a new row for it
             let readyQueue: Array<ProcessControlBlock> = [];

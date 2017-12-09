@@ -620,6 +620,7 @@ var TSOS;
         };
         // Returns the scheduler algorithm
         Shell.prototype.shellGetSchedule = function () {
+            _StdOut.putText("Scheduling algorithm: " + _Scheduler.algorithm);
         };
         return Shell;
     }());

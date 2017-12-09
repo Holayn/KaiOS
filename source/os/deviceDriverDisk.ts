@@ -328,6 +328,7 @@
 
             // Performs a format on the disk by initializing all blocks in all sectors in all tracks on disk
             public krnFormat() {
+                // TODO: Return false if a format can't be performed at that time
                 // For all values in session storage, set available bit to 0, pointer to 0,0,0, and fill data with 00s
                 let zeroes = new Array<String>();
                 for(var l=0; l<60; l++){
@@ -342,7 +343,6 @@
                 }
                 // Update disk display
                 Control.hostDisk();
-                // TODO: Return false if a format can't be performed at that time
                 return true;
             }
 
