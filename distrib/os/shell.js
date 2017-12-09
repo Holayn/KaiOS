@@ -614,6 +614,20 @@ var TSOS;
         };
         // Lists files on disk
         Shell.prototype.shellList = function () {
+            // Get the list of files from the disk device driver
+            var filenames = _krnDiskDriver.krnLs();
+            if (filenames.length != 0) {
+                _StdOut.putText("Files in the filesystem:");
+                _StdOut.advanceLine();
+                for (var _i = 0, filenames_1 = filenames; _i < filenames_1.length; _i++) {
+                    var f = filenames_1[_i];
+                    _StdOut.putText(f);
+                    _StdOut.advanceLine();
+                }
+            }
+            else {
+                _StdOut.putText("There are no files in the filesystem.");
+            }
         };
         // Sets the scheduler algorithm
         Shell.prototype.shellSetSchedule = function () {

@@ -726,7 +726,19 @@ module TSOS {
 
         // Lists files on disk
         public shellList() {
-
+            // Get the list of files from the disk device driver
+            let filenames = _krnDiskDriver.krnLs();
+            if(filenames.length != 0){
+                _StdOut.putText("Files in the filesystem:");
+                _StdOut.advanceLine();
+                for(var f of filenames){
+                    _StdOut.putText(f);
+                    _StdOut.advanceLine();
+                }
+            }
+            else{
+                _StdOut.putText("There are no files in the filesystem.");
+            }
         }
 
         // Sets the scheduler algorithm

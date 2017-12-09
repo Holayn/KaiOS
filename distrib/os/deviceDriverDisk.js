@@ -293,6 +293,7 @@ var TSOS;
         };
         // Performs a delete given a file name
         DeviceDriverDisk.prototype.krnDiskDelete = function (filename) {
+            // Look for the filename in the directory structure
             var hexArr = this.stringToASCII(filename);
             for (var i = 1; i < _Disk.numOfSectors * _Disk.numOfBlocks; i++) {
                 var dirBlock = JSON.parse(sessionStorage.getItem(sessionStorage.key(i)));
@@ -343,6 +344,38 @@ var TSOS;
             // Update disk display
             TSOS.Control.hostDisk();
             return true;
+        };
+        // Return the used directory entries
+        DeviceDriverDisk.prototype.krnLs = function () {
+            // Return the filenames of all directory blocks that are used
+            var filenames = [];
+            // Don't look in the MBR
+            for (var i = 1; i < _Disk.numOfSectors * _Disk.numOfBlocks; i++) {
+                var dirBlock = JSON.parse(sessionStorage.getItem(sessionStorage.key(i)));
+                var matchingFileName = true;
+                // Don't look in blocks not in use
+                if (dirBlock.availableBit == "1") {
+                    filenames.push(dirBlock.data);
+                }
+            }
+            // Convert all hex filenames to human-readable form
+            for (var i = 0; i < filenames.length; i++) {
+                var dataPtr = 0;
+                var res = []; // filename
+                while (true) {
+                    if (filenames[i][dataPtr] != "00") {
+                        // Avoiding string concatenation to improve runtime
+                        res.push(String.fromCharCode(parseInt(filenames[i][dataPtr], 16))); // push each char into array
+                        dataPtr++;
+                    }
+                    else {
+                        break;
+                    }
+                }
+                filenames[i] = res.join("");
+            }
+            // Return array of filenames
+            return filenames;
         };
         // Helper method to convert string to ASCII to hex
         // Returns an array of each character represented as hex

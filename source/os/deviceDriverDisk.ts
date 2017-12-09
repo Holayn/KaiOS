@@ -293,6 +293,7 @@
 
             // Performs a delete given a file name
             public krnDiskDelete(filename) {
+                // Look for the filename in the directory structure
                 let hexArr = this.stringToASCII(filename);
                 for(var i=1; i<_Disk.numOfSectors*_Disk.numOfBlocks; i++){
                     let dirBlock = JSON.parse(sessionStorage.getItem(sessionStorage.key(i)));
@@ -344,6 +345,39 @@
                 // Update disk display
                 Control.hostDisk();
                 return true;
+            }
+
+            // Return the used directory entries
+            public krnLs() {
+                // Return the filenames of all directory blocks that are used
+                let filenames = [];
+                // Don't look in the MBR
+                for(var i=1; i<_Disk.numOfSectors*_Disk.numOfBlocks; i++){
+                    let dirBlock = JSON.parse(sessionStorage.getItem(sessionStorage.key(i)));
+                    let matchingFileName = true;
+                    // Don't look in blocks not in use
+                    if(dirBlock.availableBit == "1"){
+                        filenames.push(dirBlock.data);
+                    }
+                }
+                // Convert all hex filenames to human-readable form
+                for(var i=0; i<filenames.length; i++){
+                    let dataPtr = 0;
+                    let res = []; // filename
+                    while(true){
+                        if(filenames[i][dataPtr] != "00"){
+                            // Avoiding string concatenation to improve runtime
+                            res.push(String.fromCharCode(parseInt(filenames[i][dataPtr], 16))); // push each char into array
+                            dataPtr++; 
+                        }
+                        else{
+                            break;
+                        }
+                    }
+                    filenames[i] = res.join("");
+                }
+                // Return array of filenames
+                return filenames;
             }
 
             // Helper method to convert string to ASCII to hex
