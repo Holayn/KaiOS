@@ -560,7 +560,9 @@ var TSOS;
         Shell.prototype.shellWriteFile = function (args) {
             if (args.length == 2) {
                 // TODO: Enforce what can be written to file.
-                var status_2 = _krnDiskDriver.krnDiskWrite(args[0], args[1]);
+                var fileText = args[1];
+                console.log(fileText);
+                var status_2 = _krnDiskDriver.krnDiskWrite(args[0], fileText);
                 if (status_2 == FILE_SUCCESS) {
                     _StdOut.putText(args[0] + " successfully written to.");
                 }

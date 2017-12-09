@@ -28,10 +28,6 @@ var TSOS;
             // The code below cannot run because "this" can only be
             // accessed after calling super.
             _super.call(this) || this;
-            _this.numOfTracks = 4; // The number of tracks on the disk
-            _this.numOfSectors = 8; // The number of sectors in each track
-            _this.numOfBlocks = 8; // The number of blocks in each sector
-            _this.dataSize = 60; // The actual amount of bytes we can write data to.
             _this.driverEntry = _this.krnDiskDriverEntry;
             return _this;
         }
@@ -42,7 +38,7 @@ var TSOS;
         };
         DeviceDriverDisk.prototype.checkForExistingFile = function (filename) {
             var hexArr = this.stringToASCII(filename);
-            for (var i = 1; i < this.numOfSectors * this.numOfBlocks; i++) {
+            for (var i = 1; i < _Disk.numOfSectors * _Disk.numOfBlocks; i++) {
                 var dirBlock = JSON.parse(sessionStorage.getItem(sessionStorage.key(i)));
                 var matchingFileName = true;
                 // Don't look in blocks not in use
@@ -53,7 +49,7 @@ var TSOS;
                         }
                     }
                     // We found the filename
-                    if (matchingFileName) {
+                    if (matchingFileName && dirBlock.data[hexArr.length] == "00") {
                         return true;
                     }
                 }
@@ -68,41 +64,50 @@ var TSOS;
             }
             // Look for first free block in directory data structure (first track)
             // Leave out the first block, which is the MBR
-            for (var i = 1; i < this.numOfSectors * this.numOfBlocks; i++) {
+            for (var i = 1; i < _Disk.numOfSectors * _Disk.numOfBlocks; i++) {
                 var dirBlock = JSON.parse(sessionStorage.getItem(sessionStorage.key(i)));
                 // If the block is available, set the passed filename in the data
                 if (dirBlock.availableBit == "0") {
                     // Now look for first free block in data structure so we actually have a "place" to put the file
-                    for (var j = (this.numOfSectors * this.numOfBlocks); j < (this.numOfTracks * this.numOfSectors * this.numOfBlocks); j++) {
-                        var datBlock = JSON.parse(sessionStorage.getItem(sessionStorage.key(j)));
-                        // If the block is available, mark it as unavailable, and set its tsb to the dirBlock pointer
-                        if (datBlock.availableBit == "0") {
-                            dirBlock.availableBit = "1";
-                            datBlock.availableBit = "1";
-                            dirBlock.pointer = sessionStorage.key(j); // set pointer to space in memory
-                            // Convert filename to ASCII/hex and store in data
-                            var hexArr = this.stringToASCII(filename);
-                            // We only replace the bytes needed, not the entire data array
-                            for (var k = 0; k < hexArr.length; k++) {
-                                dirBlock.data[k] = hexArr[k];
-                            }
-                            sessionStorage.setItem(sessionStorage.key(i), JSON.stringify(dirBlock));
-                            sessionStorage.setItem(sessionStorage.key(j), JSON.stringify(datBlock));
-                            // Update the disk display and return success
-                            TSOS.Control.hostDisk();
-                            return FILE_SUCCESS;
+                    var datBlockIndex = this.findFreeDataBlock();
+                    if (datBlockIndex != null) {
+                        var datBlock = JSON.parse(sessionStorage.getItem(sessionStorage.key(datBlockIndex)));
+                        dirBlock.availableBit = "1";
+                        datBlock.availableBit = "1";
+                        dirBlock.pointer = sessionStorage.key(datBlockIndex); // set pointer to space in memory
+                        // Convert filename to ASCII/hex and store in data
+                        var hexArr = this.stringToASCII(filename);
+                        // We only replace the bytes needed, not the entire data array
+                        for (var k = 0; k < hexArr.length; k++) {
+                            dirBlock.data[k] = hexArr[k];
                         }
+                        sessionStorage.setItem(sessionStorage.key(i), JSON.stringify(dirBlock));
+                        sessionStorage.setItem(sessionStorage.key(datBlockIndex), JSON.stringify(datBlock));
+                        // Update the disk display and return success
+                        TSOS.Control.hostDisk();
+                        return FILE_SUCCESS;
                     }
                     return FULL_DISK_SPACE; // We ran through the data structure but there were no free blocks, meaning no more space on disk :(((((((
                 }
             }
             return FULL_DISK_SPACE; // We ran through the directory data structure but there were no free blocks, meaning no more space on disk :(
         };
+        // Return the session storage index of the next free data block. If can't find, return null.
+        DeviceDriverDisk.prototype.findFreeDataBlock = function () {
+            for (var j = (_Disk.numOfSectors * _Disk.numOfBlocks); j < (_Disk.numOfTracks * _Disk.numOfSectors * _Disk.numOfBlocks); j++) {
+                var datBlock = JSON.parse(sessionStorage.getItem(sessionStorage.key(j)));
+                // If the block is available, mark it as unavailable, and set its tsb to the dirBlock pointer
+                if (datBlock.availableBit == "0") {
+                    return j;
+                }
+            }
+            return null;
+        };
         // Performs a write given a file name
         DeviceDriverDisk.prototype.krnDiskWrite = function (filename, text) {
-            // Look for filename
+            // Look for filename in directrory structure
             var hexArr = this.stringToASCII(filename);
-            for (var i = 1; i < this.numOfSectors * this.numOfBlocks; i++) {
+            for (var i = 1; i < _Disk.numOfSectors * _Disk.numOfBlocks; i++) {
                 var dirBlock = JSON.parse(sessionStorage.getItem(sessionStorage.key(i)));
                 var matchingFileName = true;
                 // Don't look in blocks not in use
@@ -113,18 +118,102 @@ var TSOS;
                         }
                     }
                     // We found the filename
-                    if (matchingFileName) {
-                        // Convert the text to a hex array
-                        var textHexArr = this.stringToASCII(text);
-                        // Check size of text. If it is longer than 60, then we need to allocate another datablock
-                        if (textHexArr.length > this.dataSize) {
-                            // Get the first datablock, recursively write string.
-                            var dataBlock = JSON.parse(sessionStorage.getItem(dirBlock.pointer));
+                    if (matchingFileName && dirBlock.data[hexArr.length] == "00") {
+                        // Convert the text to a hex array, trimming off 
+                        var textHexArr = this.stringToASCII(text.slice(1, -1));
+                        console.log(textHexArr);
+                        // Check size of text. If it is longer than 60, then we need to have enough datablocks
+                        var stringLength = textHexArr.length;
+                        var datBlockTSB = dirBlock.pointer; // pointer to current block we're looking at
+                        var datBlock = JSON.parse(sessionStorage.getItem(dirBlock.pointer));
+                        // Keep track of the last block that was already allocated for this file
+                        // This is so we know what to start to delete from so we don't delete what we had before, if we run out of memory while allocating new blocks.
+                        var lastAlreadyAllocdBlockTSB = dirBlock.pointer;
+                        // What if data block writing to already pointing to stuff? Then we need to traverse it.
+                        // Continuously allocate new blocks until we gucci
+                        while (stringLength > _Disk.dataSize) {
+                            // If pointer 0:0:0, then we need to find free blocks
+                            // Else if it is already pointing to something, we're good already
+                            if (datBlock.pointer != "0:0:0") {
+                                stringLength -= _Disk.dataSize;
+                                // Update to keep track of last block that was already allocated for this file so later we can delete appropriately
+                                lastAlreadyAllocdBlockTSB = datBlock.pointer;
+                                // Update pointers
+                                datBlockTSB = datBlock.pointer;
+                                datBlock = JSON.parse(sessionStorage.getItem(datBlock.pointer));
+                            }
+                            else {
+                                // We reached the end of the blocks that have already been allocated for this file. We need MOAR.
+                                // Find enough free data blocks, if can't, return error
+                                var nextFreeBlockIndex = this.findFreeDataBlock();
+                                if (nextFreeBlockIndex != null) {
+                                    stringLength -= _Disk.dataSize;
+                                    // Found a free datablock, mark it as used
+                                    var nextFreeBlock = JSON.parse(sessionStorage.getItem(sessionStorage.key(nextFreeBlockIndex)));
+                                    nextFreeBlock.availableBit = "1";
+                                    // Update allocated block in session storage
+                                    sessionStorage.setItem(sessionStorage.key(nextFreeBlockIndex), JSON.stringify(nextFreeBlock));
+                                    // Set the pointer to this new free datablock in the previous data block
+                                    datBlock.pointer = sessionStorage.key(nextFreeBlockIndex);
+                                    // Update that in storage
+                                    sessionStorage.setItem(datBlockTSB, JSON.stringify(datBlock));
+                                    // Update pointers
+                                    datBlockTSB = datBlock.pointer;
+                                    datBlock = JSON.parse(sessionStorage.getItem(datBlock.pointer));
+                                }
+                                else {
+                                    // Couldn't find free data block. Not enough space to write string to disk. String was probably very long
+                                    // Make sure to go back and make the data blocks that were marked "used" as free during allocation process
+                                    // Perform a recursive delete starting from the first 
+                                    // But wait, we don't want to delete what's already there.
+                                    // So go to the last already existing block for the file, and start deleting starting with the block it is pointing to
+                                    var ptrBlock = JSON.parse(sessionStorage.getItem(lastAlreadyAllocdBlockTSB));
+                                    this.recurseDelete(ptrBlock.pointer);
+                                    return FULL_DISK_SPACE;
+                                }
+                            }
                         }
+                        // We have enough allocated space. Get the first datablock, recursively write string.
+                        console.log("WRITING");
+                        var dataPtr = 0;
+                        var currentIndex = dirBlock.pointer;
+                        var currentBlock = JSON.parse(sessionStorage.getItem(currentIndex));
+                        for (var k = 0; k < textHexArr.length; k++) {
+                            currentBlock.data[dataPtr] = textHexArr[k];
+                            dataPtr++;
+                            // Check to see if we've reached the limit of what data the block can hold. If so, go to the next block.
+                            if (dataPtr == 60) {
+                                // Set the block in session storage first
+                                sessionStorage.setItem(currentIndex, JSON.stringify(currentBlock));
+                                currentIndex = currentBlock.pointer;
+                                currentBlock = JSON.parse(sessionStorage.getItem(currentIndex));
+                                dataPtr = 0;
+                            }
+                        }
+                        // Update session storage
+                        sessionStorage.setItem(currentIndex, JSON.stringify(currentBlock));
+                        // Update disk display
+                        TSOS.Control.hostDisk();
+                        return FILE_SUCCESS;
                     }
                 }
             }
             return FILE_NAME_NO_EXIST;
+        };
+        // Helper method to do a recursively delete starting from some TSB of session storage
+        DeviceDriverDisk.prototype.recurseDelete = function (tsb) {
+            var ptrBlock = JSON.parse(sessionStorage.getItem(tsb)); // block that belongs to the TSB
+            if (ptrBlock.pointer != "0:0:0") {
+                // follow links
+                this.recurseDelete(ptrBlock.pointer);
+            }
+            // remove pointer
+            ptrBlock.pointer = "0:0:0";
+            // set as available
+            ptrBlock.availableBit = "0";
+            // update
+            sessionStorage.setItem(tsb, JSON.stringify(ptrBlock));
+            return;
         };
         // Performs a read given a file name
         DeviceDriverDisk.prototype.krnDiskRead = function () {
@@ -134,38 +223,18 @@ var TSOS;
         };
         // Performs a format on the disk by initializing all blocks in all sectors in all tracks on disk
         DeviceDriverDisk.prototype.krnFormat = function () {
-            // Clear session storage
-            sessionStorage.clear();
-            // Init the storage
-            for (var i = 0; i < this.numOfTracks; i++) {
-                for (var j = 0; j < this.numOfSectors; j++) {
-                    for (var k = 0; k < this.numOfBlocks; k++) {
-                        var key = i + ":" + j + ":" + k;
-                        var zeroes = new Array();
-                        for (var l = 0; l < this.dataSize; l++) {
-                            zeroes.push("00");
-                        }
-                        var block = {
-                            availableBit: "0",
-                            pointer: ["0:0:0"],
-                            data: zeroes // Rest of 64 bytes is filled with data
-                        };
-                        sessionStorage.setItem(key, JSON.stringify(block));
-                    }
-                }
+            // For all values in session storage, set available bit to 0, pointer to 0,0,0, and fill data with 00s
+            var zeroes = new Array();
+            for (var l = 0; l < 60; l++) {
+                zeroes.push("00");
             }
-            // // For all values in session storage, set available bit to 0, pointer to 0,0,0, and fill data with 00s
-            // let zeroes = new Array<String>();
-            // for(var l=0; l<60; l++){
-            //     zeroes.push("00");
-            // }
-            // for(var i=0; i<_Disk.numOfTracks*_Disk.numOfSectors*_Disk.numOfBlocks; i++){
-            //     // Get the JSON from the stored string
-            //     let block = JSON.parse(sessionStorage.getItem(sessionStorage.key(i)));
-            //     block.availableBit = "0";
-            //     block.pointer = "0:0:0";
-            //     block.data = zeroes;
-            // }
+            for (var i = 0; i < _Disk.numOfTracks * _Disk.numOfSectors * _Disk.numOfBlocks; i++) {
+                // Get the JSON from the stored string
+                var block = JSON.parse(sessionStorage.getItem(sessionStorage.key(i)));
+                block.availableBit = "0";
+                block.pointer = "0:0:0";
+                block.data = zeroes;
+            }
             // Update disk display
             TSOS.Control.hostDisk();
             // TODO: Return false if a format can't be performed at that time

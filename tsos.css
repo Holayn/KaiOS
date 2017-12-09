@@ -227,6 +227,7 @@ label .label-header{
 
 #tableDisk {
   max-width: 500px;
+  font-family: Courier;
 }
 
 #tableDisk tr {
