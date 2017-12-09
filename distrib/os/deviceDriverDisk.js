@@ -174,24 +174,31 @@ var TSOS;
                             }
                         }
                         // We have enough allocated space. Get the first datablock, recursively write string.
-                        console.log("WRITING");
                         var dataPtr = 0;
-                        var currentIndex = dirBlock.pointer;
-                        var currentBlock = JSON.parse(sessionStorage.getItem(currentIndex));
+                        var currentTSB = dirBlock.pointer;
+                        console.log("Writing to TSB: " + currentTSB);
+                        var currentBlock = JSON.parse(sessionStorage.getItem(currentTSB));
+                        // First, clear out any data that was there previously
+                        currentBlock = this.clearData(currentBlock);
                         for (var k = 0; k < textHexArr.length; k++) {
                             currentBlock.data[dataPtr] = textHexArr[k];
                             dataPtr++;
                             // Check to see if we've reached the limit of what data the block can hold. If so, go to the next block.
                             if (dataPtr == 60) {
                                 // Set the block in session storage first
-                                sessionStorage.setItem(currentIndex, JSON.stringify(currentBlock));
-                                currentIndex = currentBlock.pointer;
-                                currentBlock = JSON.parse(sessionStorage.getItem(currentIndex));
+                                sessionStorage.setItem(currentTSB, JSON.stringify(currentBlock));
+                                currentTSB = currentBlock.pointer;
+                                currentBlock = JSON.parse(sessionStorage.getItem(currentTSB));
+                                currentBlock = this.clearData(currentBlock);
                                 dataPtr = 0;
                             }
                         }
+                        // If we're done writing, but the pointer in the current block is still pointing to something, it means the old file was longer
+                        // so delete it all.
+                        this.recurseDelete(currentBlock.pointer);
+                        currentBlock.pointer = "0:0:0";
                         // Update session storage
-                        sessionStorage.setItem(currentIndex, JSON.stringify(currentBlock));
+                        sessionStorage.setItem(currentTSB, JSON.stringify(currentBlock));
                         // Update disk display
                         TSOS.Control.hostDisk();
                         return FILE_SUCCESS;
@@ -199,6 +206,13 @@ var TSOS;
                 }
             }
             return FILE_NAME_NO_EXIST;
+        };
+        // Sets a block's bytes to all zeroes
+        DeviceDriverDisk.prototype.clearData = function (block) {
+            for (var i = 0; i < _Disk.dataSize; i++) {
+                block.data[i] = "00";
+            }
+            return block;
         };
         // Helper method to do a recursively delete starting from some TSB of session storage
         DeviceDriverDisk.prototype.recurseDelete = function (tsb) {

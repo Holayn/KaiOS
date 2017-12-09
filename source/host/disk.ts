@@ -36,7 +36,7 @@ module TSOS {
                         }
                         let block = {
                             availableBit : "0", // Flags a block as available or not
-                            pointer: ["0:0:0"], // Pointer to next data block
+                            pointer: "0:0:0", // Pointer to next data block
                             data: zeroes // Rest of 64 bytes is filled with data
                         }
                         sessionStorage.setItem(key, JSON.stringify(block));

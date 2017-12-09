@@ -34,7 +34,7 @@ var TSOS;
                         }
                         var block = {
                             availableBit: "0",
-                            pointer: ["0:0:0"],
+                            pointer: "0:0:0",
                             data: zeroes // Rest of 64 bytes is filled with data
                         };
                         sessionStorage.setItem(key, JSON.stringify(block));

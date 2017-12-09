@@ -262,6 +262,12 @@ module TSOS {
         // This will update the disk display with contents of session storage
         public static hostDisk(): void {
             var table = (<HTMLTableElement>document.getElementById('tableDisk'));
+            // Remove all rows
+            console.log(table.rows.length);
+            let rows = table.rows.length;
+            for(var i=0; i<rows; i++){
+                table.deleteRow(0);
+            }
             // For each row, insert the TSB, available bit, pointer, and data into separate cells
             for(var i=0; i<_Disk.numOfTracks*_Disk.numOfSectors*_Disk.numOfBlocks; i++){
                 var row = table.insertRow(i);
@@ -277,7 +283,7 @@ module TSOS {
                 pointer.innerHTML = pointerVal;
                 pointer.style.color = "lightgray";
                 var data = row.insertCell(3);
-                data.innerHTML = JSON.parse(sessionStorage.getItem(sessionStorage.key(i))).data.join("");
+                data.innerHTML = JSON.parse(sessionStorage.getItem(sessionStorage.key(i))).data.join("").toString();
                 data.style.color = "lightblue";
             }
         }
