@@ -48,8 +48,12 @@ var TSOS;
                             matchingFileName = false;
                         }
                     }
+                    // If reach end of hexArr but dirBlock data still more?
+                    if (dirBlock.data[hexArr.length] != "00") {
+                        matchingFileName = false;
+                    }
                     // We found the filename
-                    if (matchingFileName && dirBlock.data[hexArr.length] == "00") {
+                    if (matchingFileName) {
                         return true;
                     }
                 }
@@ -117,11 +121,14 @@ var TSOS;
                             matchingFileName = false;
                         }
                     }
+                    // If reach end of hexArr but dirBlock data still more?
+                    if (dirBlock.data[hexArr.length] != "00") {
+                        matchingFileName = false;
+                    }
                     // We found the filename
-                    if (matchingFileName && dirBlock.data[hexArr.length] == "00") {
+                    if (matchingFileName) {
                         // Convert the text to a hex array, trimming off 
                         var textHexArr = this.stringToASCII(text.slice(1, -1));
-                        console.log(textHexArr);
                         // Check size of text. If it is longer than 60, then we need to have enough datablocks
                         var stringLength = textHexArr.length;
                         var datBlockTSB = dirBlock.pointer; // pointer to current block we're looking at
@@ -230,7 +237,57 @@ var TSOS;
             return;
         };
         // Performs a read given a file name
-        DeviceDriverDisk.prototype.krnDiskRead = function () {
+        DeviceDriverDisk.prototype.krnDiskRead = function (filename) {
+            // Look for filename in directrory structure
+            var hexArr = this.stringToASCII(filename);
+            for (var i = 1; i < _Disk.numOfSectors * _Disk.numOfBlocks; i++) {
+                var dirBlock = JSON.parse(sessionStorage.getItem(sessionStorage.key(i)));
+                var matchingFileName = true;
+                // Don't look in blocks not in use
+                if (dirBlock.availableBit == "1") {
+                    for (var j = 0; j < hexArr.length; j++) {
+                        if (hexArr[j] != dirBlock.data[j]) {
+                            matchingFileName = false;
+                        }
+                    }
+                    // If reach end of hexArr but dirBlock data still more?
+                    if (dirBlock.data[hexArr.length] != "00") {
+                        matchingFileName = false;
+                    }
+                    // We found the filename
+                    if (matchingFileName) {
+                        // Perform a recursive read
+                        var tsb = dirBlock.pointer;
+                        var dataBlock = JSON.parse(sessionStorage.getItem(tsb));
+                        // Convert the data retrieved back into a human-readable string
+                        var dataPtr = 0;
+                        var res = []; // File 
+                        while (true) {
+                            // Read until we reach 00-terminated string
+                            if (dataBlock.data[dataPtr] != "00") {
+                                // Avoiding string concatenation to improve runtime
+                                res.push(String.fromCharCode(parseInt(dataBlock.data[dataPtr], 16))); // push each char into array
+                                dataPtr++;
+                                if (dataPtr == _Disk.dataSize) {
+                                    // Go to next TSB
+                                    if (dataBlock.pointer != "0:0:0") {
+                                        dataBlock = JSON.parse(sessionStorage.getItem(dataBlock.pointer));
+                                    }
+                                    dataPtr = 0;
+                                }
+                            }
+                            else {
+                                break;
+                            }
+                        }
+                        // Print out file
+                        _StdOut.putText(res.join(""));
+                        // Return success
+                        return;
+                    }
+                }
+            }
+            return FILE_NAME_NO_EXIST;
         };
         // Performs a delete given a file name
         DeviceDriverDisk.prototype.krnDiskDelete = function () {

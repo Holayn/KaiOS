@@ -662,8 +662,17 @@ module TSOS {
         }
 
         // Reads a file
-        public shellReadFile() {
-
+        public shellReadFile(args) {
+            if(args.length == 1){
+                // TODO: Enforce what can be written to file.
+                let status = _krnDiskDriver.krnDiskRead(args[0]);
+                if(status == FILE_NAME_NO_EXIST){
+                    _StdOut.putText("The file: " + args[0] + " does not exist.");
+                }
+            }
+            else{
+                _StdOut.putText("Usage: read <filename>  Please supply a filename.");
+            }
         }
 
         // Writes to a file
@@ -671,10 +680,15 @@ module TSOS {
             if(args.length == 2){
                 // TODO: Enforce what can be written to file.
                 let fileText = args[1];
-                console.log(fileText);
                 let status = _krnDiskDriver.krnDiskWrite(args[0], fileText);
                 if(status == FILE_SUCCESS){
-                    _StdOut.putText(args[0] + " successfully written to.");
+                    _StdOut.putText("The file: " + args[0] + " has been successfully written to.");
+                }
+                else if(status == FILE_NAME_NO_EXIST){
+                    _StdOut.putText("The file: " + args[0] + " does not exist.");
+                }
+                else if(status == FULL_DISK_SPACE){
+                    _StdOut.putText("Unable to write to the file: " + args[0] + ". Not enough disk space to write!");
                 }
             }
             else{

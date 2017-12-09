@@ -554,17 +554,32 @@ var TSOS;
             }
         };
         // Reads a file
-        Shell.prototype.shellReadFile = function () {
+        Shell.prototype.shellReadFile = function (args) {
+            if (args.length == 1) {
+                // TODO: Enforce what can be written to file.
+                var status_2 = _krnDiskDriver.krnDiskRead(args[0]);
+                if (status_2 == FILE_NAME_NO_EXIST) {
+                    _StdOut.putText("The file: " + args[0] + " does not exist.");
+                }
+            }
+            else {
+                _StdOut.putText("Usage: read <filename>  Please supply a filename.");
+            }
         };
         // Writes to a file
         Shell.prototype.shellWriteFile = function (args) {
             if (args.length == 2) {
                 // TODO: Enforce what can be written to file.
                 var fileText = args[1];
-                console.log(fileText);
-                var status_2 = _krnDiskDriver.krnDiskWrite(args[0], fileText);
-                if (status_2 == FILE_SUCCESS) {
-                    _StdOut.putText(args[0] + " successfully written to.");
+                var status_3 = _krnDiskDriver.krnDiskWrite(args[0], fileText);
+                if (status_3 == FILE_SUCCESS) {
+                    _StdOut.putText("The file: " + args[0] + " has been successfully written to.");
+                }
+                else if (status_3 == FILE_NAME_NO_EXIST) {
+                    _StdOut.putText("The file: " + args[0] + " does not exist.");
+                }
+                else if (status_3 == FULL_DISK_SPACE) {
+                    _StdOut.putText("Unable to write to the file: " + args[0] + ". Not enough disk space to write!");
                 }
             }
             else {
