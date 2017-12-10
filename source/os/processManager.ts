@@ -36,18 +36,17 @@
             // If there is no more memory, then go find free space in the disk
             // Call the swapper to perform swapping operations
             else{
-                let tsb = _Swapper.findFreeDiskSpace(opcodes);
+                // Returns the TSB of the process in disk
+                let tsb = _Swapper.putProcessToDisk(opcodes);
                 // See if there is space on the disk for the process
-                if(true){
+                if(tsb != null){
                     // There is space on the disk for the process, so create a new PCB
                     let pcb = new ProcessControlBlock(_Pid);
-                    // Load the opcodes into the disk
                     pcb.init(IN_DISK);
                     // Set the PCB's TSB for the TSB it is stored in
-                    pcb.TSB = "derp"; // TODO: get TSB
+                    pcb.TSB = tsb;
                     // Put the new PCB onto the resident queue where it waits for CPU time
                     this.residentQueue.enqueue(pcb);
-                    _MemoryManager.loadIntoMemory(opcodes, partition);
                     _StdOut.putText("Program loaded in memory with process ID " + _Pid);
                     _Pid++;
                 }

@@ -12,9 +12,21 @@
         constructor(){}
 
         // Calls the disk device driver to find enough space to store the program
-        // Returns the first TSB in the newly allocated memory
-        public findFreeDiskSpace(opcodes): String {
-
+        // Returns the first TSB of the newly allocated data block
+        public putProcessToDisk(opcodes): String {
+            // First, find a free data block to hold the opcodes
+            let tsb = _krnDiskDriver.findFreeDataBlock();
+            // Now, call the device driver's allocate disk space to see if need more data blocks to hold the opcodes
+            // This will allocate those blocks as being used and update pointers
+            let enoughFreeSpace = _krnDiskDriver.allocateDiskSpace(opcodes, tsb);
+            if(!enoughFreeSpace){
+                return null;
+            }
+            else{
+                // Write the opcodes to disk
+                _krnDiskDriver.writeDiskData(tsb, opcodes);
+                return tsb;
+            }
         }
     }
 }
