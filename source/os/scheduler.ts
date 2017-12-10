@@ -8,17 +8,23 @@
 
 module TSOS {
     export class Scheduler {
-        public algorithm: String = "Round Robin";
+        public algorithm: number; // index of the current algorithm being run
+        public algorithms: Object = {
+            0:ROUND_ROBIN,
+            1:FCFS,
+            2:PRIORITY
+        };
         public counter: number;
         public quantum: number;
         constructor() {
             this.counter = 0;
             this.quantum = 6; // Number of clock ticks until context switch for process
+            this.algorithm = 0; // set the scheduling algorithm to round robin
         }
         // This is called on every CPU cycle to count the number of clock 
         // cycles that the process was being executed for
         public watch() {
-            // Don't actually do context switching if there is nothing in the ready 
+            // Don't actually do context switching if there is nothing in the ready queue
             // Why invoke additional overhead?
             if(_ProcessManager.readyQueue.getSize() > 0){
                 this.counter++;

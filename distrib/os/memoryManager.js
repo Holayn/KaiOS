@@ -16,7 +16,6 @@ var TSOS;
             ];
         }
         // For now, we load programs into location 00 of memory, in the first partition.
-        // Later, we'll have to change this when we deal with the other partitions
         MemoryManager.prototype.loadIntoMemory = function (opCodes, partition) {
             var loadCounter = this.partitions[partition].base;
             for (var _i = 0, opCodes_1 = opCodes; _i < opCodes_1.length; _i++) {
@@ -31,7 +30,6 @@ var TSOS;
             // Set the partition isEmpty flag to true so that we know the partition is unavailable
             this.partitions[partition].isEmpty = false;
             // Update the display accordingly
-            // _Memory.clearMemory();
             TSOS.Control.hostMemory();
         };
         // Checks to see if there is an available partition in memory

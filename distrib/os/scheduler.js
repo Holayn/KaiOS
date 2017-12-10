@@ -9,14 +9,19 @@ var TSOS;
 (function (TSOS) {
     var Scheduler = /** @class */ (function () {
         function Scheduler() {
-            this.algorithm = "Round Robin";
+            this.algorithms = {
+                0: ROUND_ROBIN,
+                1: FCFS,
+                2: PRIORITY
+            };
             this.counter = 0;
             this.quantum = 6; // Number of clock ticks until context switch for process
+            this.algorithm = 0; // set the scheduling algorithm to round robin
         }
         // This is called on every CPU cycle to count the number of clock 
         // cycles that the process was being executed for
         Scheduler.prototype.watch = function () {
-            // Don't actually do context switching if there is nothing in the ready 
+            // Don't actually do context switching if there is nothing in the ready queue
             // Why invoke additional overhead?
             if (_ProcessManager.readyQueue.getSize() > 0) {
                 this.counter++;

@@ -18,7 +18,6 @@
         }
         
         // For now, we load programs into location 00 of memory, in the first partition.
-        // Later, we'll have to change this when we deal with the other partitions
         public loadIntoMemory(opCodes, partition): void {
             var loadCounter = this.partitions[partition].base;
             for(var opCode of opCodes){
@@ -32,7 +31,6 @@
             // Set the partition isEmpty flag to true so that we know the partition is unavailable
             this.partitions[partition].isEmpty = false;
             // Update the display accordingly
-            // _Memory.clearMemory();
             Control.hostMemory();
         }
 

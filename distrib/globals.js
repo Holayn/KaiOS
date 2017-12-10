@@ -25,6 +25,10 @@ var FILE_SUCCESS = 0;
 var FULL_DISK_SPACE = 1;
 var FILE_NAME_ALREADY_EXISTS = 2;
 var FILE_NAME_NO_EXIST = 3;
+var ROUND_ROBIN = "Round Robin";
+var FCFS = "FCFS";
+var PRIORITY = "Priority";
+var IN_DISK = 999;
 //
 // Global Variables
 // TODO: Make a global object and use that instead of the "_" naming convention in the global namespace.
@@ -53,6 +57,8 @@ var _MemoryManager = null;
 var _ProcessManager = null;
 // The OS's scheduler
 var _Scheduler = null;
+// The OS's swapper
+var _Swapper = null;
 // Standard input and output
 var _StdIn; // Same "to null or not to null" issue as above.
 var _StdOut;

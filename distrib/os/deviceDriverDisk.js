@@ -73,12 +73,12 @@ var TSOS;
                 // If the block is available, set the passed filename in the data
                 if (dirBlock.availableBit == "0") {
                     // Now look for first free block in data structure so we actually have a "place" to put the file
-                    var datBlockIndex = this.findFreeDataBlock();
-                    if (datBlockIndex != null) {
-                        var datBlock = JSON.parse(sessionStorage.getItem(sessionStorage.key(datBlockIndex)));
+                    var datBlockTSB = this.findFreeDataBlock();
+                    if (datBlockTSB != null) {
+                        var datBlock = JSON.parse(sessionStorage.getItem(datBlockTSB));
                         dirBlock.availableBit = "1";
                         datBlock.availableBit = "1";
-                        dirBlock.pointer = sessionStorage.key(datBlockIndex); // set pointer to space in memory
+                        dirBlock.pointer = datBlockTSB; // set pointer to space in memory
                         // Convert filename to ASCII/hex and store in data
                         var hexArr = this.stringToASCII(filename);
                         // Clear the directory block's data first a.k.a the filename if it was there before
@@ -88,7 +88,7 @@ var TSOS;
                             dirBlock.data[k] = hexArr[k];
                         }
                         sessionStorage.setItem(sessionStorage.key(i), JSON.stringify(dirBlock));
-                        sessionStorage.setItem(sessionStorage.key(datBlockIndex), JSON.stringify(datBlock));
+                        sessionStorage.setItem(datBlockTSB, JSON.stringify(datBlock));
                         // Update the disk display and return success
                         TSOS.Control.hostDisk();
                         return FILE_SUCCESS;
@@ -98,16 +98,99 @@ var TSOS;
             }
             return FULL_DISK_SPACE; // We ran through the directory data structure but there were no free blocks, meaning no more space on disk :(
         };
-        // Return the session storage index of the next free data block. If can't find, return null.
+        // Return the TSB of the next free data block. If can't find, return null.
         DeviceDriverDisk.prototype.findFreeDataBlock = function () {
             for (var j = (_Disk.numOfSectors * _Disk.numOfBlocks); j < (_Disk.numOfTracks * _Disk.numOfSectors * _Disk.numOfBlocks); j++) {
                 var datBlock = JSON.parse(sessionStorage.getItem(sessionStorage.key(j)));
                 // If the block is available, mark it as unavailable, and set its tsb to the dirBlock pointer
                 if (datBlock.availableBit == "0") {
-                    return j;
+                    datBlock.availableBit = "1";
+                    return sessionStorage.key(j);
                 }
             }
             return null;
+        };
+        /**
+         * Returns the TSBs of free data blocks in some array.
+         * If not enough free data blocks are found, then return null.
+         * @param numBlocks the number of free blocks to find
+         */
+        DeviceDriverDisk.prototype.findFreeDataBlocks = function (numBlocks) {
+            console.log(numBlocks);
+            var blocks = []; // storage for the free blocks
+            var startOfDiskIndex = _Disk.numOfSectors * _Disk.numOfBlocks; // This is where the data blocks start in the disk
+            var endOfDiskIndex = _Disk.numOfTracks * _Disk.numOfSectors * _Disk.numOfBlocks; // This is where the disk ends
+            for (var i = startOfDiskIndex; i < endOfDiskIndex; i++) {
+                var datBlock = JSON.parse(sessionStorage.getItem(sessionStorage.key(i)));
+                // If the block is available, push it to the array of free blocks we can use
+                if (datBlock.availableBit == "0") {
+                    blocks.push(sessionStorage.key(i));
+                    numBlocks--;
+                }
+                // We found enough free blocks
+                if (numBlocks == 0) {
+                    return blocks;
+                }
+            }
+            if (numBlocks != 0) {
+                return null;
+            }
+        };
+        /**
+         * Allocates space in the disk by finding enough data blocks to hold the file
+         * Returns false if there are not enough free data blocks to do so
+         * @param file the file represented as an array of hex digits
+         * @param tsb the first TSB in the chain of data blocks
+         */
+        DeviceDriverDisk.prototype.allocateDiskSpace = function (file, tsb) {
+            // Check size of text. If it is longer than 60, then we need to have enough datablocks
+            console.log(file);
+            var stringLength = file.length;
+            var datBlockTSB = tsb; // pointer to current block we're looking at
+            var datBlock = JSON.parse(sessionStorage.getItem(datBlockTSB));
+            // Keep track of the last block that was already allocated for this file
+            // This is so we know what to start to delete from so we don't delete what we had before, if we run out of memory while allocating new blocks.
+            var lastAlreadyAllocdBlockTSB = tsb;
+            // What if data block writing to already pointing to stuff? Then we need to traverse it.
+            // Continuously allocate new blocks until we gucci
+            while (stringLength > _Disk.dataSize) {
+                // If pointer 0:0:0, then we need to find free blocks
+                // Else if it is already pointing to something, we're good already
+                if (datBlock.pointer != "0:0:0") {
+                    stringLength -= _Disk.dataSize;
+                    // Update to keep track of last block that was already allocated for this file so later we can delete appropriately
+                    lastAlreadyAllocdBlockTSB = datBlock.pointer;
+                    // Update pointers
+                    datBlockTSB = datBlock.pointer;
+                    datBlock = JSON.parse(sessionStorage.getItem(datBlock.pointer));
+                }
+                else {
+                    // We reached the end of the blocks that have already been allocated for this file. We need MOAR.
+                    // Find enough free data blocks, if can't, return error
+                    // First, find out how many more datablocks we need
+                    var numBlocks = Math.ceil(stringLength / _Disk.dataSize);
+                    // Go find that number of free blocks
+                    var freeBlocks = this.findFreeDataBlocks(numBlocks); // array of tsbs that are free
+                    if (freeBlocks != null) {
+                        // Once we get those n blocks, mark them as used, then set their pointers accordingly.
+                        // Set the current block's pointer to the first block in the array, then recursively set pointers
+                        for (var _i = 0, freeBlocks_1 = freeBlocks; _i < freeBlocks_1.length; _i++) {
+                            var block = freeBlocks_1[_i];
+                            datBlock.pointer = block;
+                            datBlock.availableBit = "1";
+                            // Set in session storage
+                            sessionStorage.setItem(datBlockTSB, JSON.stringify(datBlock));
+                            datBlockTSB = block;
+                            datBlock = JSON.parse(sessionStorage.getItem(datBlockTSB));
+                        }
+                        return true;
+                    }
+                    else {
+                        return false; // we weren't able to find enough free blocks for this file
+                    }
+                }
+            }
+            return true;
         };
         // Performs a write given a file name
         DeviceDriverDisk.prototype.krnDiskWrite = function (filename, text) {
@@ -129,58 +212,12 @@ var TSOS;
                     }
                     // We found the filename
                     if (matchingFileName) {
-                        // Convert the text to a hex array, trimming off 
+                        // Convert the text to a hex array, trimming off quotes
                         var textHexArr = this.stringToASCII(text.slice(1, -1));
-                        // Check size of text. If it is longer than 60, then we need to have enough datablocks
-                        var stringLength = textHexArr.length;
-                        var datBlockTSB = dirBlock.pointer; // pointer to current block we're looking at
-                        var datBlock = JSON.parse(sessionStorage.getItem(dirBlock.pointer));
-                        // Keep track of the last block that was already allocated for this file
-                        // This is so we know what to start to delete from so we don't delete what we had before, if we run out of memory while allocating new blocks.
-                        var lastAlreadyAllocdBlockTSB = dirBlock.pointer;
-                        // What if data block writing to already pointing to stuff? Then we need to traverse it.
-                        // Continuously allocate new blocks until we gucci
-                        while (stringLength > _Disk.dataSize) {
-                            // If pointer 0:0:0, then we need to find free blocks
-                            // Else if it is already pointing to something, we're good already
-                            if (datBlock.pointer != "0:0:0") {
-                                stringLength -= _Disk.dataSize;
-                                // Update to keep track of last block that was already allocated for this file so later we can delete appropriately
-                                lastAlreadyAllocdBlockTSB = datBlock.pointer;
-                                // Update pointers
-                                datBlockTSB = datBlock.pointer;
-                                datBlock = JSON.parse(sessionStorage.getItem(datBlock.pointer));
-                            }
-                            else {
-                                // We reached the end of the blocks that have already been allocated for this file. We need MOAR.
-                                // Find enough free data blocks, if can't, return error
-                                var nextFreeBlockIndex = this.findFreeDataBlock();
-                                if (nextFreeBlockIndex != null) {
-                                    stringLength -= _Disk.dataSize;
-                                    // Found a free datablock, mark it as used
-                                    var nextFreeBlock = JSON.parse(sessionStorage.getItem(sessionStorage.key(nextFreeBlockIndex)));
-                                    nextFreeBlock.availableBit = "1";
-                                    // Update allocated block in session storage
-                                    sessionStorage.setItem(sessionStorage.key(nextFreeBlockIndex), JSON.stringify(nextFreeBlock));
-                                    // Set the pointer to this new free datablock in the previous data block
-                                    datBlock.pointer = sessionStorage.key(nextFreeBlockIndex);
-                                    // Update that in storage
-                                    sessionStorage.setItem(datBlockTSB, JSON.stringify(datBlock));
-                                    // Update pointers
-                                    datBlockTSB = datBlock.pointer;
-                                    datBlock = JSON.parse(sessionStorage.getItem(datBlock.pointer));
-                                }
-                                else {
-                                    // Couldn't find free data block. Not enough space to write string to disk. String was probably very long
-                                    // Make sure to go back and make the data blocks that were marked "used" as free during allocation process
-                                    // Perform a recursive delete starting from the first 
-                                    // But wait, we don't want to delete what's already there.
-                                    // So go to the last already existing block for the file, and start deleting starting with the block it is pointing to
-                                    var ptrBlock = JSON.parse(sessionStorage.getItem(lastAlreadyAllocdBlockTSB));
-                                    this.recurseDelete(ptrBlock.pointer);
-                                    return FULL_DISK_SPACE;
-                                }
-                            }
+                        // Allocates enough free space for the file
+                        var enoughFreeSpace = this.allocateDiskSpace(textHexArr, dirBlock.pointer);
+                        if (!enoughFreeSpace) {
+                            return FULL_DISK_SPACE;
                         }
                         // We have enough allocated space. Get the first datablock, recursively write string.
                         var dataPtr = 0;

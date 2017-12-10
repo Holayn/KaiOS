@@ -14,7 +14,8 @@
         public Xreg: number;
         public Yreg: number;
         public Zflag: number;
-        public Partition: number;
+        public Partition: number; // partition in memory
+        public TSB: String; // the TSB the process is in if it is swapped out to disk
         // This tracks turnaround and waittime for each process
         public turnAroundTime: number;
         public waitTime: number;
@@ -23,7 +24,7 @@
         }
         
         // Set everything to 0
-        public init(partition): void {
+        public init(partition: number): void {
             this.State = "Waiting";
             this.PC = 0;
             this.IR = "00";
@@ -34,6 +35,7 @@
             this.Partition = partition;
             this.turnAroundTime = 0;
             this.waitTime = 0;
+            this.TSB = "0:0:0";
         }
     }
 }

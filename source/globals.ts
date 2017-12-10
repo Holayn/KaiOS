@@ -38,6 +38,12 @@ const FILE_NAME_ALREADY_EXISTS: number = 2;
 
 const FILE_NAME_NO_EXIST: number = 3;
 
+const ROUND_ROBIN: string = "Round Robin";
+const FCFS: string = "FCFS";
+const PRIORITY: string = "Priority";
+
+const IN_DISK: number = 999;
+
 //
 // Global Variables
 // TODO: Make a global object and use that instead of the "_" naming convention in the global namespace.
@@ -76,6 +82,8 @@ var _MemoryManager: any = null;
 var _ProcessManager: any = null;
 // The OS's scheduler
 var _Scheduler: any = null;
+// The OS's swapper
+var _Swapper: any = null;
 
 // Standard input and output
 var _StdIn;    // Same "to null or not to null" issue as above.

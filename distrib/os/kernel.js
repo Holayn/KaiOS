@@ -60,6 +60,8 @@ var TSOS;
             _ProcessManager = new TSOS.ProcessManager();
             // Load the scheduler
             _Scheduler = new TSOS.Scheduler();
+            // Load the swapper
+            _Swapper = new TSOS.Swapper();
             // Enable the OS Interrupts.  (Not the CPU clock interrupt, as that is done in the hardware sim.)
             this.krnTrace("Enabling the interrupts.");
             this.krnEnableInterrupts();
