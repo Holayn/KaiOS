@@ -61,8 +61,6 @@
                 _MemoryManager.loadIntoMemory(data, partition);
                 // Update the PCB's partition to the one it got placed in
                 pcb.Partition = partition;
-                console.log(pcb)
-                console.log(_ProcessManager.running)
                 // Remove the program from disk
                 _krnDiskDriver.krnDiskDeleteData(tsb);
                 // Update disk display
@@ -103,14 +101,15 @@
             let tsb = pcb.TSB;
             console.log("Performing roll out");
             // Get partition from memory...what partition? Let's do a random partition...RNG BOYZ
-            let unluckyParition = Math.floor(Math.random() * _MemoryManager.partitions.length); 
+            let unluckyPartition = Math.floor(Math.random() * _MemoryManager.partitions.length); 
+            console.log("UNLUCKY PARTITION #: " + unluckyPartition + ". YOU LOSE TO RNG BUDDY LOL.");
             // Look for the PCB with that partition, we need to tell it the bad news (that it's going to disk aka jail)
-            let unluckyPCB = this.lookInQueues(unluckyParition);
+            let unluckyPCB = this.lookInQueues(unluckyPartition);
             if(unluckyPCB != null){
                 // Get data from memory
-                let memoryData = _MemoryManager.getMemoryPartitionData(unluckyParition);
+                let memoryData = _MemoryManager.getMemoryPartitionData(unluckyPartition);
                 // Free the partition
-                _MemoryManager.clearMemoryPartition(unluckyParition);
+                _MemoryManager.clearMemoryPartition(unluckyPartition);
                 // Get data from disk
                 let data = _krnDiskDriver.krnDiskReadData(tsb);
                 // Trim off extra bytes
@@ -118,15 +117,12 @@
                 for(var i=0; i<extraData-_MemoryManager.globalLimit; i++){
                     data.pop();
                 }
-                console.log(data.length);
                 // Put data from disk into the partition from memory
                 if(_MemoryManager.checkMemory(data.length)){
-                    console.log("eyy")
                     var partition = _MemoryManager.getFreePartition(data.length);
                     _MemoryManager.loadIntoMemory(data, partition);
                     // Update the PCB's partition to the one it got placed in
                     pcb.Partition = partition;
-                    console.log(pcb);
                     // Remove the program from disk
                     _krnDiskDriver.krnDiskDeleteData(tsb);
                     // Update disk display

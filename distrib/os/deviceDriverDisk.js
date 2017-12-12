@@ -272,7 +272,6 @@ var TSOS;
             }
             return block;
         };
-        // Helper method to do a recursively delete starting from some TSB of session storage
         /**
          * Performs a recursive delete given a starting TSB
          * @param tsb the data block to start deleting from
@@ -364,7 +363,10 @@ var TSOS;
             }
             return FILE_NAME_NO_EXIST;
         };
-        // Performs a delete given a file name
+        /**
+         * Performs a delete given a file name
+         * @param filename the filename to delete
+         */
         DeviceDriverDisk.prototype.krnDiskDelete = function (filename) {
             // Look for the filename in the directory structure
             var hexArr = this.stringToASCII(filename);
@@ -402,6 +404,9 @@ var TSOS;
         // Performs a format on the disk by initializing all blocks in all sectors in all tracks on disk
         DeviceDriverDisk.prototype.krnFormat = function () {
             // TODO: Return false if a format can't be performed at that time
+            if (_CPU.isExecuting) {
+                return false;
+            }
             // For all values in session storage, set available bit to 0, pointer to 0,0,0, and fill data with 00s
             var zeroes = new Array();
             for (var l = 0; l < 60; l++) {
