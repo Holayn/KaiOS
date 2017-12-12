@@ -71,7 +71,7 @@ module TSOS {
                                   "trace",
                                   "<on | off> - Turns the OS trace on or off.");
             this.commandList[this.commandList.length] = sc;
-            this.helpList[this.helpList.length] = sc;
+            // this.helpList[this.helpList.length] = sc;
 
             // rot13 <string>
             sc = new ShellCommand(this.shellRot13,
@@ -107,7 +107,7 @@ module TSOS {
             // load
             sc = new ShellCommand(this.shellLoad,
                                   "load",
-                                  "<?priority> - Loads a program into memory and assigns it an optional priority value (0 is highest priority, 1 is default).");
+                                  "<?priority> - Loads program into memory w/ optional priority (0=highest, 1=default)");
             this.commandList[this.commandList.length] = sc;
             this.helpList[this.helpList.length] = sc;
 
@@ -144,7 +144,7 @@ module TSOS {
                                   "ps",
                                   "- Lists all the running processes' IDs");
             this.commandList[this.commandList.length] = sc;
-            this.helpList[this.helpList.length] = sc;
+            // this.helpList[this.helpList.length] = sc;
 
             // kill <id> - kills the specified process id.
             sc = new ShellCommand(this.shellKill,
@@ -220,6 +220,13 @@ module TSOS {
             sc = new ShellCommand(this.shellGetSchedule,
                                   "getschedule",
                                   "- gets current scheduling algorithm");
+            this.commandList[this.commandList.length] = sc;
+            this.helpList[this.helpList.length] = sc;
+
+            // chkdsk - recovers deleted files
+            sc = new ShellCommand(this.shellChkDsk,
+                "chkdsk",
+                "- recovers deleted files");
             this.commandList[this.commandList.length] = sc;
             this.helpList[this.helpList.length] = sc;
 
@@ -724,10 +731,20 @@ module TSOS {
 
         // Writes to a file
         public shellWriteFile(args) {
-            if(args.length == 2){
-                // TODO: Enforce what can be written to file.
-                let fileText = args[1];
-                let status = _krnDiskDriver.krnDiskWrite(args[0], fileText);
+            console.log(args)
+            if(args.length >= 2){
+                // If user entered spaces, concatenate the arguments
+                let string = "";
+                for(var i=1; i<args.length; i++){
+                    string += args[i] + " ";
+                }
+                string = string.trim();
+                // Enforce what can be written to file. Only characters and spaces!
+                if(!string.substring(1,string.length-1).match(/^.[a-z ]+$/i)){
+                    _StdOut.putText("Filenames may only have characters and spaces written to them.");
+                    return;
+                }
+                let status = _krnDiskDriver.krnDiskWrite(args[0], string);
                 if(status == FILE_SUCCESS){
                     _StdOut.putText("The file: " + args[0] + " has been successfully written to.");
                 }
@@ -843,6 +860,12 @@ module TSOS {
         // Returns the scheduler algorithm
         public shellGetSchedule() {
             _StdOut.putText("Scheduling algorithm: " + _Scheduler.algorithm);
+        }
+
+        // Recovers deleted files
+        public shellChkDsk() {
+            _krnDiskDriver.krnChkDsk();
+            _StdOut.putText("All deleted files recovered");
         }
     }
 }

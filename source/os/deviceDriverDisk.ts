@@ -132,7 +132,6 @@
              * @param numBlocks the number of free blocks to find
              */
             private findFreeDataBlocks(numBlocks: number) {
-                console.log(numBlocks);
                 let blocks = []; // storage for the free blocks
                 let startOfDiskIndex = _Disk.numOfSectors*_Disk.numOfBlocks; // This is where the data blocks start in the disk
                 let endOfDiskIndex = _Disk.numOfTracks*_Disk.numOfSectors*_Disk.numOfBlocks; // This is where the disk ends
@@ -162,12 +161,9 @@
              */
             public allocateDiskSpace(file: Array<String>, tsb: string): boolean {
                 // Check size of text. If it is longer than 60, then we need to have enough datablocks
-                console.log(file);
-                console.log(tsb);
                 let stringLength = file.length;
                 let datBlockTSB = tsb; // pointer to current block we're looking at
                 let datBlock = JSON.parse(sessionStorage.getItem(datBlockTSB)); 
-                console.log(datBlock)
                 // What if data block writing to already pointing to stuff? Then we need to traverse it, making sure there is enough space to hold our new file.
                 // Continuously allocate new blocks until we gucci
                 while(stringLength > _Disk.dataSize){
@@ -307,8 +303,8 @@
                     // follow links
                     this.krnDiskDeleteData(ptrBlock.pointer);
                 }
-                // remove pointer
-                ptrBlock.pointer = "0:0:0";
+                // remove pointer. nah keep the pointer so we can do some good ol chkdsk
+                // ptrBlock.pointer = "0:0:0";
                 // set as available
                 ptrBlock.availableBit = "0";
                 // update
@@ -418,7 +414,8 @@
                             this.krnDiskDeleteData(dirBlock.pointer);
                             // Update directory block
                             dirBlock.availableBit = "0"
-                            dirBlock.pointer = "0:0:0";
+                            // Keep the pointer for chkdsk
+                            // dirBlock.pointer = "0:0:0"; 
                             // Set in storage
                             sessionStorage.setItem(sessionStorage.key(i), JSON.stringify(dirBlock));
                             // Update display
@@ -510,7 +507,6 @@
                     let dataPtr = 4;
                     let res = []; // filename
                     while(true){
-                        console.log(filenames[i]['data']);
                         if(filenames[i]['data'][dataPtr] != "00"){
                             // Avoiding string concatenation to improve runtime
                             res.push(String.fromCharCode(parseInt(filenames[i]['data'][dataPtr], 16))); // push each char into array
@@ -521,7 +517,6 @@
                         }
                     }
                     filenames[i]['name'] = res.join("");
-                    console.log(filenames[i]['data'])
                     // Parse out the date
                     filenames[i]['month'] = parseInt(filenames[i]['data'][0], 16);
                     filenames[i]['day'] = parseInt(filenames[i]['data'][1], 16);
@@ -529,6 +524,23 @@
                 }
                 // Return array of filenames
                 return filenames;
+            }
+
+            /**
+             * Performs a recovery of deleted files by just looking at all directory blocks to see
+             * if there is a pointer still existing when the available bit is flipped off
+             */
+            public krnChkDsk() {
+                for(var i=0; i<_Disk.numOfTracks*_Disk.numOfSectors*_Disk.numOfBlocks; i++){
+                    // Get the JSON from the stored string
+                    let block = JSON.parse(sessionStorage.getItem(sessionStorage.key(i)));
+                    if(block.availableBit = "0" && block.pointer != "0:0:0"){
+                        block.availableBit = "1";
+                        sessionStorage.setItem(sessionStorage.key(i), JSON.stringify(block));
+                        // Update disk display
+                        Control.hostDisk();
+                    }
+                }
             }
 
             // Helper method to convert string to ASCII to hex

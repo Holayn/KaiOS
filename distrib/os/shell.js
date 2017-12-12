@@ -49,7 +49,7 @@ var TSOS;
             // trace <on | off>
             sc = new TSOS.ShellCommand(this.shellTrace, "trace", "<on | off> - Turns the OS trace on or off.");
             this.commandList[this.commandList.length] = sc;
-            this.helpList[this.helpList.length] = sc;
+            // this.helpList[this.helpList.length] = sc;
             // rot13 <string>
             sc = new TSOS.ShellCommand(this.shellRot13, "rot13", "<string> - Does rot13 obfuscation on <string>.");
             this.commandList[this.commandList.length] = sc;
@@ -67,7 +67,7 @@ var TSOS;
             this.commandList[this.commandList.length] = sc;
             this.helpList[this.helpList.length] = sc;
             // load
-            sc = new TSOS.ShellCommand(this.shellLoad, "load", "<?priority> - Loads a program into memory and assigns it an optional priority value (0 is highest priority, 1 is default).");
+            sc = new TSOS.ShellCommand(this.shellLoad, "load", "<?priority> - Loads program into memory w/ optional priority (0=highest, 1=default)");
             this.commandList[this.commandList.length] = sc;
             this.helpList[this.helpList.length] = sc;
             // seppuku
@@ -89,7 +89,7 @@ var TSOS;
             // ps  - list the running processes' IDs
             sc = new TSOS.ShellCommand(this.shellPS, "ps", "- Lists all the running processes' IDs");
             this.commandList[this.commandList.length] = sc;
-            this.helpList[this.helpList.length] = sc;
+            // this.helpList[this.helpList.length] = sc;
             // kill <id> - kills the specified process id.
             sc = new TSOS.ShellCommand(this.shellKill, "kill", "<pid> - Kills a specified process id");
             this.commandList[this.commandList.length] = sc;
@@ -132,6 +132,10 @@ var TSOS;
             this.helpList[this.helpList.length] = sc;
             // getschedule - gets current scheduling algorithm
             sc = new TSOS.ShellCommand(this.shellGetSchedule, "getschedule", "- gets current scheduling algorithm");
+            this.commandList[this.commandList.length] = sc;
+            this.helpList[this.helpList.length] = sc;
+            // chkdsk - recovers deleted files
+            sc = new TSOS.ShellCommand(this.shellChkDsk, "chkdsk", "- recovers deleted files");
             this.commandList[this.commandList.length] = sc;
             this.helpList[this.helpList.length] = sc;
             // Display the initial prompt.
@@ -615,10 +619,20 @@ var TSOS;
         };
         // Writes to a file
         Shell.prototype.shellWriteFile = function (args) {
-            if (args.length == 2) {
-                // TODO: Enforce what can be written to file.
-                var fileText = args[1];
-                var status_3 = _krnDiskDriver.krnDiskWrite(args[0], fileText);
+            console.log(args);
+            if (args.length >= 2) {
+                // If user entered spaces, concatenate the arguments
+                var string = "";
+                for (var i = 1; i < args.length; i++) {
+                    string += args[i] + " ";
+                }
+                string = string.trim();
+                // Enforce what can be written to file. Only characters and spaces!
+                if (!string.substring(1, string.length - 1).match(/^.[a-z ]+$/i)) {
+                    _StdOut.putText("Filenames may only have characters and spaces written to them.");
+                    return;
+                }
+                var status_3 = _krnDiskDriver.krnDiskWrite(args[0], string);
                 if (status_3 == FILE_SUCCESS) {
                     _StdOut.putText("The file: " + args[0] + " has been successfully written to.");
                 }
@@ -731,6 +745,11 @@ var TSOS;
         // Returns the scheduler algorithm
         Shell.prototype.shellGetSchedule = function () {
             _StdOut.putText("Scheduling algorithm: " + _Scheduler.algorithm);
+        };
+        // Recovers deleted files
+        Shell.prototype.shellChkDsk = function () {
+            _krnDiskDriver.krnChkDsk();
+            _StdOut.putText("All deleted files recovered");
         };
         return Shell;
     }());

@@ -248,7 +248,6 @@ var TSOS;
         Control.hostDisk = function () {
             var table = document.getElementById('tableDisk');
             // Remove all rows
-            console.log(table.rows.length);
             var rows = table.rows.length;
             for (var i = 0; i < rows; i++) {
                 table.deleteRow(0);

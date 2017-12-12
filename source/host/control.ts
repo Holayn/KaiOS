@@ -268,7 +268,6 @@ module TSOS {
         public static hostDisk(): void {
             var table = (<HTMLTableElement>document.getElementById('tableDisk'));
             // Remove all rows
-            console.log(table.rows.length);
             let rows = table.rows.length;
             for(var i=0; i<rows; i++){
                 table.deleteRow(0);
