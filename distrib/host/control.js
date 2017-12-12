@@ -164,7 +164,10 @@ var TSOS;
         Control.hostProcesses = function () {
             // Show scheduling algorithm
             var scheduleName = document.getElementById('scheduleName');
-            scheduleName.innerHTML = _Scheduler.algorithm;
+            scheduleName.innerHTML = _Scheduler.algorithm.toUpperCase();
+            if (_Scheduler.algorithm == ROUND_ROBIN) {
+                scheduleName.innerHTML = "ROUND ROBIN";
+            }
             var table = document.getElementById('tableReady');
             // For each PCB in ready queue, print out a new row for it
             var readyQueue = [];

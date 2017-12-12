@@ -21,6 +21,7 @@ var TSOS;
             // Properties
             this.promptStr = ">";
             this.commandList = [];
+            this.helpList = [];
             this.curses = "[fuvg],[cvff],[shpx],[phag],[pbpxfhpxre],[zbgureshpxre],[gvgf]";
             this.apologies = "[sorry]";
         }
@@ -40,12 +41,15 @@ var TSOS;
             // cls
             sc = new TSOS.ShellCommand(this.shellCls, "cls", "- Clears the screen and resets the cursor position.");
             this.commandList[this.commandList.length] = sc;
+            this.helpList[this.helpList.length] = sc;
             // man <topic>
             sc = new TSOS.ShellCommand(this.shellMan, "man", "<topic> - Displays the MANual page for <topic>.");
             this.commandList[this.commandList.length] = sc;
+            this.helpList[this.helpList.length] = sc;
             // trace <on | off>
             sc = new TSOS.ShellCommand(this.shellTrace, "trace", "<on | off> - Turns the OS trace on or off.");
             this.commandList[this.commandList.length] = sc;
+            this.helpList[this.helpList.length] = sc;
             // rot13 <string>
             sc = new TSOS.ShellCommand(this.shellRot13, "rot13", "<string> - Does rot13 obfuscation on <string>.");
             this.commandList[this.commandList.length] = sc;
@@ -61,57 +65,75 @@ var TSOS;
             // piano
             sc = new TSOS.ShellCommand(this.shellPiano, "piano", "- Your key presses now play piano notes!");
             this.commandList[this.commandList.length] = sc;
+            this.helpList[this.helpList.length] = sc;
             // load
-            sc = new TSOS.ShellCommand(this.shellLoad, "load", "<?priority> - Loads a program into memory and assigns it an optional priority value.");
+            sc = new TSOS.ShellCommand(this.shellLoad, "load", "<?priority> - Loads a program into memory and assigns it an optional priority value (0 is highest priority, 1 is default).");
             this.commandList[this.commandList.length] = sc;
+            this.helpList[this.helpList.length] = sc;
             // seppuku
             sc = new TSOS.ShellCommand(this.shellSeppuku, "seppuku", "- Commit seppuku (trigger the BSOD message)");
             this.commandList[this.commandList.length] = sc;
+            this.helpList[this.helpList.length] = sc;
             // status
             sc = new TSOS.ShellCommand(this.shellStatus, "status", "<string> - Changes the status message.");
             this.commandList[this.commandList.length] = sc;
+            this.helpList[this.helpList.length] = sc;
             // run
             sc = new TSOS.ShellCommand(this.shellRun, "run", "- Runs a program already in memory.");
             this.commandList[this.commandList.length] = sc;
+            this.helpList[this.helpList.length] = sc;
             // run all
             sc = new TSOS.ShellCommand(this.shellRunAll, "runall", "- Runs all programs in memory.");
             this.commandList[this.commandList.length] = sc;
+            this.helpList[this.helpList.length] = sc;
             // ps  - list the running processes' IDs
             sc = new TSOS.ShellCommand(this.shellPS, "ps", "- Lists all the running processes' IDs");
             this.commandList[this.commandList.length] = sc;
+            this.helpList[this.helpList.length] = sc;
             // kill <id> - kills the specified process id.
             sc = new TSOS.ShellCommand(this.shellKill, "kill", "<pid> - Kills a specified process id");
             this.commandList[this.commandList.length] = sc;
+            this.helpList[this.helpList.length] = sc;
             // quantum <int> - sets the quantum for round robin scheduling
             sc = new TSOS.ShellCommand(this.shellQuantum, "quantum", "<int> - Sets the quantum for round robin scheduling");
             this.commandList[this.commandList.length] = sc;
+            this.helpList[this.helpList.length] = sc;
             // clearmem - clears all memory partitions
             sc = new TSOS.ShellCommand(this.shellClearMem, "clearmem", "- Clears all memory partitions");
             this.commandList[this.commandList.length] = sc;
+            this.helpList[this.helpList.length] = sc;
             // create <filename> - creates a file
             sc = new TSOS.ShellCommand(this.shellCreateFile, "create", "<filename> - Creates a file given a filename");
             this.commandList[this.commandList.length] = sc;
+            this.helpList[this.helpList.length] = sc;
             // read <filename> - reads a file
             sc = new TSOS.ShellCommand(this.shellReadFile, "read", "<filename> - Reads a file given a filename");
             this.commandList[this.commandList.length] = sc;
+            this.helpList[this.helpList.length] = sc;
             // write <filename> - writes a file
             sc = new TSOS.ShellCommand(this.shellWriteFile, "write", "<filename> \"text\" - Writes text to a file given a filename");
             this.commandList[this.commandList.length] = sc;
+            this.helpList[this.helpList.length] = sc;
             // delete <filename> - deletes a file
             sc = new TSOS.ShellCommand(this.shellDeleteFile, "delete", "<filename> - Deletes a file given a filename");
             this.commandList[this.commandList.length] = sc;
+            this.helpList[this.helpList.length] = sc;
             // format - formats the disk
             sc = new TSOS.ShellCommand(this.shellFormat, "format", "- Formats the disk");
             this.commandList[this.commandList.length] = sc;
+            this.helpList[this.helpList.length] = sc;
             // ls - lists files on disk
             sc = new TSOS.ShellCommand(this.shellList, "ls", "- Lists files on disk");
             this.commandList[this.commandList.length] = sc;
+            this.helpList[this.helpList.length] = sc;
             // setschedule - sets the scheduler to an algorithm: RR, FCFS, Priority
-            sc = new TSOS.ShellCommand(this.shellSetSchedule, "setschedule", "<algorithm>- Sets the scheduler to an algorithm: Round Robin, FCFS, Priority");
+            sc = new TSOS.ShellCommand(this.shellSetSchedule, "setschedule", "<algorithm>- Sets the scheduler to an algorithm: RR, FCFS, Priority");
             this.commandList[this.commandList.length] = sc;
+            this.helpList[this.helpList.length] = sc;
             // getschedule - gets current scheduling algorithm
             sc = new TSOS.ShellCommand(this.shellGetSchedule, "getschedule", "- gets current scheduling algorithm");
             this.commandList[this.commandList.length] = sc;
+            this.helpList[this.helpList.length] = sc;
             // Display the initial prompt.
             this.putPrompt();
         };
@@ -233,9 +255,9 @@ var TSOS;
         };
         Shell.prototype.shellHelp = function (args) {
             _StdOut.putText("Commands:");
-            for (var i in _OsShell.commandList) {
+            for (var i in _OsShell.helpList) {
                 _StdOut.advanceLine();
-                _StdOut.putText("  " + _OsShell.commandList[i].command + " " + _OsShell.commandList[i].description);
+                _StdOut.putText("  " + _OsShell.helpList[i].command + " " + _OsShell.helpList[i].description);
             }
         };
         Shell.prototype.shellShutdown = function (args) {
@@ -286,7 +308,7 @@ var TSOS;
                         _StdOut.putText("Piano plays a piano note for different key presses.");
                         break;
                     case "load":
-                        _StdOut.putText("Load loads a program into memory and may assign a priority to a program.");
+                        _StdOut.putText("Load loads a program into memory and may assign a priority (0 is highest priority, 1 is default) to a program.");
                         break;
                     case "seppuku":
                         _StdOut.putText("Seppuku commits seppuku. Loads the BSOD message.");
@@ -331,7 +353,7 @@ var TSOS;
                         _StdOut.putText("Lists all files on the harddrive");
                         break;
                     case "setschedule":
-                        _StdOut.putText("Sets the scheduling algorithm: Round Robin, FCFS, Priority");
+                        _StdOut.putText("Sets the scheduling algorithm: RR, FCFS, Priority");
                         break;
                     case "getschedule":
                         _StdOut.putText("Gets the current scheduling algorithm");
@@ -427,12 +449,14 @@ var TSOS;
                 // Do a system call to create a new process
                 // Make sure the user is passing in a number if they assign a priority
                 if (args.length > 1) {
-                    _StdOut.putText("Usage: load <?priority>  Please supply a valid priority number.");
+                    _StdOut.putText("Usage: load <?priority>  Please supply a valid priority number (0 is highest, 1 is default).");
                     return;
                 }
-                if (typeof args[0] != "number") {
-                    _StdOut.putText("Usage: load <?priority>  Please supply a valid priority number.");
-                    return;
+                if (args.length == 1) {
+                    if (!args[0].match(/^[0-9]\d*$/)) {
+                        _StdOut.putText("Usage: load <?priority>  Please supply a valid priority number (0 is highest, 1 is default).");
+                        return;
+                    }
                 }
                 _ProcessManager.createProcess(userArr, args);
             }
@@ -649,11 +673,11 @@ var TSOS;
                     _StdOut.putText("Scheduling algorithm set to: " + _Scheduler.algorithm);
                 }
                 else {
-                    _StdOut.putText("Usage: setschedule <algorithm>  Round Robin, FCFS, Priority");
+                    _StdOut.putText("Usage: setschedule <algorithm>  RR, FCFS, Priority");
                 }
             }
             else {
-                _StdOut.putText("Usage: setschedule <algorithm>  Round Robin, FCFS, Priority");
+                _StdOut.putText("Usage: setschedule <algorithm>  RR, FCFS, Priority");
             }
         };
         // Returns the scheduler algorithm

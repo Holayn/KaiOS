@@ -44,7 +44,8 @@ module TSOS {
                     }
                 }
                 if(this.algorithm == PRIORITY){
-                    
+                    // We don't actually do anything here. We will implement priority scheduling such that
+                    // every time a process is run, the ready queue is reordered such that items with higher priority come first.
                 }
             }
         }
@@ -54,6 +55,30 @@ module TSOS {
          */
         public unwatch() {
             this.counter = 0;
+        }
+
+        /**
+         * Finds and returns the PCB in the ready queue with the highest priority
+         * Also removes the PCB from the ready queue
+         */
+        public findHighestPriority() {
+            let res;
+            let size = _ProcessManager.readyQueue.getSize();
+            for(var i=0; i<size; i++){
+                var pcb = _ProcessManager.readyQueue.dequeue();
+                if(res == null){
+                    res = pcb;
+                    continue;
+                }
+                if(pcb.Priority < res.Priority){
+                    _ProcessManager.readyQueue.enqueue(res); // put the process back into the ready queue
+                    res = pcb;
+                }
+                else{
+                    _ProcessManager.readyQueue.enqueue(pcb);
+                }
+            }
+            return res;
         }
 
         /**
@@ -84,12 +109,15 @@ module TSOS {
         public setAlgorithm(algorithm: String) {
             switch (algorithm) {
                 case ROUND_ROBIN:
+                    this.algorithm = ROUND_ROBIN;
                     break;
                 case FCFS:
                     // FCFS is simply round robin with a uuuuuuuuuuuuuuuuuuuuuuuuuuuuuge quantum
+                    this.algorithm = FCFS;
                     this.quantum = 999999;
                     break;
                 case PRIORITY:
+                    this.algorithm = PRIORITY;
                     break;
                 default:
                     return false;

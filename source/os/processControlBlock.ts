@@ -17,6 +17,7 @@
         public Partition: number; // partition in memory
         public Swapped: boolean; // flag to keep track if a process is swapped out to disk
         public TSB: String; // the TSB the process is in if it is swapped out to disk
+        public Priority: number; // the priority of a process used in Priority scheduling
         // This tracks turnaround and waittime for each process
         public turnAroundTime: number;
         public waitTime: number;

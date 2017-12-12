@@ -32,7 +32,13 @@
                 // We have to get an available partition in memory and load the program into there.
                 var partition = _MemoryManager.getFreePartition(opcodes.length);
                 pcb.init(partition);
-                // Assign priority
+                // Assign priority if given
+                if(args.length > 0){
+                    pcb.Priority = args[0];
+                }
+                else{
+                    pcb.Priority = 1;
+                }
                 // Put the new PCB onto the resident queue where it waits for CPU time
                 this.residentQueue.enqueue(pcb);
                 _MemoryManager.loadIntoMemory(opcodes, partition);
@@ -52,6 +58,13 @@
                     // There is space on the disk for the process, so create a new PCB
                     let pcb = new ProcessControlBlock(_Pid);
                     pcb.init(IN_DISK);
+                    // Assign priority if given
+                    if(args.length > 0){
+                        pcb.Priority = args[0];
+                    }
+                    else{
+                        pcb.Priority = 1;
+                    }
                     // Set the PCB's TSB for the TSB it is stored in
                     pcb.Swapped = true;
                     pcb.TSB = tsb;
@@ -146,9 +159,16 @@
         
         // This runs a process that is stored in memory
         public runProcess(): void {
-            // Take a PCB off the ready queue, and set the CPU to its info.
-            // Starts the CPU executing by setting isExecuting to true.
-            this.running = this.readyQueue.dequeue();
+            console.log(this.readyQueue);
+            // Call the scheduler to reorder the ready queue if the scheduling scheme is Priority
+            if(_Scheduler.algorithm == PRIORITY){
+                this.running = _Scheduler.findHighestPriority();
+            }
+            else{
+                // Take a PCB off the ready queue, and set the CPU to its info.
+                // Starts the CPU executing by setting isExecuting to true.
+                this.running = this.readyQueue.dequeue();
+            }
             // Put all stuff from PCB to CPU
             _CPU.PC = this.running.PC;
             _CPU.Acc = this.running.Acc;

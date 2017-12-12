@@ -38,9 +38,9 @@ const FILE_NAME_ALREADY_EXISTS: number = 2;
 
 const FILE_NAME_NO_EXIST: number = 3;
 
-const ROUND_ROBIN: string = "Round Robin";
-const FCFS: string = "FCFS";
-const PRIORITY: string = "Priority";
+const ROUND_ROBIN: string = "rr";
+const FCFS: string = "fcfs";
+const PRIORITY: string = "priority";
 
 const IN_DISK: number = 999;
 

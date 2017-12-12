@@ -25,9 +25,9 @@ var FILE_SUCCESS = 0;
 var FULL_DISK_SPACE = 1;
 var FILE_NAME_ALREADY_EXISTS = 2;
 var FILE_NAME_NO_EXIST = 3;
-var ROUND_ROBIN = "Round Robin";
-var FCFS = "FCFS";
-var PRIORITY = "Priority";
+var ROUND_ROBIN = "rr";
+var FCFS = "fcfs";
+var PRIORITY = "priority";
 var IN_DISK = 999;
 //
 // Global Variables

@@ -182,7 +182,10 @@ module TSOS {
         public static hostProcesses(): void {
             // Show scheduling algorithm
             var scheduleName = (<HTMLTableElement>document.getElementById('scheduleName'));
-            scheduleName.innerHTML = _Scheduler.algorithm;
+            scheduleName.innerHTML = _Scheduler.algorithm.toUpperCase();
+            if(_Scheduler.algorithm == ROUND_ROBIN){
+                scheduleName.innerHTML = "ROUND ROBIN";
+            }
             var table = (<HTMLTableElement>document.getElementById('tableReady'));
             // For each PCB in ready queue, print out a new row for it
             let readyQueue: Array<ProcessControlBlock> = [];

@@ -239,6 +239,7 @@ var TSOS;
                     var lineData = _DrawingContext.getImageData(0, i, _Canvas.width, lineHeight);
                     canvasText.push(lineData);
                 }
+                _DrawingContext.clearRect(0, 0, _Canvas.width, _Canvas.height);
                 for (var i = 0; i < canvasText.length; i++) {
                     //Start reprinting the lines, but have the first line be above, off-screen from the canvas
                     _DrawingContext.putImageData(canvasText[i], 0, (-lineHeight + i * (lineHeight)), 0, 0, _Canvas.width, _Canvas.height);
