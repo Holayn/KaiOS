@@ -31,6 +31,8 @@ var PRIORITY = "priority";
 var IN_DISK = 999;
 var MAX_FILE_LENGTH = 56;
 var DATE_LENGTH = 4;
+var QUICK_FORMAT = 1;
+var FULL_FORMAT = 0;
 //
 // Global Variables
 // TODO: Make a global object and use that instead of the "_" naming convention in the global namespace.

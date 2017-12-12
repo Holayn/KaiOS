@@ -119,7 +119,7 @@ var TSOS;
             this.commandList[this.commandList.length] = sc;
             this.helpList[this.helpList.length] = sc;
             // format - formats the disk
-            sc = new TSOS.ShellCommand(this.shellFormat, "format", "- Formats the disk");
+            sc = new TSOS.ShellCommand(this.shellFormat, "format", "[-quick]|[-full] - Formats the disk");
             this.commandList[this.commandList.length] = sc;
             this.helpList[this.helpList.length] = sc;
             // ls - lists files on disk
@@ -650,13 +650,36 @@ var TSOS;
             }
         };
         // Formats a file
-        Shell.prototype.shellFormat = function () {
-            // Call the disk device driver to format the disk
-            if (_krnDiskDriver.krnFormat()) {
-                _StdOut.putText("Disk formatted successfully!");
+        Shell.prototype.shellFormat = function (args) {
+            if (args.length == 1) {
+                if (args[0] == "-quick") {
+                    if (_krnDiskDriver.krnFormat(QUICK_FORMAT)) {
+                        _StdOut.putText("Disk formatted successfully!");
+                    }
+                    else {
+                        _StdOut.putText("Can't format disk right now. :(");
+                    }
+                }
+                else if (args[0] == "-full") {
+                    if (_krnDiskDriver.krnFormat(FULL_FORMAT)) {
+                        _StdOut.putText("Disk formatted successfully!");
+                    }
+                    else {
+                        _StdOut.putText("Can't format disk right now. :(");
+                    }
+                }
+                else {
+                    _StdOut.putText("Usage: format [-quick]|[-full]");
+                }
             }
             else {
-                _StdOut.putText("Can't format disk right now. :(");
+                // Call the disk device driver to format the disk
+                if (_krnDiskDriver.krnFormat(FULL_FORMAT)) {
+                    _StdOut.putText("Disk formatted successfully!");
+                }
+                else {
+                    _StdOut.putText("Can't format disk right now. :(");
+                }
             }
         };
         // Lists files on disk

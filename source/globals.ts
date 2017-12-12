@@ -48,6 +48,9 @@ const MAX_FILE_LENGTH: number = 56;
 
 const DATE_LENGTH: number = 4;
 
+const QUICK_FORMAT: number = 1;
+const FULL_FORMAT: number = 0;
+
 //
 // Global Variables
 // TODO: Make a global object and use that instead of the "_" naming convention in the global namespace.

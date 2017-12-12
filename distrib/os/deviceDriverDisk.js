@@ -426,23 +426,49 @@ var TSOS;
             }
             return FILE_NAME_NO_EXIST;
         };
-        // Performs a format on the disk by initializing all blocks in all sectors in all tracks on disk
-        DeviceDriverDisk.prototype.krnFormat = function () {
-            // TODO: Return false if a format can't be performed at that time
+        /**
+         * Performs a format on the disk by initializing all blocks in all sectors in all tracks on disk
+         * @param formatType the format to perform
+         */
+        DeviceDriverDisk.prototype.krnFormat = function (formatType) {
             if (_CPU.isExecuting) {
                 return false;
             }
-            // For all values in session storage, set available bit to 0, pointer to 0,0,0, and fill data with 00s
-            var zeroes = new Array();
-            for (var l = 0; l < 60; l++) {
-                zeroes.push("00");
+            // Just set pointers to 0 and available bit to 0
+            if (formatType == QUICK_FORMAT) {
+                for (var i = 0; i < _Disk.numOfTracks * _Disk.numOfSectors * _Disk.numOfBlocks; i++) {
+                    // Get the JSON from the stored string
+                    var block = JSON.parse(sessionStorage.getItem(sessionStorage.key(i)));
+                    block.availableBit = "0";
+                    block.pointer = "0:0:0";
+                    sessionStorage.setItem(sessionStorage.key(i), JSON.stringify(block));
+                }
             }
-            for (var i = 0; i < _Disk.numOfTracks * _Disk.numOfSectors * _Disk.numOfBlocks; i++) {
-                // Get the JSON from the stored string
-                var block = JSON.parse(sessionStorage.getItem(sessionStorage.key(i)));
-                block.availableBit = "0";
-                block.pointer = "0:0:0";
-                block.data = zeroes;
+            else {
+                // For all values in session storage, set available bit to 0, pointer to 0,0,0, and fill data with 00s
+                var zeroes = new Array();
+                for (var l = 0; l < 60; l++) {
+                    zeroes.push("00");
+                }
+                for (var i = 0; i < _Disk.numOfTracks * _Disk.numOfSectors * _Disk.numOfBlocks; i++) {
+                    // Get the JSON from the stored string
+                    var block = JSON.parse(sessionStorage.getItem(sessionStorage.key(i)));
+                    block.availableBit = "0";
+                    block.pointer = "0:0:0";
+                    block.data = zeroes;
+                    sessionStorage.setItem(sessionStorage.key(i), JSON.stringify(block));
+                }
+            }
+            // Format should also remove any processes that are swapped from the resident queue
+            var size = _ProcessManager.residentQueue.getSize();
+            for (var i = 0; i < size; i++) {
+                var pcb = _ProcessManager.residentQueue.dequeue();
+                if (pcb.Swapped) {
+                    // Do nothing, goodbye PCB!
+                }
+                else {
+                    _ProcessManager.residentQueue.enqueue(pcb); // put the process back into the resident queue
+                }
             }
             // Update disk display
             TSOS.Control.hostDisk();
