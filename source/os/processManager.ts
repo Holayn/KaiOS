@@ -120,6 +120,13 @@
                 if(pcb.Pid == pid){
                     // The chosen one
                     theChosenPcb = pcb;
+                    // If it is swapped out to disk, remove it from disk as well.
+                    if(theChosenPcb.Swapped){
+                        console.log("EXITED A PROCESS THAT IS IN THE READY QUEUE BUT IS SWAPPED OUT");
+                        Control.hostLog("Exiting process " + pid, "os");
+                        _krnDiskDriver.krnDiskDeleteData(theChosenPcb.TSB);
+                        return true;
+                    }
                 }
                 else{
                     // If it's not the poop chicken butt needed, put it back in the ready queue

@@ -62,7 +62,7 @@
                 // Update the PCB's partition to the one it got placed in
                 pcb.Partition = partition;
                 // Remove the program from disk
-                _krnDiskDriver.krnDiskDeleteData(tsb);
+                _krnDiskDriver.krnDiskDeleteProcess(tsb);
                 // Update disk display
                 Control.hostDisk();
                 // Update memory display 
@@ -126,7 +126,7 @@
                     pcb.Swapped = false;
                     pcb.State = "Waiting";
                     // Remove the program from disk
-                    _krnDiskDriver.krnDiskDeleteData(tsb);
+                    _krnDiskDriver.krnDiskDeleteProcess(tsb);
                     // Update disk display
                     Control.hostDisk();
                 }

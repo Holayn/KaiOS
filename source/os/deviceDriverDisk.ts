@@ -295,6 +295,7 @@
 
             /**
              * Performs a recursive delete given a starting TSB
+             * Don't remove pointers so we can perform chkdsk
              * @param tsb the data block to start deleting from
              */
             public krnDiskDeleteData(tsb) {
@@ -303,10 +304,29 @@
                     // follow links
                     this.krnDiskDeleteData(ptrBlock.pointer);
                 }
-                // remove pointer. nah keep the pointer so we can do some good ol chkdsk
                 // ptrBlock.pointer = "0:0:0";
                 // set as available
                 ptrBlock.availableBit = "0";
+                // update
+                sessionStorage.setItem(tsb, JSON.stringify(ptrBlock));
+                return;
+            }
+
+            /**
+             * Performs a recursive delete given a starting TSB for a process stored in the TSB
+             * Remove pointers!
+             */
+            public krnDiskDeleteProcess(tsb) {
+                let ptrBlock = JSON.parse(sessionStorage.getItem(tsb)); // block that belongs to the TSB
+                if(ptrBlock.pointer != "0:0:0"){
+                    // follow links
+                    this.krnDiskDeleteData(ptrBlock.pointer);
+                }
+                // remove pointer
+                ptrBlock.pointer = "0:0:0";
+                // set as available
+                ptrBlock.availableBit = "0";
+                ptrBlock = this.clearData(ptrBlock);
                 // update
                 sessionStorage.setItem(tsb, JSON.stringify(ptrBlock));
                 return;
@@ -319,7 +339,6 @@
              */
             public krnDiskReadData(tsb) {
                 let dataBlock = JSON.parse(sessionStorage.getItem(tsb));
-                // Convert the data retrieved back into a human-readable string
                 let dataPtr = 0;
                 let res = []; // hex array of data
                 while(true){
