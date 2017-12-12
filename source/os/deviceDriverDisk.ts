@@ -287,7 +287,36 @@
                 return;
             }
 
-            // Performs a read given a file name
+            /**
+             * Returns data stored in a TSB given a TSB
+             * @param tsb the data block to start reading from
+             * @return a hex array of the data
+             */
+            public krnDiskReadData(tsb) {
+                let dataBlock = JSON.parse(sessionStorage.getItem(tsb));
+                // Convert the data retrieved back into a human-readable string
+                let dataPtr = 0;
+                let res = []; // hex array of data
+                while(true){
+                    // Read until we reach end of the data block
+                    res.push(dataBlock.data[dataPtr]);
+                    dataPtr++; 
+                    if(dataPtr == _Disk.dataSize){
+                        // Go to next TSB if there is a pointer to it.
+                        if(dataBlock.pointer != "0:0:0"){
+                            dataBlock = JSON.parse(sessionStorage.getItem(dataBlock.pointer));
+                            dataPtr = 0;
+                        }
+                        else{
+                            return res;
+                        }
+                    }
+                }
+            }
+
+            /**
+             * Performs a read on a file given a file name
+             */
             public krnDiskRead(filename) {
                 // Look for filename in directrory structure
                 let hexArr = this.stringToASCII(filename);
@@ -309,30 +338,22 @@
                         if(matchingFileName){
                             // Perform a recursive read
                             let tsb = dirBlock.pointer;
-                            let dataBlock = JSON.parse(sessionStorage.getItem(tsb));
-                            // Convert the data retrieved back into a human-readable string
+                            let data = this.krnDiskReadData(tsb);
                             let dataPtr = 0;
-                            let res = []; // File 
+                            let fileData = []; // the data in the file
                             while(true){
                                 // Read until we reach 00-terminated string
-                                if(dataBlock.data[dataPtr] != "00"){
+                                if(data[dataPtr] != "00"){
                                     // Avoiding string concatenation to improve runtime
-                                    res.push(String.fromCharCode(parseInt(dataBlock.data[dataPtr], 16))); // push each char into array
+                                    fileData.push(String.fromCharCode(parseInt(data[dataPtr], 16))); // push each char into array
                                     dataPtr++; 
-                                    if(dataPtr == _Disk.dataSize){
-                                        // Go to next TSB
-                                        if(dataBlock.pointer != "0:0:0"){
-                                            dataBlock = JSON.parse(sessionStorage.getItem(dataBlock.pointer));
-                                        }
-                                        dataPtr = 0;
-                                    }
                                 }
                                 else{
                                     break;
                                 }
                             }
                             // Print out file
-                            _StdOut.putText(res.join(""));
+                            _StdOut.putText(fileData.join(""));
                             // Return success
                             return;
                         }

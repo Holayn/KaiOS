@@ -42,13 +42,6 @@
                 }
             }
             return false;
-            // for(var i=this.partitions[0].base; i<this.partitions[0].limit; i++){
-            //     if(_Memory.memoryArray[i] != "00"){
-            //         this.partitions[0].isEmpty = false;
-            //         return false;
-            //     }
-            // }
-            // return true;
         }
 
         // Returns a reference to an available partition in memory 

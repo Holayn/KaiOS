@@ -11,8 +11,11 @@
     export class Swapper {
         constructor(){}
 
-        // Calls the disk device driver to find enough space to store the program
-        // Returns the first TSB of the newly allocated data block
+        /**
+         * Calls the disk device driver to find enough space to store the program
+         * Returns the first TSB of the newly allocated data block
+         * @param opcodes the hex array of opcodes
+         */
         public putProcessToDisk(opcodes): String {
             // First, find a free data block to hold the opcodes
             let tsb = _krnDiskDriver.findFreeDataBlock();
@@ -27,6 +30,18 @@
                 _krnDiskDriver.writeDiskData(tsb, opcodes);
                 return tsb;
             }
+        }
+
+        /**
+         * Performs a roll-in of a process from disk to main memory given its TSB
+         * @param tsb the TSB of the process in disk
+         */
+        public rollIn(tsb) {
+            // First, look for a space in main memory to put the process from disk
+            // Get the program stored in disk
+            _MemoryManager.checkMemory
+            // If there is no room, then we must roll out a process from memory into the disk, then put the new process in that place in memory
+            // If there is room, then just put the new process in that memory
         }
     }
 }

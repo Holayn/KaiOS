@@ -22,6 +22,7 @@ var TSOS;
             this.Partition = partition;
             this.turnAroundTime = 0;
             this.waitTime = 0;
+            this.Swapped = false;
             this.TSB = "0:0:0";
         };
         return ProcessControlBlock;

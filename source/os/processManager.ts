@@ -20,6 +20,8 @@
         public createProcess(opcodes): void {
             // Check to see if there is an available partition in memory to put program in.
             // Make sure the program can fit into that partition
+            // First, make sure the opcodes are under 264 bytes in length.
+            
             // If there is no available memory, then display appropriate output to the user.
             if(_MemoryManager.checkMemory(opcodes.length)){
                 let pcb = new ProcessControlBlock(_Pid);
@@ -36,6 +38,7 @@
             // If there is no more memory, then go find free space in the disk
             // Call the swapper to perform swapping operations
             else{
+                // We also have to make sure the program is not too large. A program is limited by the partition size.
                 // Returns the TSB of the process in disk
                 let tsb = _Swapper.putProcessToDisk(opcodes);
                 // See if there is space on the disk for the process
@@ -44,6 +47,7 @@
                     let pcb = new ProcessControlBlock(_Pid);
                     pcb.init(IN_DISK);
                     // Set the PCB's TSB for the TSB it is stored in
+                    pcb.Swapped = true;
                     pcb.TSB = tsb;
                     // Put the new PCB onto the resident queue where it waits for CPU time
                     this.residentQueue.enqueue(pcb);
@@ -51,7 +55,7 @@
                     _Pid++;
                 }
                 else{
-                    _StdOut.putText("Loading of program failed! No memory available.");
+                    _StdOut.putText("Loading of program failed! Not memory available.");
                 }
             }
         }
@@ -147,6 +151,9 @@
             _CPU.isExecuting = true;
             // Set the PCB status to running
             this.running.State = "Running";
+            // We need to check if the process is stored in memory. If so, we need to have the swapper roll in from disk, and 
+            // roll out a process in memory if there is not enough space in memory for the rolled-in process.
+
             // // Update the display for the PCB
             // Control.hostProcesses();
             // Update the CPU display as well

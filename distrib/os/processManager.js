@@ -16,6 +16,7 @@ var TSOS;
         ProcessManager.prototype.createProcess = function (opcodes) {
             // Check to see if there is an available partition in memory to put program in.
             // Make sure the program can fit into that partition
+            // First, make sure the opcodes are under 264 bytes in length.
             // If there is no available memory, then display appropriate output to the user.
             if (_MemoryManager.checkMemory(opcodes.length)) {
                 var pcb = new TSOS.ProcessControlBlock(_Pid);
@@ -30,6 +31,7 @@ var TSOS;
                 _Pid++;
             }
             else {
+                // We also have to make sure the program is not too large. A program is limited by the partition size.
                 // Returns the TSB of the process in disk
                 var tsb = _Swapper.putProcessToDisk(opcodes);
                 // See if there is space on the disk for the process
@@ -38,6 +40,7 @@ var TSOS;
                     var pcb = new TSOS.ProcessControlBlock(_Pid);
                     pcb.init(IN_DISK);
                     // Set the PCB's TSB for the TSB it is stored in
+                    pcb.Swapped = true;
                     pcb.TSB = tsb;
                     // Put the new PCB onto the resident queue where it waits for CPU time
                     this.residentQueue.enqueue(pcb);
@@ -45,7 +48,7 @@ var TSOS;
                     _Pid++;
                 }
                 else {
-                    _StdOut.putText("Loading of program failed! No memory available.");
+                    _StdOut.putText("Loading of program failed! Not memory available.");
                 }
             }
         };
@@ -137,6 +140,8 @@ var TSOS;
             _CPU.isExecuting = true;
             // Set the PCB status to running
             this.running.State = "Running";
+            // We need to check if the process is stored in memory. If so, we need to have the swapper roll in from disk, and 
+            // roll out a process in memory if there is not enough space in memory for the rolled-in process.
             // // Update the display for the PCB
             // Control.hostProcesses();
             // Update the CPU display as well

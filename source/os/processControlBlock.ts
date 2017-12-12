@@ -15,6 +15,7 @@
         public Yreg: number;
         public Zflag: number;
         public Partition: number; // partition in memory
+        public Swapped: boolean; // flag to keep track if a process is swapped out to disk
         public TSB: String; // the TSB the process is in if it is swapped out to disk
         // This tracks turnaround and waittime for each process
         public turnAroundTime: number;
@@ -35,6 +36,7 @@
             this.Partition = partition;
             this.turnAroundTime = 0;
             this.waitTime = 0;
+            this.Swapped = false;
             this.TSB = "0:0:0";
         }
     }
