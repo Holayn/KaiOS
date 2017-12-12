@@ -576,6 +576,15 @@ var TSOS;
         Shell.prototype.shellCreateFile = function (args) {
             if (args.length == 1) {
                 // TODO: Enforce file name constraints i.e. length, characters, etc
+                // Filenames must be 60 or less
+                if (args[0].length > 60) {
+                    _StdOut.putText("File name length too long! Must be 60 characters or less.");
+                    return;
+                }
+                if (!args[0].match(/^.[a-z]+$/i)) {
+                    _StdOut.putText("Filenames may only be characters.");
+                    return;
+                }
                 var status_1 = _krnDiskDriver.krnDiskCreate(args[0]);
                 if (status_1 == FILE_SUCCESS) {
                     _StdOut.putText("File successfully created: " + args[0]);
@@ -659,8 +668,11 @@ var TSOS;
                 _StdOut.advanceLine();
                 for (var _i = 0, filenames_1 = filenames; _i < filenames_1.length; _i++) {
                     var f = filenames_1[_i];
-                    _StdOut.putText(f);
-                    _StdOut.advanceLine();
+                    // Don't show hidden files
+                    if (f.charAt(0) != ".") {
+                        _StdOut.putText(f);
+                        _StdOut.advanceLine();
+                    }
                 }
             }
             else {

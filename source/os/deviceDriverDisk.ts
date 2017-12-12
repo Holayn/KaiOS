@@ -72,6 +72,8 @@
                             let datBlock = JSON.parse(sessionStorage.getItem(datBlockTSB));
                             dirBlock.availableBit = "1";
                             datBlock.availableBit = "1";
+                            // Clear out any data previously in datBlock
+                            datBlock = this.clearData(datBlock);
                             dirBlock.pointer = datBlockTSB; // set pointer to space in memory
                             // Convert filename to ASCII/hex and store in data
                             let hexArr = this.stringToASCII(filename);

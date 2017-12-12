@@ -683,6 +683,15 @@ module TSOS {
         public shellCreateFile(args) {
             if(args.length == 1){
                 // TODO: Enforce file name constraints i.e. length, characters, etc
+                // Filenames must be 60 or less
+                if(args[0].length > 60){
+                    _StdOut.putText("File name length too long! Must be 60 characters or less.");
+                    return;
+                }
+                if(!args[0].match(/^.[a-z]+$/i)){
+                    _StdOut.putText("Filenames may only be characters.");
+                    return;
+                }
                 let status = _krnDiskDriver.krnDiskCreate(args[0]);
                 if(status == FILE_SUCCESS){
                     _StdOut.putText("File successfully created: " + args[0]);
@@ -770,8 +779,11 @@ module TSOS {
                 _StdOut.putText("Files in the filesystem:");
                 _StdOut.advanceLine();
                 for(var f of filenames){
-                    _StdOut.putText(f);
-                    _StdOut.advanceLine();
+                    // Don't show hidden files
+                    if(f.charAt(0) != "."){
+                        _StdOut.putText(f);
+                        _StdOut.advanceLine();
+                    }
                 }
             }
             else{
