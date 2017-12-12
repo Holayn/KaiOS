@@ -453,6 +453,7 @@ var TSOS;
                     return;
                 }
                 if (args.length == 1) {
+                    console.log(args);
                     if (!args[0].match(/^[0-9]\d*$/)) {
                         _StdOut.putText("Usage: load <?priority>  Please supply a valid priority number (0 is highest, 1 is default).");
                         return;

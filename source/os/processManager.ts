@@ -34,7 +34,7 @@
                 pcb.init(partition);
                 // Assign priority if given
                 if(args.length > 0){
-                    pcb.Priority = args[0];
+                    pcb.Priority = parseInt(args[0]);
                 }
                 else{
                     pcb.Priority = 1;
@@ -159,7 +159,6 @@
         
         // This runs a process that is stored in memory
         public runProcess(): void {
-            console.log(this.readyQueue);
             // Call the scheduler to reorder the ready queue if the scheduling scheme is Priority
             if(_Scheduler.algorithm == PRIORITY){
                 this.running = _Scheduler.findHighestPriority();

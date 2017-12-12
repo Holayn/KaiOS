@@ -24,6 +24,7 @@ var TSOS;
             this.waitTime = 0;
             this.Swapped = false;
             this.TSB = "0:0:0";
+            this.Priority = 1;
         };
         return ProcessControlBlock;
     }());

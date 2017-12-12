@@ -62,14 +62,15 @@ var TSOS;
                 var pcb = _ProcessManager.readyQueue.dequeue();
                 if (res == null) {
                     res = pcb;
-                    continue;
-                }
-                if (pcb.Priority < res.Priority) {
-                    _ProcessManager.readyQueue.enqueue(res); // put the process back into the ready queue
-                    res = pcb;
                 }
                 else {
-                    _ProcessManager.readyQueue.enqueue(pcb);
+                    if (pcb.Priority < res.Priority) {
+                        _ProcessManager.readyQueue.enqueue(res); // put the process back into the ready queue
+                        res = pcb;
+                    }
+                    else {
+                        _ProcessManager.readyQueue.enqueue(pcb);
+                    }
                 }
             }
             return res;
