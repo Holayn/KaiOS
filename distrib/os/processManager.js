@@ -13,7 +13,7 @@ var TSOS;
             this.residentQueue = new TSOS.Queue(); // Where we load the program into memory, where it waits to be run.
             this.readyQueue = new TSOS.Queue(); // Where a program is put when marked for CPU to move its program counter forward.
         }
-        ProcessManager.prototype.createProcess = function (opcodes) {
+        ProcessManager.prototype.createProcess = function (opcodes, args) {
             // Check to see if there is an available partition in memory to put program in.
             // Make sure the program can fit into that partition
             // First, make sure the opcodes are under 256 bytes in length.
@@ -28,6 +28,7 @@ var TSOS;
                 // We have to get an available partition in memory and load the program into there.
                 var partition = _MemoryManager.getFreePartition(opcodes.length);
                 pcb.init(partition);
+                // Assign priority
                 // Put the new PCB onto the resident queue where it waits for CPU time
                 this.residentQueue.enqueue(pcb);
                 _MemoryManager.loadIntoMemory(opcodes, partition);

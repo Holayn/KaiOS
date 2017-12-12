@@ -62,7 +62,7 @@ var TSOS;
             sc = new TSOS.ShellCommand(this.shellPiano, "piano", "- Your key presses now play piano notes!");
             this.commandList[this.commandList.length] = sc;
             // load
-            sc = new TSOS.ShellCommand(this.shellLoad, "load", "- Validates the user code in the HTML5 text area.");
+            sc = new TSOS.ShellCommand(this.shellLoad, "load", "<?priority> - Loads a program into memory and assigns it an optional priority value.");
             this.commandList[this.commandList.length] = sc;
             // seppuku
             sc = new TSOS.ShellCommand(this.shellSeppuku, "seppuku", "- Commit seppuku (trigger the BSOD message)");
@@ -95,7 +95,7 @@ var TSOS;
             sc = new TSOS.ShellCommand(this.shellReadFile, "read", "<filename> - Reads a file given a filename");
             this.commandList[this.commandList.length] = sc;
             // write <filename> - writes a file
-            sc = new TSOS.ShellCommand(this.shellWriteFile, "write", "<filename> - Writes to a file given a filename");
+            sc = new TSOS.ShellCommand(this.shellWriteFile, "write", "<filename> \"text\" - Writes text to a file given a filename");
             this.commandList[this.commandList.length] = sc;
             // delete <filename> - deletes a file
             sc = new TSOS.ShellCommand(this.shellDeleteFile, "delete", "<filename> - Deletes a file given a filename");
@@ -107,7 +107,7 @@ var TSOS;
             sc = new TSOS.ShellCommand(this.shellList, "ls", "- Lists files on disk");
             this.commandList[this.commandList.length] = sc;
             // setschedule - sets the scheduler to an algorithm: RR, FCFS, Priority
-            sc = new TSOS.ShellCommand(this.shellSetSchedule, "setschedule", "<algorithm>- Sets the scheduler to an algorithm: RR, FCFS, Priority");
+            sc = new TSOS.ShellCommand(this.shellSetSchedule, "setschedule", "<algorithm>- Sets the scheduler to an algorithm: Round Robin, FCFS, Priority");
             this.commandList[this.commandList.length] = sc;
             // getschedule - gets current scheduling algorithm
             sc = new TSOS.ShellCommand(this.shellGetSchedule, "getschedule", "- gets current scheduling algorithm");
@@ -286,7 +286,7 @@ var TSOS;
                         _StdOut.putText("Piano plays a piano note for different key presses.");
                         break;
                     case "load":
-                        _StdOut.putText("Load validates the user code in the HTML5 text area.");
+                        _StdOut.putText("Load loads a program into memory and may assign a priority to a program.");
                         break;
                     case "seppuku":
                         _StdOut.putText("Seppuku commits seppuku. Loads the BSOD message.");
@@ -331,7 +331,7 @@ var TSOS;
                         _StdOut.putText("Lists all files on the harddrive");
                         break;
                     case "setschedule":
-                        _StdOut.putText("Sets the scheduling algorithm: RR, FCFS, Priority");
+                        _StdOut.putText("Sets the scheduling algorithm: Round Robin, FCFS, Priority");
                         break;
                     case "getschedule":
                         _StdOut.putText("Gets the current scheduling algorithm");
@@ -400,10 +400,14 @@ var TSOS;
                 _StdOut.putText("Your keyboard is not a piano anymore.");
             _PianoTime = !_PianoTime;
         };
-        // Validates by making sure the op codes are valid (hex, 2 long each)
-        // Handles the case where the user enters newlines.
-        // A user has to enter a program for load to return valid
-        Shell.prototype.shellLoad = function () {
+        /**
+         * Validates by making sure the op codes are valid (hex, 2 long each)
+         * Handles the case where the user enters newlines.
+         * A user has to enter a program for load to return valid.
+         * If valid, loads into memory and creates a new process
+         * Takes an optional priority parameter
+         */
+        Shell.prototype.shellLoad = function (args) {
             var re = /[0-9A-Fa-f]{2}/i;
             var foundError = false;
             var userInput = document.getElementById("taProgramInput").value;
@@ -421,7 +425,16 @@ var TSOS;
             }
             if (!foundError) {
                 // Do a system call to create a new process
-                _ProcessManager.createProcess(userArr);
+                // Make sure the user is passing in a number if they assign a priority
+                if (args.length > 1) {
+                    _StdOut.putText("Usage: load <?priority>  Please supply a valid priority number.");
+                    return;
+                }
+                if (typeof args[0] != "number") {
+                    _StdOut.putText("Usage: load <?priority>  Please supply a valid priority number.");
+                    return;
+                }
+                _ProcessManager.createProcess(userArr, args);
             }
         };
         Shell.prototype.shellSeppuku = function () {
@@ -630,7 +643,18 @@ var TSOS;
             }
         };
         // Sets the scheduler algorithm
-        Shell.prototype.shellSetSchedule = function () {
+        Shell.prototype.shellSetSchedule = function (args) {
+            if (args.length == 1) {
+                if (_Scheduler.setAlgorithm(args[0])) {
+                    _StdOut.putText("Scheduling algorithm set to: " + _Scheduler.algorithm);
+                }
+                else {
+                    _StdOut.putText("Usage: setschedule <algorithm>  Round Robin, FCFS, Priority");
+                }
+            }
+            else {
+                _StdOut.putText("Usage: setschedule <algorithm>  Round Robin, FCFS, Priority");
+            }
         };
         // Returns the scheduler algorithm
         Shell.prototype.shellGetSchedule = function () {

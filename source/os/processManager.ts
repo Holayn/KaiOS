@@ -17,7 +17,7 @@
             this.readyQueue = new Queue();                          // Where a program is put when marked for CPU to move its program counter forward.
         }
 
-        public createProcess(opcodes): void {
+        public createProcess(opcodes, args): void {
             // Check to see if there is an available partition in memory to put program in.
             // Make sure the program can fit into that partition
             // First, make sure the opcodes are under 256 bytes in length.
@@ -32,6 +32,7 @@
                 // We have to get an available partition in memory and load the program into there.
                 var partition = _MemoryManager.getFreePartition(opcodes.length);
                 pcb.init(partition);
+                // Assign priority
                 // Put the new PCB onto the resident queue where it waits for CPU time
                 this.residentQueue.enqueue(pcb);
                 _MemoryManager.loadIntoMemory(opcodes, partition);

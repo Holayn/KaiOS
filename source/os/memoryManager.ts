@@ -85,6 +85,9 @@
         // Clears all memory partitions
         // Prevent stupid people from clearing memory when processes are running
         public clearAllMemory(): boolean {
+            if(_CPU.isExecuting){
+                return false;
+            }
             if(_ProcessManager.readyQueue.length > 0){
                 return false;
             }
@@ -98,6 +101,10 @@
                     _Memory.memoryArray[i] = "00";
                 }
                 this.partitions[j].isEmpty = true;
+            }
+            // Also, clear out the resident queue, for we don't have any programs in memory anymore
+            while(_ProcessManager.residentQueue.getSize() > 0){
+                _ProcessManager.residentQueue.dequeue();
             }
             Control.hostMemory();
             return true;

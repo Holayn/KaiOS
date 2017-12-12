@@ -79,6 +79,9 @@ var TSOS;
         // Clears all memory partitions
         // Prevent stupid people from clearing memory when processes are running
         MemoryManager.prototype.clearAllMemory = function () {
+            if (_CPU.isExecuting) {
+                return false;
+            }
             if (_ProcessManager.readyQueue.length > 0) {
                 return false;
             }
@@ -92,6 +95,10 @@ var TSOS;
                     _Memory.memoryArray[i] = "00";
                 }
                 this.partitions[j].isEmpty = true;
+            }
+            // Also, clear out the resident queue, for we don't have any programs in memory anymore
+            while (_ProcessManager.residentQueue.getSize() > 0) {
+                _ProcessManager.residentQueue.dequeue();
             }
             TSOS.Control.hostMemory();
             return true;

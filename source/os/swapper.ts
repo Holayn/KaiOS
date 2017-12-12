@@ -145,7 +145,11 @@
                 else{
                     // Somehow, no more memory in disk even though we just cleared room for it. Something borked it up.
                     Control.hostLog("Not enough space for rollout", "os");
-                    _KernelInterruptQueue.enqueue(66); // cause a bsod because how else to freak everyone out?
+                    // Stop the CPU from executing, clear memory, and print out a hurtful message.
+                    _MemoryManager.clearAllMemory();
+                    _CPU.isExecuting = false;
+                    _StdOut.putText("Not enough space on disk for rollout. Please reformat your disk.");
+                    // _KernelInterruptQueue.enqueue(66); // cause a bsod because how else to freak everyone out?
                 }
             }
         }

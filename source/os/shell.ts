@@ -102,7 +102,7 @@ module TSOS {
             // load
             sc = new ShellCommand(this.shellLoad,
                                   "load",
-                                  "- Validates the user code in the HTML5 text area.");
+                                  "<?priority> - Loads a program into memory and assigns it an optional priority value.");
             this.commandList[this.commandList.length] = sc;
 
             // seppuku
@@ -168,7 +168,7 @@ module TSOS {
             // write <filename> - writes a file
             sc = new ShellCommand(this.shellWriteFile,
                                   "write",
-                                  "<filename> - Writes to a file given a filename");
+                                  "<filename> \"text\" - Writes text to a file given a filename");
             this.commandList[this.commandList.length] = sc;
 
             // delete <filename> - deletes a file
@@ -192,7 +192,7 @@ module TSOS {
             // setschedule - sets the scheduler to an algorithm: RR, FCFS, Priority
             sc = new ShellCommand(this.shellSetSchedule,
                                   "setschedule",
-                                  "<algorithm>- Sets the scheduler to an algorithm: RR, FCFS, Priority");
+                                  "<algorithm>- Sets the scheduler to an algorithm: Round Robin, FCFS, Priority");
             this.commandList[this.commandList.length] = sc;
 
             // getschedule - gets current scheduling algorithm
@@ -386,7 +386,7 @@ module TSOS {
                         _StdOut.putText("Piano plays a piano note for different key presses.");
                         break;
                     case "load":
-                        _StdOut.putText("Load validates the user code in the HTML5 text area.");
+                        _StdOut.putText("Load loads a program into memory and may assign a priority to a program.");
                         break;
                     case "seppuku":
                         _StdOut.putText("Seppuku commits seppuku. Loads the BSOD message.");
@@ -431,7 +431,7 @@ module TSOS {
                         _StdOut.putText("Lists all files on the harddrive");
                         break;
                     case "setschedule":
-                        _StdOut.putText("Sets the scheduling algorithm: RR, FCFS, Priority");
+                        _StdOut.putText("Sets the scheduling algorithm: Round Robin, FCFS, Priority");
                         break;
                     case "getschedule":
                         _StdOut.putText("Gets the current scheduling algorithm");
@@ -500,10 +500,14 @@ module TSOS {
             _PianoTime = !_PianoTime;
         }
 
-        // Validates by making sure the op codes are valid (hex, 2 long each)
-        // Handles the case where the user enters newlines.
-        // A user has to enter a program for load to return valid
-        public shellLoad() {
+        /**
+         * Validates by making sure the op codes are valid (hex, 2 long each)
+         * Handles the case where the user enters newlines.
+         * A user has to enter a program for load to return valid.
+         * If valid, loads into memory and creates a new process
+         * Takes an optional priority parameter
+         */
+        public shellLoad(args) {
             let re = /[0-9A-Fa-f]{2}/i;
             let foundError = false;
             let userInput = (<HTMLInputElement>document.getElementById("taProgramInput")).value;
@@ -520,7 +524,16 @@ module TSOS {
             }
             if(!foundError){
                 // Do a system call to create a new process
-                 _ProcessManager.createProcess(userArr);
+                // Make sure the user is passing in a number if they assign a priority
+                if(args.length > 1){
+                    _StdOut.putText("Usage: load <?priority>  Please supply a valid priority number.");
+                    return;
+                }
+                if(typeof args[0] != "number"){
+                    _StdOut.putText("Usage: load <?priority>  Please supply a valid priority number.");
+                    return;
+                }
+                 _ProcessManager.createProcess(userArr, args);
             }
         }
 
@@ -742,8 +755,18 @@ module TSOS {
         }
 
         // Sets the scheduler algorithm
-        public shellSetSchedule() {
-
+        public shellSetSchedule(args) {
+            if(args.length == 1){
+                if(_Scheduler.setAlgorithm(args[0])){
+                    _StdOut.putText("Scheduling algorithm set to: " + _Scheduler.algorithm);
+                }
+                else{
+                    _StdOut.putText("Usage: setschedule <algorithm>  Round Robin, FCFS, Priority");
+                }
+            }
+            else{
+                _StdOut.putText("Usage: setschedule <algorithm>  Round Robin, FCFS, Priority");
+            }
         }
 
         // Returns the scheduler algorithm
