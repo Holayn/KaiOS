@@ -44,6 +44,8 @@ const PRIORITY: string = "priority";
 
 const IN_DISK: number = 999;
 
+const MAX_FILE_LENGTH: number = 56;
+
 //
 // Global Variables
 // TODO: Make a global object and use that instead of the "_" naming convention in the global namespace.

@@ -684,8 +684,8 @@ module TSOS {
             if(args.length == 1){
                 // TODO: Enforce file name constraints i.e. length, characters, etc
                 // Filenames must be 60 or less
-                if(args[0].length > 60){
-                    _StdOut.putText("File name length too long! Must be 60 characters or less.");
+                if(args[0].length > MAX_FILE_LENGTH){
+                    _StdOut.putText("File name length too long! Must be " + MAX_FILE_LENGTH + " characters or less.");
                     return;
                 }
                 if(!args[0].match(/^.[a-z]+$/i)){
@@ -782,7 +782,7 @@ module TSOS {
                 if(args.length == 1){
                     if(args[0] == "-l"){
                         for(var f of filenames){
-                            _StdOut.putText(f);
+                            _StdOut.putText(f['name'] + " - creation date: " + f['month'] + "/" + f['day'] + "/" + f['year'] + ". size: " + f['size']);
                             _StdOut.advanceLine();
                         }
                     }
@@ -790,8 +790,8 @@ module TSOS {
                 else{
                     for(var f of filenames){
                         // Don't show hidden files
-                        if(f.charAt(0) != "."){
-                            _StdOut.putText(f);
+                        if(f['name'].charAt(0) != "."){
+                            _StdOut.putText(f['name']);
                             _StdOut.advanceLine();
                         }
                     }

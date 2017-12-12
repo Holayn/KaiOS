@@ -577,8 +577,8 @@ var TSOS;
             if (args.length == 1) {
                 // TODO: Enforce file name constraints i.e. length, characters, etc
                 // Filenames must be 60 or less
-                if (args[0].length > 60) {
-                    _StdOut.putText("File name length too long! Must be 60 characters or less.");
+                if (args[0].length > MAX_FILE_LENGTH) {
+                    _StdOut.putText("File name length too long! Must be " + MAX_FILE_LENGTH + " characters or less.");
                     return;
                 }
                 if (!args[0].match(/^.[a-z]+$/i)) {
@@ -671,7 +671,7 @@ var TSOS;
                     if (args[0] == "-l") {
                         for (var _i = 0, filenames_1 = filenames; _i < filenames_1.length; _i++) {
                             var f = filenames_1[_i];
-                            _StdOut.putText(f);
+                            _StdOut.putText(f['name'] + " - creation date: " + f['month'] + "/" + f['day'] + "/" + f['year'] + ". size: " + f['size']);
                             _StdOut.advanceLine();
                         }
                     }
@@ -680,8 +680,8 @@ var TSOS;
                     for (var _a = 0, filenames_2 = filenames; _a < filenames_2.length; _a++) {
                         var f = filenames_2[_a];
                         // Don't show hidden files
-                        if (f.charAt(0) != ".") {
-                            _StdOut.putText(f);
+                        if (f['name'].charAt(0) != ".") {
+                            _StdOut.putText(f['name']);
                             _StdOut.advanceLine();
                         }
                     }

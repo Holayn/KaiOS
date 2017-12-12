@@ -79,9 +79,28 @@
                             let hexArr = this.stringToASCII(filename);
                             // Clear the directory block's data first a.k.a the filename if it was there before
                             dirBlock = this.clearData(dirBlock);
+                            // Get the date and convert it to hex
+                            let today = new Date();
+                            let month = (today.getMonth()+1).toString(16);
+                            if(month.length == 1){
+                                month = "0" + month; // pad with zero
+                            }
+                            let day = (today.getDate()).toString(16);
+                            if(day.length == 1){
+                                day = "0" + day; // pad with zero
+                            }
+                            let year = (today.getFullYear()).toString(16);
+                            if(year.length == 3){
+                                year = "0" + year; // pad with zero
+                            }
+                            // Store date in first 4 bytes
+                            dirBlock.data[0] = month;
+                            dirBlock.data[1] = day;
+                            dirBlock.data[2] = year.substring(0,2);
+                            dirBlock.data[3] = year.substring(2);
                             // We only replace the bytes needed, not the entire data array
-                            for(var k=0; k<hexArr.length; k++){
-                                dirBlock.data[k] = hexArr[k];
+                            for(var k=4, j=0; j<hexArr.length; k++, j++){
+                                dirBlock.data[k] = hexArr[j];
                             }
                             sessionStorage.setItem(sessionStorage.key(i), JSON.stringify(dirBlock));
                             sessionStorage.setItem(datBlockTSB, JSON.stringify(datBlock));
@@ -194,7 +213,11 @@
                 return true;
             }
 
-            // Performs a write given a file name
+            /**
+             * Performs a write given a file name
+             * @param filename the filename
+             * @param text the text to write in the filename
+             */
             public krnDiskWrite(filename: String, text: String) {
                 // Look for filename in directrory structure
                 let hexArr = this.stringToASCII(filename);
@@ -430,6 +453,14 @@
                 return true;
             }
 
+            /**
+             * Gets size of a file given its initial TSB
+             * Just performs a read and then gets the length of the data returned
+             */
+            private getSize(tsb): number {
+                return this.krnDiskReadData(tsb).length;
+            }
+
             // Return the used directory entries
             public krnLs() {
                 // Return the filenames of all directory blocks that are used
@@ -437,27 +468,37 @@
                 // Don't look in the MBR
                 for(var i=1; i<_Disk.numOfSectors*_Disk.numOfBlocks; i++){
                     let dirBlock = JSON.parse(sessionStorage.getItem(sessionStorage.key(i)));
-                    let matchingFileName = true;
                     // Don't look in blocks not in use
                     if(dirBlock.availableBit == "1"){
-                        filenames.push(dirBlock.data);
+                        let size = this.getSize(dirBlock.pointer);
+                        let info = {
+                            data: dirBlock.data,
+                            size: size + "bytes"
+                        }
+                        filenames.push(info);
                     }
                 }
                 // Convert all hex filenames to human-readable form
                 for(var i=0; i<filenames.length; i++){
-                    let dataPtr = 0;
+                    let dataPtr = 4;
                     let res = []; // filename
                     while(true){
-                        if(filenames[i][dataPtr] != "00"){
+                        console.log(filenames[i]['data']);
+                        if(filenames[i]['data'][dataPtr] != "00"){
                             // Avoiding string concatenation to improve runtime
-                            res.push(String.fromCharCode(parseInt(filenames[i][dataPtr], 16))); // push each char into array
+                            res.push(String.fromCharCode(parseInt(filenames[i]['data'][dataPtr], 16))); // push each char into array
                             dataPtr++; 
                         }
                         else{
                             break;
                         }
                     }
-                    filenames[i] = res.join("");
+                    filenames[i]['name'] = res.join("");
+                    console.log(filenames[i]['data'])
+                    // Parse out the date
+                    filenames[i]['month'] = parseInt(filenames[i]['data'][0], 16);
+                    filenames[i]['day'] = parseInt(filenames[i]['data'][1], 16);
+                    filenames[i]['year'] = parseInt(filenames[i]['data'][2] + filenames[i]['data'][3], 16);
                 }
                 // Return array of filenames
                 return filenames;

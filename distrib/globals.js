@@ -29,6 +29,7 @@ var ROUND_ROBIN = "rr";
 var FCFS = "fcfs";
 var PRIORITY = "priority";
 var IN_DISK = 999;
+var MAX_FILE_LENGTH = 56;
 //
 // Global Variables
 // TODO: Make a global object and use that instead of the "_" naming convention in the global namespace.
