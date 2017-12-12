@@ -199,8 +199,8 @@ module TSOS {
             // dequeuing and enqueuing process below...proceed with caution
             for(var i=0; i<_ProcessManager.readyQueue.getSize(); i++){
                 var pcb = _ProcessManager.readyQueue.dequeue();
-                readyQueue.push(pcb);
                 _ProcessManager.readyQueue.enqueue(pcb);
+                readyQueue.push(pcb);
             }
             if(_ProcessManager.running != null){
                 readyQueue.push(_ProcessManager.running);

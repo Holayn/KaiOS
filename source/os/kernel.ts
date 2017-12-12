@@ -190,6 +190,8 @@ module TSOS {
                     _StdIn.handleInput();
                     break;
                 case PROCESS_EXIT:
+                    // Reset the scheduler's counter
+                    _Scheduler.unwatch();
                     _ProcessManager.exitProcess(params);
                     break;
                 case CONTEXT_SWITCH:                  // Placeholder for context switching. We only update the PCB when there is a context switch!!!

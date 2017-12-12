@@ -87,6 +87,9 @@
         // We also need to update the CPU and memory display
         // Display stats depending on whether true or false is passed in
         public exitProcess(displayStats: boolean): void {
+            console.log("EXITING PROCESS");
+            // Reset the scheduler's counter
+            _Scheduler.unwatch();
             _CPU.init();
             _MemoryManager.clearMemoryPartition(this.running.Partition);
             Control.hostMemory();
@@ -103,12 +106,10 @@
                 _StdOut.advanceLine();
                 _OsShell.putPrompt();
             }
-            // Clear out running process
-            this.running = null;
             // // Update processes display
             // Control.hostProcesses();
-            // Reset the scheduler's counter
-            _Scheduler.unwatch();
+            // Clear out running process
+            this.running = null;
         }
 
         // This exits a process from the ready queue.

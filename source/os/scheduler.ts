@@ -35,7 +35,7 @@ module TSOS {
                         this.counter = 0;
                     }
                 }
-                if(this.algorithm == FCFS){
+                else if(this.algorithm == FCFS){
                     this.counter++;
                     // If the quantum has been used up, perform a context switch
                     if(this.counter == this.quantum){
