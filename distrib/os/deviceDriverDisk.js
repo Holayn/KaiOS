@@ -43,13 +43,13 @@ var TSOS;
                 var matchingFileName = true;
                 // Don't look in blocks not in use
                 if (dirBlock.availableBit == "1") {
-                    for (var j = 0; j < hexArr.length; j++) {
-                        if (hexArr[j] != dirBlock.data[j]) {
+                    for (var k = 4, j = 0; j < hexArr.length; k++, j++) {
+                        if (hexArr[j] != dirBlock.data[k]) {
                             matchingFileName = false;
                         }
                     }
                     // If reach end of hexArr but dirBlock data still more?
-                    if (dirBlock.data[hexArr.length] != "00") {
+                    if (dirBlock.data[hexArr.length + DATE_LENGTH] != "00") {
                         matchingFileName = false;
                     }
                     // We found the filename
@@ -229,13 +229,13 @@ var TSOS;
                 var matchingFileName = true;
                 // Don't look in blocks not in use
                 if (dirBlock.availableBit == "1") {
-                    for (var j = 0; j < hexArr.length; j++) {
-                        if (hexArr[j] != dirBlock.data[j]) {
+                    for (var k = 4, j = 0; j < hexArr.length; k++, j++) {
+                        if (hexArr[j] != dirBlock.data[k]) {
                             matchingFileName = false;
                         }
                     }
                     // If reach end of hexArr but dirBlock data still more?
-                    if (dirBlock.data[hexArr.length] != "00") {
+                    if (dirBlock.data[hexArr.length + DATE_LENGTH] != "00") {
                         matchingFileName = false;
                     }
                     // We found the filename
@@ -352,13 +352,13 @@ var TSOS;
                 var matchingFileName = true;
                 // Don't look in blocks not in use
                 if (dirBlock.availableBit == "1") {
-                    for (var j = 0; j < hexArr.length; j++) {
-                        if (hexArr[j] != dirBlock.data[j]) {
+                    for (var k = 4, j = 0; j < hexArr.length; k++, j++) {
+                        if (hexArr[j] != dirBlock.data[k]) {
                             matchingFileName = false;
                         }
                     }
                     // If reach end of hexArr but dirBlock data still more?
-                    if (dirBlock.data[hexArr.length] != "00") {
+                    if (dirBlock.data[hexArr.length + DATE_LENGTH] != "00") {
                         matchingFileName = false;
                     }
                     // We found the filename
@@ -400,13 +400,13 @@ var TSOS;
                 var matchingFileName = true;
                 // Don't look in blocks not in use
                 if (dirBlock.availableBit == "1") {
-                    for (var j = 0; j < hexArr.length; j++) {
-                        if (hexArr[j] != dirBlock.data[j]) {
+                    for (var k = 4, j = 0; j < hexArr.length; k++, j++) {
+                        if (hexArr[j] != dirBlock.data[k]) {
                             matchingFileName = false;
                         }
                     }
                     // If reach end of hexArr but dirBlock data still more?
-                    if (dirBlock.data[hexArr.length] != "00") {
+                    if (dirBlock.data[hexArr.length + DATE_LENGTH] != "00") {
                         matchingFileName = false;
                     }
                     // We found the filename
