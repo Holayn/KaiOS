@@ -20,8 +20,11 @@
         public createProcess(opcodes): void {
             // Check to see if there is an available partition in memory to put program in.
             // Make sure the program can fit into that partition
-            // First, make sure the opcodes are under 264 bytes in length.
-            
+            // First, make sure the opcodes are under 256 bytes in length.
+            if(opcodes.length > _MemoryManager.globalLimit){
+                _StdOut.putText("Loading of program failed! Program is over 256 bytes in length.");
+                return;
+            }
             // If there is no available memory, then display appropriate output to the user.
             if(_MemoryManager.checkMemory(opcodes.length)){
                 let pcb = new ProcessControlBlock(_Pid);
@@ -151,9 +154,15 @@
             _CPU.isExecuting = true;
             // Set the PCB status to running
             this.running.State = "Running";
-            // We need to check if the process is stored in memory. If so, we need to have the swapper roll in from disk, and 
+            // We need to check if the process is stored in disk. If so, we need to have the swapper roll in from disk, and 
             // roll out a process in memory if there is not enough space in memory for the rolled-in process.
-
+            if(this.running.Swapped){
+                // Roll it in from disk
+                _Swapper.rollIn(this.running);
+                // No longer swapped out to disk
+                this.running.Swapped = false;
+                this.running.TSB = "0:0:0";
+            }
             // // Update the display for the PCB
             // Control.hostProcesses();
             // Update the CPU display as well

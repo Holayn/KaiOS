@@ -141,7 +141,8 @@ var TSOS;
          * @param file the file represented as an array of hex digits
          * @param tsb the first TSB in the chain of data blocks
          */
-        DeviceDriverDisk.prototype.allocateDiskSpace = function (file, tsb) {
+        DeviceDriverDisk.prototype.allocateDiskSpace = function (file, tsb, setBlocks) {
+            if (setBlocks === void 0) { setBlocks = 0; }
             // Check size of text. If it is longer than 60, then we need to have enough datablocks
             console.log(file);
             var stringLength = file.length;
@@ -257,7 +258,7 @@ var TSOS;
             }
             // If we're done writing, but the pointer in the current block is still pointing to something, it means the old file was longer
             // so delete it all.
-            this.recurseDelete(currentBlock.pointer);
+            this.krnDiskDeleteData(currentBlock.pointer);
             currentBlock.pointer = "0:0:0";
             // Update session storage
             sessionStorage.setItem(currentTSB, JSON.stringify(currentBlock));
@@ -272,11 +273,15 @@ var TSOS;
             return block;
         };
         // Helper method to do a recursively delete starting from some TSB of session storage
-        DeviceDriverDisk.prototype.recurseDelete = function (tsb) {
+        /**
+         * Performs a recursive delete given a starting TSB
+         * @param tsb the data block to start deleting from
+         */
+        DeviceDriverDisk.prototype.krnDiskDeleteData = function (tsb) {
             var ptrBlock = JSON.parse(sessionStorage.getItem(tsb)); // block that belongs to the TSB
             if (ptrBlock.pointer != "0:0:0") {
                 // follow links
-                this.recurseDelete(ptrBlock.pointer);
+                this.krnDiskDeleteData(ptrBlock.pointer);
             }
             // remove pointer
             ptrBlock.pointer = "0:0:0";
@@ -380,7 +385,7 @@ var TSOS;
                     // We found the filename
                     if (matchingFileName) {
                         // Perform recursive delete given first TSB
-                        this.recurseDelete(dirBlock.pointer);
+                        this.krnDiskDeleteData(dirBlock.pointer);
                         // Update directory block
                         dirBlock.availableBit = "0";
                         dirBlock.pointer = "0:0:0";

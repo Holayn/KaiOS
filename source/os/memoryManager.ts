@@ -7,13 +7,14 @@
    module TSOS {
     export class MemoryManager {
         public partitions: Array<any>
+        public globalLimit: number = 256; // the global limit on the size of a memory partition
         constructor(){
             // We'll have three partitions in memory, each of 256 bytes in size
             // We'll also store a flag for each partition representing if the partition is available
             this.partitions = [
-                {"base": 0, "limit": 256, "isEmpty": true},
-                {"base": 256, "limit": 256, "isEmpty": true},
-                {"base": 512, "limit": 256, "isEmpty": true}
+                {"base": 0, "limit": this.globalLimit, "isEmpty": true},
+                {"base": 256, "limit": this.globalLimit, "isEmpty": true},
+                {"base": 512, "limit": this.globalLimit, "isEmpty": true}
             ];
         }
         
@@ -51,13 +52,13 @@
                     return i;
                 }
             }
-            return -1;
+            return null;
         }
 
         // Clears a memory partition, given the partition, and marks the partition as available.
         // Make sure to update the memory display
         public clearMemoryPartition(partition): void {
-            if(!this.canClearMemory(partition))
+            // if(!this.canClearMemory(partition))
             console.log("Clearing memory partition " + partition);
             var base = this.partitions[partition].base;
             var limit = this.partitions[partition].limit + this.partitions[partition].base;
@@ -68,7 +69,23 @@
             Control.hostMemory();
         }
 
+        /**
+         * Returns all the data residing in a memory partition
+         * @param partition the partition to get the data from
+         * @return an array of hex values
+         */
+        public getMemoryPartitionData(partition) {
+            let data = [];
+            let base = this.partitions[partition].base;
+            let limit = this.partitions[partition].limit + this.partitions[partition].base;
+            for(var i=base; i<limit; i++){
+                data.push(_Memory.memoryArray[i]);
+            }
+            return data;
+        }
+
         // Clears all memory partitions
+        // Prevent stupid people from clearing memory when processes are running
         public clearAllMemory(): boolean {
             if(_ProcessManager.readyQueue.length > 0){
                 return false;
