@@ -30,8 +30,6 @@ var TSOS;
             }
             // Set the partition isEmpty flag to true so that we know the partition is unavailable
             this.partitions[partition].isEmpty = false;
-            // Update the display accordingly
-            TSOS.Control.hostMemory();
         };
         // Checks to see if there is an available partition in memory
         MemoryManager.prototype.checkMemory = function (opcodesLength) {
@@ -62,7 +60,7 @@ var TSOS;
                 _Memory.memoryArray[i] = "00";
             }
             this.partitions[partition].isEmpty = true;
-            TSOS.Control.hostMemory();
+            // Control.hostMemory();
         };
         /**
          * Returns all the data residing in a memory partition

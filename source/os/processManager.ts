@@ -35,6 +35,8 @@
                 // Put the new PCB onto the resident queue where it waits for CPU time
                 this.residentQueue.enqueue(pcb);
                 _MemoryManager.loadIntoMemory(opcodes, partition);
+                // Update the display accordingly
+                Control.hostMemory();
                 _StdOut.putText("Program loaded in memory with process ID " + _Pid);
                 _Pid++;
             }
@@ -72,6 +74,7 @@
         public exitProcess(displayStats: boolean): void {
             _CPU.init();
             _MemoryManager.clearMemoryPartition(this.running.Partition);
+            Control.hostMemory();
             // Update host log
             Control.hostLog("Exiting process " + this.running.Pid, "os");
             if(displayStats){

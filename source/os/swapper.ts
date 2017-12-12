@@ -23,9 +23,14 @@
             // This will allocate those blocks as being used and update pointers
             // We need to allocate enough blocks to hold a largest program
             // Imagine a scenario where the disk is full. A process taking 2 blocks of memory is rolled into memory, and a process that would take
-            // 4 blocks of memory is rolled out. Where would we put it? We're screwed! So we need to always allocate enough blocks to hold the largest program possible.
-            let numBlocks = Math.ceil(_MemoryManager.globalLimit / _Disk.dataSize); // we need to allocate 5 blocks for a program.
-            let enoughFreeSpace = _krnDiskDriver.allocateDiskSpace(opcodes, tsb, numBlocks);
+            // 4 blocks of memory is rolled out. Where would we put it? We're screwed! So we need to always allocate enough blocks to hold the largest program possible
+            // To achieve this, we cheat by just extending the opcodes to have 256 bytes in total
+            let length = opcodes.length;
+            while(length < _MemoryManager.globalLimit){
+                opcodes.push("00");
+                length++;
+            }
+            let enoughFreeSpace = _krnDiskDriver.allocateDiskSpace(opcodes, tsb);
             if(!enoughFreeSpace){
                 return null;
             }
@@ -41,60 +46,111 @@
          * @param pcb the PCB of the process in disk
          */
         public rollIn(pcb) {
+            console.log("Performing roll in");
             let tsb = pcb.TSB;
             // Get the program stored in disk
             let data = _krnDiskDriver.krnDiskReadData(tsb);
+            // Trim off extra data since we now allocate 5 blocks (300 bytes) for a program, which is more than what a memory partition can hold
+            let extraData = Math.ceil(_MemoryManager.globalLimit / _Disk.dataSize) * _Disk.dataSize;
+            for(var i=0; i<extraData-_MemoryManager.globalLimit; i++){
+                data.pop();
+            }
             // Look for a space in main memory to put the process from disk
             if(_MemoryManager.checkMemory(data.length)){
                 var partition = _MemoryManager.getFreePartition(data.length);
                 _MemoryManager.loadIntoMemory(data, partition);
                 // Update the PCB's partition to the one it got placed in
                 pcb.Partition = partition;
+                console.log(pcb)
+                console.log(_ProcessManager.running)
                 // Remove the program from disk
                 _krnDiskDriver.krnDiskDeleteData(tsb);
                 // Update disk display
                 Control.hostDisk();
+                // Update memory display 
+                Control.hostMemory();
             }
             else{
                 // If there is no room, then we must roll out a process from memory into the disk, then put the new process in that place in memory
-                this.rollOut(tsb);
+                this.rollOut(pcb);
+            }
+        }
+
+        /**
+         * Helper method to look through the process manager's queues for a PCB that is using a partition in memory
+         * @param partition the partition being searched for
+         */
+        private lookInQueues(partition) {
+            // Look in ready queue
+            for(var i=0; i<_ProcessManager.readyQueue.q.length; i++){
+                if(_ProcessManager.readyQueue.q[i].Partition == partition){
+                    return _ProcessManager.readyQueue.q[i];
+                }
+            }
+            // Look in resident queue
+            for(var i=0; i<_ProcessManager.residentQueue.q.length; i++){
+                if(_ProcessManager.residentQueue.q[i].Partition == partition){
+                    return _ProcessManager.residentQueue.q[i];
+                }
             }
         }
 
         /**
          * Performs a roll-out of a process from main memory to disk given a tsb to be moved to
-         * @param tsb the data block for the process to be moved to
+         * @param pcb the process control block of program in disk
          */
-        public rollOut(tsb) {
+        public rollOut(pcb) {
+            let tsb = pcb.TSB;
+            console.log("Performing roll out");
             // Get partition from memory...what partition? Let's do a random partition...RNG BOYZ
             let unluckyParition = Math.floor(Math.random() * _MemoryManager.partitions.length); 
-            // Get data from memory
-            let memoryData = _MemoryManager.getMemoryPartitionData(unluckyParition);
-            // Free the partition
-            _MemoryManager.clearMemoryPartition(unluckyParition);
-            // Get data from disk
-            let data = _krnDiskDriver.krnDiskReadData(tsb);
-            // Put data from disk into the partition from memory
-            if(_MemoryManager.checkMemory(data.length)){
-                var partition = _MemoryManager.getFreePartition(data.length);
-                _MemoryManager.loadIntoMemory(data, partition);
-                // Remove the program from disk
-                _krnDiskDriver.krnDiskDeleteData(tsb);
-                // Update disk display
-                Control.hostDisk();
-            }
-            else{
-                return;
-            }
-            // Put the data from memory into disk and get the TSB of where it was written
-            let memoryToDiskTSB = this.putProcessToDisk(memoryData);
-            if(memoryToDiskTSB != null){
-
-            }
-            else{
-                // Somehow, no more memory in disk even though we just cleared room for it. Something borked it up.
-                Control.hostLog("Not enough space for rollout", "os");
-                _KernelInterruptQueue.enqueue(66); // cause a bsod because how else to freak everyone out?
+            // Look for the PCB with that partition, we need to tell it the bad news (that it's going to disk aka jail)
+            let unluckyPCB = this.lookInQueues(unluckyParition);
+            if(unluckyPCB != null){
+                // Get data from memory
+                let memoryData = _MemoryManager.getMemoryPartitionData(unluckyParition);
+                // Free the partition
+                _MemoryManager.clearMemoryPartition(unluckyParition);
+                // Get data from disk
+                let data = _krnDiskDriver.krnDiskReadData(tsb);
+                // Trim off extra bytes
+                let extraData = Math.ceil(_MemoryManager.globalLimit / _Disk.dataSize) * _Disk.dataSize;
+                for(var i=0; i<extraData-_MemoryManager.globalLimit; i++){
+                    data.pop();
+                }
+                console.log(data.length);
+                // Put data from disk into the partition from memory
+                if(_MemoryManager.checkMemory(data.length)){
+                    console.log("eyy")
+                    var partition = _MemoryManager.getFreePartition(data.length);
+                    _MemoryManager.loadIntoMemory(data, partition);
+                    // Update the PCB's partition to the one it got placed in
+                    pcb.Partition = partition;
+                    console.log(pcb);
+                    // Remove the program from disk
+                    _krnDiskDriver.krnDiskDeleteData(tsb);
+                    // Update disk display
+                    Control.hostDisk();
+                }
+                else{
+                    return;
+                }
+                // Put the data from memory into disk and get the TSB of where it was written
+                let memoryToDiskTSB = this.putProcessToDisk(memoryData);
+                if(memoryToDiskTSB != null){
+                    // Success!
+                    // Update the PCB to show that it is in disk
+                    unluckyPCB.Partition = IN_DISK;
+                    unluckyPCB.Swapped = true;
+                    unluckyPCB.TSB = memoryToDiskTSB;
+                    Control.hostLog("Performed roll out and roll in", "os");
+                    return;
+                }
+                else{
+                    // Somehow, no more memory in disk even though we just cleared room for it. Something borked it up.
+                    Control.hostLog("Not enough space for rollout", "os");
+                    _KernelInterruptQueue.enqueue(66); // cause a bsod because how else to freak everyone out?
+                }
             }
         }
     }

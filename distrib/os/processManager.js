@@ -31,6 +31,8 @@ var TSOS;
                 // Put the new PCB onto the resident queue where it waits for CPU time
                 this.residentQueue.enqueue(pcb);
                 _MemoryManager.loadIntoMemory(opcodes, partition);
+                // Update the display accordingly
+                TSOS.Control.hostMemory();
                 _StdOut.putText("Program loaded in memory with process ID " + _Pid);
                 _Pid++;
             }
@@ -65,6 +67,7 @@ var TSOS;
         ProcessManager.prototype.exitProcess = function (displayStats) {
             _CPU.init();
             _MemoryManager.clearMemoryPartition(this.running.Partition);
+            TSOS.Control.hostMemory();
             // Update host log
             TSOS.Control.hostLog("Exiting process " + this.running.Pid, "os");
             if (displayStats) {

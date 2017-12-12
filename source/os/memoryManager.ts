@@ -31,8 +31,6 @@
             }
             // Set the partition isEmpty flag to true so that we know the partition is unavailable
             this.partitions[partition].isEmpty = false;
-            // Update the display accordingly
-            Control.hostMemory();
         }
 
         // Checks to see if there is an available partition in memory
@@ -66,7 +64,7 @@
                 _Memory.memoryArray[i] = "00";
             }
             this.partitions[partition].isEmpty = true;
-            Control.hostMemory();
+            // Control.hostMemory();
         }
 
         /**
