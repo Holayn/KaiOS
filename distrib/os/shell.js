@@ -585,7 +585,7 @@ var TSOS;
                     _StdOut.putText("File name length too long! Must be " + MAX_FILE_LENGTH + " characters or less.");
                     return;
                 }
-                if (!args[0].match(/^.[a-z]+$/i)) {
+                if (!args[0].match(/^.[a-z]*$/i)) {
                     _StdOut.putText("Filenames may only be characters.");
                     return;
                 }
@@ -628,8 +628,8 @@ var TSOS;
                 }
                 string = string.trim();
                 // Enforce what can be written to file. Only characters and spaces!
-                if (!string.substring(1, string.length - 1).match(/^.[a-z ]+$/i)) {
-                    _StdOut.putText("Filenames may only have characters and spaces written to them.");
+                if (!string.substring(1, string.length - 1).match(/^.[a-z ]*$/i)) {
+                    _StdOut.putText("Files may only have characters and spaces written to them.");
                     return;
                 }
                 var status_3 = _krnDiskDriver.krnDiskWrite(args[0], string);
