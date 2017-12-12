@@ -137,6 +137,7 @@
              * Returns false if there are not enough free data blocks to do so
              * @param file the file represented as an array of hex digits
              * @param tsb the first TSB in the chain of data blocks
+             * @param setBlocks optional parameter that can be passed in order to have a number of blocks set regardless
              */
             public allocateDiskSpace(file: Array<String>, tsb: string, setBlocks: number = 0): boolean {
                 // Check size of text. If it is longer than 60, then we need to have enough datablocks
@@ -144,44 +145,79 @@
                 let stringLength = file.length;
                 let datBlockTSB = tsb; // pointer to current block we're looking at
                 let datBlock = JSON.parse(sessionStorage.getItem(datBlockTSB)); 
-                // Keep track of the last block that was already allocated for this file
-                // This is so we know what to start to delete from so we don't delete what we had before, if we run out of memory while allocating new blocks.
-                let lastAlreadyAllocdBlockTSB = tsb; 
-                // What if data block writing to already pointing to stuff? Then we need to traverse it, making sure there is enough space to hold our new file.
-                // Continuously allocate new blocks until we gucci
-                while(stringLength > _Disk.dataSize){
-                    // If pointer 0:0:0, then we need to find free blocks
-                    // Else if it is already pointing to something, we're good already
-                    if(datBlock.pointer != "0:0:0"){
-                        stringLength -= _Disk.dataSize;
-                        // Update to keep track of last block that was already allocated for this file so later we can delete appropriately
-                        lastAlreadyAllocdBlockTSB = datBlock.pointer;
-                        // Update pointers
-                        datBlockTSB = datBlock.pointer;
-                        datBlock = JSON.parse(sessionStorage.getItem(datBlock.pointer));
-                    }
-                    else{
-                        // We reached the end of the blocks that have already been allocated for this file. We need MOAR.
-                        // Find enough free data blocks, if can't, return error
-                        // First, find out how many more datablocks we need
-                        let numBlocks = Math.ceil(stringLength / _Disk.dataSize);
-                        // Go find that number of free blocks
-                        let freeBlocks = this.findFreeDataBlocks(numBlocks); // array of tsbs that are free
-                        if(freeBlocks != null){
-                            // Once we get those n blocks, mark them as used, then set their pointers accordingly.
-                            // Set the current block's pointer to the first block in the array, then recursively set pointers
-                            for(var block of freeBlocks){
-                                datBlock.pointer = block;
-                                datBlock.availableBit = "1";
-                                // Set in session storage
-                                sessionStorage.setItem(datBlockTSB, JSON.stringify(datBlock));
-                                datBlockTSB = block;
-                                datBlock = JSON.parse(sessionStorage.getItem(datBlockTSB));
-                            }
-                            return true;
+                // Check to see if we have a set number of blocks to allocate. If not, proceed normally.
+                if(setBlocks == 0){
+                    // What if data block writing to already pointing to stuff? Then we need to traverse it, making sure there is enough space to hold our new file.
+                    // Continuously allocate new blocks until we gucci
+                    while(stringLength > _Disk.dataSize){
+                        // If pointer 0:0:0, then we need to find free blocks
+                        // Else if it is already pointing to something, we're good already
+                        if(datBlock.pointer != "0:0:0"){
+                            stringLength -= _Disk.dataSize;
+                            // Update pointers
+                            datBlockTSB = datBlock.pointer;
+                            datBlock = JSON.parse(sessionStorage.getItem(datBlock.pointer));
                         }
                         else{
-                            return false; // we weren't able to find enough free blocks for this file
+                            // We reached the end of the blocks that have already been allocated for this file. We need MOAR.
+                            // Find enough free data blocks, if can't, return error
+                            // First, find out how many more datablocks we need
+                            let numBlocks = Math.ceil(stringLength / _Disk.dataSize);
+                            // Go find that number of free blocks
+                            let freeBlocks = this.findFreeDataBlocks(numBlocks); // array of tsbs that are free
+                            if(freeBlocks != null){
+                                // Once we get those n blocks, mark them as used, then set their pointers accordingly.
+                                // Set the current block's pointer to the first block in the array, then recursively set pointers
+                                for(var block of freeBlocks){
+                                    datBlock.pointer = block;
+                                    datBlock.availableBit = "1";
+                                    // Set in session storage
+                                    sessionStorage.setItem(datBlockTSB, JSON.stringify(datBlock));
+                                    datBlockTSB = block;
+                                    datBlock = JSON.parse(sessionStorage.getItem(datBlockTSB));
+                                }
+                                return true;
+                            }
+                            else{
+                                return false; // we weren't able to find enough free blocks for this file
+                            }
+                        }
+                    }
+                }
+                // We have a set number of blocks to allocate
+                else{
+                    while(setBlocks > 0){
+                        // If pointer 0:0:0, then we need to find free blocks
+                        // Else if it is already pointing to something, we're good already
+                        if(datBlock.pointer != "0:0:0"){
+                            setBlocks--;
+                            // Update pointers
+                            datBlockTSB = datBlock.pointer;
+                            datBlock = JSON.parse(sessionStorage.getItem(datBlock.pointer));
+                        }
+                        else{
+                            // We reached the end of the blocks that have already been allocated for this file. We need MOAR.
+                            // Find enough free data blocks, if can't, return error
+                            // First, find out how many more datablocks we need
+                            let numBlocks = setBlocks;
+                            // Go find that number of free blocks
+                            let freeBlocks = this.findFreeDataBlocks(numBlocks); // array of tsbs that are free
+                            if(freeBlocks != null){
+                                // Once we get those n blocks, mark them as used, then set their pointers accordingly.
+                                // Set the current block's pointer to the first block in the array, then recursively set pointers
+                                for(var block of freeBlocks){
+                                    datBlock.pointer = block;
+                                    datBlock.availableBit = "1";
+                                    // Set in session storage
+                                    sessionStorage.setItem(datBlockTSB, JSON.stringify(datBlock));
+                                    datBlockTSB = block;
+                                    datBlock = JSON.parse(sessionStorage.getItem(datBlockTSB));
+                                }
+                                return true;
+                            }
+                            else{
+                                return false; // we weren't able to find enough free blocks for this file
+                            }
                         }
                     }
                 }

@@ -21,7 +21,11 @@ var TSOS;
             var tsb = _krnDiskDriver.findFreeDataBlock();
             // Now, call the device driver's allocate disk space to see if need more data blocks to hold the opcodes
             // This will allocate those blocks as being used and update pointers
-            var enoughFreeSpace = _krnDiskDriver.allocateDiskSpace(opcodes, tsb);
+            // We need to allocate enough blocks to hold a largest program
+            // Imagine a scenario where the disk is full. A process taking 2 blocks of memory is rolled into memory, and a process that would take
+            // 4 blocks of memory is rolled out. Where would we put it? We're screwed! So we need to always allocate enough blocks to hold the largest program possible.
+            var numBlocks = Math.ceil(_MemoryManager.globalLimit / _Disk.dataSize); // we need to allocate 5 blocks for a program.
+            var enoughFreeSpace = _krnDiskDriver.allocateDiskSpace(opcodes, tsb, numBlocks);
             if (!enoughFreeSpace) {
                 return null;
             }
