@@ -124,7 +124,7 @@
                     // Update the PCB's partition to the one it got placed in
                     pcb.Partition = partition;
                     pcb.Swapped = false;
-                    pcb.State = "Waiting";
+                    pcb.State = "Ready";
                     // Remove the program from disk
                     _krnDiskDriver.krnDiskDeleteProcess(tsb);
                     // Update disk display

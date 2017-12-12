@@ -12,7 +12,7 @@ var TSOS;
         }
         // Set everything to 0
         ProcessControlBlock.prototype.init = function (partition) {
-            this.State = "Waiting";
+            this.State = "Ready";
             this.PC = 0;
             this.IR = "00";
             this.Acc = 0;

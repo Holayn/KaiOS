@@ -27,7 +27,7 @@
         
         // Set everything to 0
         public init(partition: number): void {
-            this.State = "Waiting";
+            this.State = "Ready";
             this.PC = 0;
             this.IR = "00";
             this.Acc = 0;
