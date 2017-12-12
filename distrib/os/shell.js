@@ -123,7 +123,7 @@ var TSOS;
             this.commandList[this.commandList.length] = sc;
             this.helpList[this.helpList.length] = sc;
             // ls - lists files on disk
-            sc = new TSOS.ShellCommand(this.shellList, "ls", "- Lists files on disk");
+            sc = new TSOS.ShellCommand(this.shellList, "ls", "[-l] - Lists files on disk");
             this.commandList[this.commandList.length] = sc;
             this.helpList[this.helpList.length] = sc;
             // setschedule - sets the scheduler to an algorithm: RR, FCFS, Priority
@@ -660,18 +660,30 @@ var TSOS;
             }
         };
         // Lists files on disk
-        Shell.prototype.shellList = function () {
+        Shell.prototype.shellList = function (args) {
             // Get the list of files from the disk device driver
             var filenames = _krnDiskDriver.krnLs();
             if (filenames.length != 0) {
                 _StdOut.putText("Files in the filesystem:");
                 _StdOut.advanceLine();
-                for (var _i = 0, filenames_1 = filenames; _i < filenames_1.length; _i++) {
-                    var f = filenames_1[_i];
-                    // Don't show hidden files
-                    if (f.charAt(0) != ".") {
-                        _StdOut.putText(f);
-                        _StdOut.advanceLine();
+                // If user passes in option, display hidden files and their sizes and create dates
+                if (args.length == 1) {
+                    if (args[0] == "-l") {
+                        for (var _i = 0, filenames_1 = filenames; _i < filenames_1.length; _i++) {
+                            var f = filenames_1[_i];
+                            _StdOut.putText(f);
+                            _StdOut.advanceLine();
+                        }
+                    }
+                }
+                else {
+                    for (var _a = 0, filenames_2 = filenames; _a < filenames_2.length; _a++) {
+                        var f = filenames_2[_a];
+                        // Don't show hidden files
+                        if (f.charAt(0) != ".") {
+                            _StdOut.putText(f);
+                            _StdOut.advanceLine();
+                        }
                     }
                 }
             }

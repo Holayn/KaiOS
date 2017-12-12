@@ -68,6 +68,7 @@
                     // Set the PCB's TSB for the TSB it is stored in
                     pcb.Swapped = true;
                     pcb.TSB = tsb;
+                    pcb.State = "Swapped";
                     // Put the new PCB onto the resident queue where it waits for CPU time
                     this.residentQueue.enqueue(pcb);
                     _StdOut.putText("Program loaded in memory with process ID " + _Pid);
@@ -175,8 +176,6 @@
             _CPU.Yreg = this.running.Yreg;
             _CPU.Zflag = this.running.Zflag;
             _CPU.isExecuting = true;
-            // Set the PCB status to running
-            this.running.State = "Running";
             // We need to check if the process is stored in disk. If so, we need to have the swapper roll in from disk, and 
             // roll out a process in memory if there is not enough space in memory for the rolled-in process.
             if(this.running.Swapped){
@@ -186,6 +185,8 @@
                 this.running.Swapped = false;
                 this.running.TSB = "0:0:0";
             }
+            // Set the PCB status to running
+            this.running.State = "Running";
             // // Update the display for the PCB
             // Control.hostProcesses();
             // Update the CPU display as well

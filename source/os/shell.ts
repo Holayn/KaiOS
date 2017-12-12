@@ -205,7 +205,7 @@ module TSOS {
             // ls - lists files on disk
             sc = new ShellCommand(this.shellList,
                                   "ls",
-                                  "- Lists files on disk");
+                                  "[-l] - Lists files on disk");
             this.commandList[this.commandList.length] = sc;
             this.helpList[this.helpList.length] = sc;
 
@@ -772,17 +772,28 @@ module TSOS {
         }
 
         // Lists files on disk
-        public shellList() {
+        public shellList(args) {
             // Get the list of files from the disk device driver
             let filenames = _krnDiskDriver.krnLs();
             if(filenames.length != 0){
                 _StdOut.putText("Files in the filesystem:");
                 _StdOut.advanceLine();
-                for(var f of filenames){
-                    // Don't show hidden files
-                    if(f.charAt(0) != "."){
-                        _StdOut.putText(f);
-                        _StdOut.advanceLine();
+                // If user passes in option, display hidden files and their sizes and create dates
+                if(args.length == 1){
+                    if(args[0] == "-l"){
+                        for(var f of filenames){
+                            _StdOut.putText(f);
+                            _StdOut.advanceLine();
+                        }
+                    }
+                }
+                else{
+                    for(var f of filenames){
+                        // Don't show hidden files
+                        if(f.charAt(0) != "."){
+                            _StdOut.putText(f);
+                            _StdOut.advanceLine();
+                        }
                     }
                 }
             }

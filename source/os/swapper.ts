@@ -123,6 +123,8 @@
                     _MemoryManager.loadIntoMemory(data, partition);
                     // Update the PCB's partition to the one it got placed in
                     pcb.Partition = partition;
+                    pcb.Swapped = false;
+                    pcb.State = "Waiting";
                     // Remove the program from disk
                     _krnDiskDriver.krnDiskDeleteData(tsb);
                     // Update disk display
@@ -138,6 +140,7 @@
                     // Update the PCB to show that it is in disk
                     unluckyPCB.Partition = IN_DISK;
                     unluckyPCB.Swapped = true;
+                    unluckyPCB.State = "Swapped";
                     unluckyPCB.TSB = memoryToDiskTSB;
                     Control.hostLog("Performed roll out and roll in", "os");
                     return;
