@@ -47,6 +47,17 @@
 		<!-- <script type="text/javascript" src="http://alanclasses.github.io/TSOS/test/glados-ip4.js"></script>   -->
 		<link rel="stylesheet" type="text.css" alt="placeholder for rotate" />
 
+		<!-- Detects if you're not using Chrome -->
+		<script>
+		
+		var isChrome = !!window.chrome && !!window.chrome.webstore;
+		if(!isChrome){
+			alert("Run this OS in Chrome. What is wrong with you? C'mon, dude. Since Chrome actually works, my OS only works in Chrome. Duh.");
+			location.reload();
+		}
+		
+		</script>
+
 	</head>
 
 	<body onload="onDocumentLoad()">
