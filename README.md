@@ -1,7 +1,12 @@
 # Kai's Operating Systems Repo. :^) :^) :^)
 
-This is the Operating Systems project.
+This is my Operating Systems project. Only works in Chrome. Sorry.
 See http://www.labouseur.com/courses/os/ for details.
+
+
+Running
+================
+Load index.html in Chrome.
 
 
 Setup TypeScript
