@@ -192,11 +192,11 @@ nav {
   background: #909193 url(distrib/images/spiral.jpg);
   background-size: cover;
   -webkit-animation-name: rotate;
-  -webkit-animation-duration:120s;
+  -webkit-animation-duration:300s;
   -webkit-animation-iteration-count:infinite;
   -webkit-animation-timing-function:linear;
   -moz-animation-name: rotate;
-  -moz-animation-duration:120s;
+  -moz-animation-duration:200s;
   -moz-animation-iteration-count:infinite;
   -moz-animation-timing-function:linear;
 }
