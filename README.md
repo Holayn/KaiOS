@@ -6,7 +6,7 @@ See http://www.labouseur.com/courses/os/ for details.
 
 Running
 ================
-Load index.html in Chrome.
+Load index.html in Chrome or Firefox.
 
 
 Setup TypeScript
