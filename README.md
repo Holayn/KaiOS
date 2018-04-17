@@ -1,6 +1,6 @@
 # Kai's Operating Systems Repo. :^) :^) :^)
 
-This is my Operating Systems project. Only works in Chrome. Sorry.
+This is my Operating Systems project written in TypeScript and HTML5.
 See http://www.labouseur.com/courses/os/ for details.
 
 
