@@ -272,24 +272,51 @@ module TSOS {
             for(var i=0; i<rows; i++){
                 table.deleteRow(0);
             }
+            let rowNum = 0;
+            // firefox sucks and doesn't keep session storage in order
             // For each row, insert the TSB, available bit, pointer, and data into separate cells
-            for(var i=0; i<_Disk.numOfTracks*_Disk.numOfSectors*_Disk.numOfBlocks; i++){
-                var row = table.insertRow(i);
-                row.style.backgroundColor = "white";
-                var tsb = row.insertCell(0);
-                tsb.innerHTML = sessionStorage.key(i);
-                tsb.style.color = "lightcoral";
-                var availableBit = row.insertCell(1);
-                availableBit.innerHTML = JSON.parse(sessionStorage.getItem(sessionStorage.key(i))).availableBit;
-                availableBit.style.color = "lightgreen";
-                var pointer = row.insertCell(2);
-                var pointerVal = JSON.parse(sessionStorage.getItem(sessionStorage.key(i))).pointer;
-                pointer.innerHTML = pointerVal;
-                pointer.style.color = "lightgray";
-                var data = row.insertCell(3);
-                data.innerHTML = JSON.parse(sessionStorage.getItem(sessionStorage.key(i))).data.join("").toString();
-                data.style.color = "lightblue";
+            for(var trackNum=0; trackNum<_Disk.numOfTracks; trackNum++){
+                for(var sectorNum=0; sectorNum<_Disk.numOfSectors; sectorNum++){
+                    for(var blockNum=0; blockNum<_Disk.numOfBlocks; blockNum++){
+                        // generate proper tsb id since firefox sucks and doesn't keep session storage ordered
+                        var tsbID = trackNum + ":" + sectorNum + ":" + blockNum;
+                        var row = table.insertRow(rowNum);
+                        rowNum++;
+                        row.style.backgroundColor = "white";
+                        var tsb = row.insertCell(0);
+                        tsb.innerHTML = tsbID;
+                        tsb.style.color = "lightcoral";
+                        var availableBit = row.insertCell(1);
+                        availableBit.innerHTML = JSON.parse(sessionStorage.getItem(tsbID)).availableBit;
+                        availableBit.style.color = "lightgreen";
+                        var pointer = row.insertCell(2);
+                        var pointerVal = JSON.parse(sessionStorage.getItem(tsbID)).pointer;
+                        pointer.innerHTML = pointerVal;
+                        pointer.style.color = "lightgray";
+                        var data = row.insertCell(3);
+                        data.innerHTML = JSON.parse(sessionStorage.getItem(tsbID)).data.join("").toString();
+                        data.style.color = "lightblue";
+                    }
+                }
             }
+            // // For each row, insert the TSB, available bit, pointer, and data into separate cells
+            // for(var i=0; i<_Disk.numOfTracks*_Disk.numOfSectors*_Disk.numOfBlocks; i++){
+            //     var row = table.insertRow(i);
+            //     row.style.backgroundColor = "white";
+            //     var tsb = row.insertCell(0);
+            //     tsb.innerHTML = sessionStorage.key(i);
+            //     tsb.style.color = "lightcoral";
+            //     var availableBit = row.insertCell(1);
+            //     availableBit.innerHTML = JSON.parse(sessionStorage.getItem(sessionStorage.key(i))).availableBit;
+            //     availableBit.style.color = "lightgreen";
+            //     var pointer = row.insertCell(2);
+            //     var pointerVal = JSON.parse(sessionStorage.getItem(sessionStorage.key(i))).pointer;
+            //     pointer.innerHTML = pointerVal;
+            //     pointer.style.color = "lightgray";
+            //     var data = row.insertCell(3);
+            //     data.innerHTML = JSON.parse(sessionStorage.getItem(sessionStorage.key(i))).data.join("").toString();
+            //     data.style.color = "lightblue";
+            // }
         }
 
         public static initDiskDisplay(): void {

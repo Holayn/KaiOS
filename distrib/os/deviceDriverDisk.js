@@ -68,66 +68,86 @@ var TSOS;
             }
             // Look for first free block in directory data structure (first track)
             // Leave out the first block, which is the MBR
-            for (var i = 1; i < _Disk.numOfSectors * _Disk.numOfBlocks; i++) {
-                var dirBlock = JSON.parse(sessionStorage.getItem(sessionStorage.key(i)));
-                // If the block is available...
-                if (dirBlock.availableBit == "0") {
-                    // Now look for first free block in data structure so we actually have a "place" to put the file
-                    var datBlockTSB = this.findFreeDataBlock();
-                    if (datBlockTSB != null) {
-                        var datBlock = JSON.parse(sessionStorage.getItem(datBlockTSB));
-                        dirBlock.availableBit = "1";
-                        datBlock.availableBit = "1";
-                        // Clear out any data previously in datBlock
-                        datBlock = this.clearData(datBlock);
-                        dirBlock.pointer = datBlockTSB; // set pointer to space in memory
-                        // Convert filename to ASCII/hex and store in data
-                        var hexArr = this.stringToASCII(filename);
-                        // Clear the directory block's data first a.k.a the filename if it was there before
-                        dirBlock = this.clearData(dirBlock);
-                        // Get the date and convert it to hex
-                        var today = new Date();
-                        var month = (today.getMonth() + 1).toString(16);
-                        if (month.length == 1) {
-                            month = "0" + month; // pad with zero
+            // Firefox doesn't order session storage, so have to generate appropriate tsbID
+            // for(var i=1; i<_Disk.numOfSectors*_Disk.numOfBlocks; i++){
+            for (var sectorNum = 0; sectorNum < _Disk.numOfSectors; sectorNum++) {
+                for (var blockNum = 1; blockNum < _Disk.numOfBlocks; blockNum++) {
+                    var tsbID = "0" + ":" + sectorNum + ":" + blockNum;
+                    var dirBlock = JSON.parse(sessionStorage.getItem(tsbID));
+                    // If the block is available...
+                    if (dirBlock.availableBit == "0") {
+                        // Now look for first free block in data structure so we actually have a "place" to put the file
+                        var datBlockTSB = this.findFreeDataBlock();
+                        if (datBlockTSB != null) {
+                            var datBlock = JSON.parse(sessionStorage.getItem(datBlockTSB));
+                            dirBlock.availableBit = "1";
+                            datBlock.availableBit = "1";
+                            // Clear out any data previously in datBlock
+                            datBlock = this.clearData(datBlock);
+                            dirBlock.pointer = datBlockTSB; // set pointer to space in memory
+                            // Convert filename to ASCII/hex and store in data
+                            var hexArr = this.stringToASCII(filename);
+                            // Clear the directory block's data first a.k.a the filename if it was there before
+                            dirBlock = this.clearData(dirBlock);
+                            // Get the date and convert it to hex
+                            var today = new Date();
+                            var month = (today.getMonth() + 1).toString(16);
+                            if (month.length == 1) {
+                                month = "0" + month; // pad with zero
+                            }
+                            var day = (today.getDate()).toString(16);
+                            if (day.length == 1) {
+                                day = "0" + day; // pad with zero
+                            }
+                            var year = (today.getFullYear()).toString(16);
+                            if (year.length == 3) {
+                                year = "0" + year; // pad with zero
+                            }
+                            // Store date in first 4 bytes
+                            dirBlock.data[0] = month;
+                            dirBlock.data[1] = day;
+                            dirBlock.data[2] = year.substring(0, 2);
+                            dirBlock.data[3] = year.substring(2);
+                            // We only replace the bytes needed, not the entire data array
+                            for (var k = 4, j = 0; j < hexArr.length; k++, j++) {
+                                dirBlock.data[k] = hexArr[j];
+                            }
+                            sessionStorage.setItem(tsbID, JSON.stringify(dirBlock));
+                            sessionStorage.setItem(datBlockTSB, JSON.stringify(datBlock));
+                            // Update the disk display and return success
+                            TSOS.Control.hostDisk();
+                            return FILE_SUCCESS;
                         }
-                        var day = (today.getDate()).toString(16);
-                        if (day.length == 1) {
-                            day = "0" + day; // pad with zero
-                        }
-                        var year = (today.getFullYear()).toString(16);
-                        if (year.length == 3) {
-                            year = "0" + year; // pad with zero
-                        }
-                        // Store date in first 4 bytes
-                        dirBlock.data[0] = month;
-                        dirBlock.data[1] = day;
-                        dirBlock.data[2] = year.substring(0, 2);
-                        dirBlock.data[3] = year.substring(2);
-                        // We only replace the bytes needed, not the entire data array
-                        for (var k = 4, j = 0; j < hexArr.length; k++, j++) {
-                            dirBlock.data[k] = hexArr[j];
-                        }
-                        sessionStorage.setItem(sessionStorage.key(i), JSON.stringify(dirBlock));
-                        sessionStorage.setItem(datBlockTSB, JSON.stringify(datBlock));
-                        // Update the disk display and return success
-                        TSOS.Control.hostDisk();
-                        return FILE_SUCCESS;
+                        return FULL_DISK_SPACE; // We ran through the data structure but there were no free blocks, meaning no more space on disk :(((((((
                     }
-                    return FULL_DISK_SPACE; // We ran through the data structure but there were no free blocks, meaning no more space on disk :(((((((
                 }
             }
             return FULL_DISK_SPACE; // We ran through the directory data structure but there were no free blocks, meaning no more space on disk :(
         };
         // Return the TSB of the next free data block. If can't find, return null.
         DeviceDriverDisk.prototype.findFreeDataBlock = function () {
-            for (var j = (_Disk.numOfSectors * _Disk.numOfBlocks); j < (_Disk.numOfTracks * _Disk.numOfSectors * _Disk.numOfBlocks); j++) {
-                var datBlock = JSON.parse(sessionStorage.getItem(sessionStorage.key(j)));
-                // If the block is available, mark it as unavailable, and set its tsb to the dirBlock pointer
-                if (datBlock.availableBit == "0") {
-                    return sessionStorage.key(j);
+            // firefox sucks and doesn't keep session storage in order
+            // need to generate proper tsb id
+            for (var trackNum = 1; trackNum < _Disk.numOfTracks; trackNum++) {
+                for (var sectorNum = 0; sectorNum < _Disk.numOfSectors; sectorNum++) {
+                    for (var blockNum = 0; blockNum < _Disk.numOfBlocks; blockNum++) {
+                        var tsbID = trackNum + ":" + sectorNum + ":" + blockNum;
+                        var datBlock = JSON.parse(sessionStorage.getItem(tsbID));
+                        // If the block is available, mark it as unavailable, and set its tsb to the dirBlock pointer
+                        if (datBlock.availableBit == "0") {
+                            return tsbID;
+                        }
+                    }
                 }
             }
+            // for(var j=(_Disk.numOfSectors*_Disk.numOfBlocks); j<(_Disk.numOfTracks*_Disk.numOfSectors*_Disk.numOfBlocks); j++){
+            //     var tsbID = trackNum + ":" + sectorNum + ":" + blockNum;
+            //     let datBlock = JSON.parse(sessionStorage.getItem(sessionStorage.key(j)));
+            //     // If the block is available, mark it as unavailable, and set its tsb to the dirBlock pointer
+            //     if(datBlock.availableBit == "0"){
+            //         return sessionStorage.key(j);
+            //     }
+            // }
             return null;
         };
         /**
@@ -139,16 +159,24 @@ var TSOS;
             var blocks = []; // storage for the free blocks
             var startOfDiskIndex = _Disk.numOfSectors * _Disk.numOfBlocks; // This is where the data blocks start in the disk
             var endOfDiskIndex = _Disk.numOfTracks * _Disk.numOfSectors * _Disk.numOfBlocks; // This is where the disk ends
-            for (var i = startOfDiskIndex; i < endOfDiskIndex; i++) {
-                var datBlock = JSON.parse(sessionStorage.getItem(sessionStorage.key(i)));
-                // If the block is available, push it to the array of free blocks we can use
-                if (datBlock.availableBit == "0") {
-                    blocks.push(sessionStorage.key(i));
-                    numBlocks--;
-                }
-                // We found enough free blocks
-                if (numBlocks == 0) {
-                    return blocks;
+            // firefox sucks and doesn't keep session storage in order
+            // need to generate proper tsb id
+            // for(var i=startOfDiskIndex; i<endOfDiskIndex; i++){
+            for (var trackNum = 1; trackNum < _Disk.numOfTracks; trackNum++) {
+                for (var sectorNum = 0; sectorNum < _Disk.numOfSectors; sectorNum++) {
+                    for (var blockNum = 0; blockNum < _Disk.numOfBlocks; blockNum++) {
+                        var tsbID = trackNum + ":" + sectorNum + ":" + blockNum;
+                        var datBlock = JSON.parse(sessionStorage.getItem(tsbID));
+                        // If the block is available, push it to the array of free blocks we can use
+                        if (datBlock.availableBit == "0") {
+                            blocks.push(tsbID);
+                            numBlocks--;
+                        }
+                        // We found enough free blocks
+                        if (numBlocks == 0) {
+                            return blocks;
+                        }
+                    }
                 }
             }
             if (numBlocks != 0) {
@@ -220,32 +248,38 @@ var TSOS;
         DeviceDriverDisk.prototype.krnDiskWrite = function (filename, text) {
             // Look for filename in directrory structure
             var hexArr = this.stringToASCII(filename);
-            for (var i = 1; i < _Disk.numOfSectors * _Disk.numOfBlocks; i++) {
-                var dirBlock = JSON.parse(sessionStorage.getItem(sessionStorage.key(i)));
-                var matchingFileName = true;
-                // Don't look in blocks not in use
-                if (dirBlock.availableBit == "1") {
-                    for (var k = 4, j = 0; j < hexArr.length; k++, j++) {
-                        if (hexArr[j] != dirBlock.data[k]) {
+            // Firefox doesn't order session storage, so have to generate appropriate tsbID
+            // Don't look in MBR
+            // for(var i=1; i<_Disk.numOfSectors*_Disk.numOfBlocks; i++){
+            for (var sectorNum = 0; sectorNum < _Disk.numOfSectors; sectorNum++) {
+                for (var blockNum = 1; blockNum < _Disk.numOfBlocks; blockNum++) {
+                    var tsbID = "0" + ":" + sectorNum + ":" + blockNum;
+                    var dirBlock = JSON.parse(sessionStorage.getItem(tsbID));
+                    var matchingFileName = true;
+                    // Don't look in blocks not in use
+                    if (dirBlock.availableBit == "1") {
+                        for (var k = 4, j = 0; j < hexArr.length; k++, j++) {
+                            if (hexArr[j] != dirBlock.data[k]) {
+                                matchingFileName = false;
+                            }
+                        }
+                        // If reach end of hexArr but dirBlock data still more?
+                        if (dirBlock.data[hexArr.length + DATE_LENGTH] != "00") {
                             matchingFileName = false;
                         }
-                    }
-                    // If reach end of hexArr but dirBlock data still more?
-                    if (dirBlock.data[hexArr.length + DATE_LENGTH] != "00") {
-                        matchingFileName = false;
-                    }
-                    // We found the filename
-                    if (matchingFileName) {
-                        // Convert the text to a hex array, trimming off quotes
-                        var textHexArr = this.stringToASCII(text.slice(1, -1));
-                        // Allocates enough free space for the file
-                        var enoughFreeSpace = this.allocateDiskSpace(textHexArr, dirBlock.pointer);
-                        if (!enoughFreeSpace) {
-                            return FULL_DISK_SPACE;
+                        // We found the filename
+                        if (matchingFileName) {
+                            // Convert the text to a hex array, trimming off quotes
+                            var textHexArr = this.stringToASCII(text.slice(1, -1));
+                            // Allocates enough free space for the file
+                            var enoughFreeSpace = this.allocateDiskSpace(textHexArr, dirBlock.pointer);
+                            if (!enoughFreeSpace) {
+                                return FULL_DISK_SPACE;
+                            }
+                            // We have enough allocated space. Get the first datablock, keep writing until no more string.
+                            this.writeDiskData(dirBlock.pointer, textHexArr);
+                            return FILE_SUCCESS;
                         }
-                        // We have enough allocated space. Get the first datablock, keep writing until no more string.
-                        this.writeDiskData(dirBlock.pointer, textHexArr);
-                        return FILE_SUCCESS;
                     }
                 }
             }
@@ -361,42 +395,48 @@ var TSOS;
         DeviceDriverDisk.prototype.krnDiskRead = function (filename) {
             // Look for filename in directrory structure
             var hexArr = this.stringToASCII(filename);
-            for (var i = 1; i < _Disk.numOfSectors * _Disk.numOfBlocks; i++) {
-                var dirBlock = JSON.parse(sessionStorage.getItem(sessionStorage.key(i)));
-                var matchingFileName = true;
-                // Don't look in blocks not in use
-                if (dirBlock.availableBit == "1") {
-                    for (var k = 4, j = 0; j < hexArr.length; k++, j++) {
-                        if (hexArr[j] != dirBlock.data[k]) {
+            // Firefox doesn't order session storage, so have to generate appropriate tsbID
+            // Don't look in MBR
+            // for(var i=1; i<_Disk.numOfSectors*_Disk.numOfBlocks; i++){
+            for (var sectorNum = 0; sectorNum < _Disk.numOfSectors; sectorNum++) {
+                for (var blockNum = 1; blockNum < _Disk.numOfBlocks; blockNum++) {
+                    var tsbID = "0" + ":" + sectorNum + ":" + blockNum;
+                    var dirBlock = JSON.parse(sessionStorage.getItem(tsbID));
+                    var matchingFileName = true;
+                    // Don't look in blocks not in use
+                    if (dirBlock.availableBit == "1") {
+                        for (var k = 4, j = 0; j < hexArr.length; k++, j++) {
+                            if (hexArr[j] != dirBlock.data[k]) {
+                                matchingFileName = false;
+                            }
+                        }
+                        // If reach end of hexArr but dirBlock data still more?
+                        if (dirBlock.data[hexArr.length + DATE_LENGTH] != "00") {
                             matchingFileName = false;
                         }
-                    }
-                    // If reach end of hexArr but dirBlock data still more?
-                    if (dirBlock.data[hexArr.length + DATE_LENGTH] != "00") {
-                        matchingFileName = false;
-                    }
-                    // We found the filename
-                    if (matchingFileName) {
-                        // Perform a recursive read
-                        var tsb = dirBlock.pointer;
-                        var data = this.krnDiskReadData(tsb);
-                        var dataPtr = 0;
-                        var fileData = []; // the data in the file
-                        while (true) {
-                            // Read until we reach 00-terminated string
-                            if (data[dataPtr] != "00") {
-                                // Avoiding string concatenation to improve runtime
-                                fileData.push(String.fromCharCode(parseInt(data[dataPtr], 16))); // push each char into array
-                                dataPtr++;
+                        // We found the filename
+                        if (matchingFileName) {
+                            // Perform a recursive read
+                            var tsb = dirBlock.pointer;
+                            var data = this.krnDiskReadData(tsb);
+                            var dataPtr = 0;
+                            var fileData = []; // the data in the file
+                            while (true) {
+                                // Read until we reach 00-terminated string
+                                if (data[dataPtr] != "00") {
+                                    // Avoiding string concatenation to improve runtime
+                                    fileData.push(String.fromCharCode(parseInt(data[dataPtr], 16))); // push each char into array
+                                    dataPtr++;
+                                }
+                                else {
+                                    break;
+                                }
                             }
-                            else {
-                                break;
-                            }
+                            // Print out file
+                            _StdOut.putText(fileData.join(""));
+                            // Return success
+                            return;
                         }
-                        // Print out file
-                        _StdOut.putText(fileData.join(""));
-                        // Return success
-                        return;
                     }
                 }
             }
@@ -409,33 +449,39 @@ var TSOS;
         DeviceDriverDisk.prototype.krnDiskDelete = function (filename) {
             // Look for the filename in the directory structure
             var hexArr = this.stringToASCII(filename);
-            for (var i = 1; i < _Disk.numOfSectors * _Disk.numOfBlocks; i++) {
-                var dirBlock = JSON.parse(sessionStorage.getItem(sessionStorage.key(i)));
-                var matchingFileName = true;
-                // Don't look in blocks not in use
-                if (dirBlock.availableBit == "1") {
-                    for (var k = 4, j = 0; j < hexArr.length; k++, j++) {
-                        if (hexArr[j] != dirBlock.data[k]) {
+            // Don't look in the MBR
+            // Firefox doesn't order session storage, so have to generate appropriate tsbID
+            // for(var i=1; i<_Disk.numOfSectors*_Disk.numOfBlocks; i++){
+            for (var sectorNum = 0; sectorNum < _Disk.numOfSectors; sectorNum++) {
+                for (var blockNum = 1; blockNum < _Disk.numOfBlocks; blockNum++) {
+                    var tsbID = "0" + ":" + sectorNum + ":" + blockNum;
+                    var dirBlock = JSON.parse(sessionStorage.getItem(tsbID));
+                    var matchingFileName = true;
+                    // Don't look in blocks not in use
+                    if (dirBlock.availableBit == "1") {
+                        for (var k = 4, j = 0; j < hexArr.length; k++, j++) {
+                            if (hexArr[j] != dirBlock.data[k]) {
+                                matchingFileName = false;
+                            }
+                        }
+                        // If reach end of hexArr but dirBlock data still more?
+                        if (dirBlock.data[hexArr.length + DATE_LENGTH] != "00") {
                             matchingFileName = false;
                         }
-                    }
-                    // If reach end of hexArr but dirBlock data still more?
-                    if (dirBlock.data[hexArr.length + DATE_LENGTH] != "00") {
-                        matchingFileName = false;
-                    }
-                    // We found the filename
-                    if (matchingFileName) {
-                        // Perform recursive delete given first TSB
-                        this.krnDiskDeleteData(dirBlock.pointer);
-                        // Update directory block
-                        dirBlock.availableBit = "0";
-                        // Keep the pointer for chkdsk
-                        // dirBlock.pointer = "0:0:0"; 
-                        // Set in storage
-                        sessionStorage.setItem(sessionStorage.key(i), JSON.stringify(dirBlock));
-                        // Update display
-                        TSOS.Control.hostDisk();
-                        return FILE_SUCCESS;
+                        // We found the filename
+                        if (matchingFileName) {
+                            // Perform recursive delete given first TSB
+                            this.krnDiskDeleteData(dirBlock.pointer);
+                            // Update directory block
+                            dirBlock.availableBit = "0";
+                            // Keep the pointer for chkdsk
+                            // dirBlock.pointer = "0:0:0"; 
+                            // Set in storage
+                            sessionStorage.setItem(tsbID, JSON.stringify(dirBlock));
+                            // Update display
+                            TSOS.Control.hostDisk();
+                            return FILE_SUCCESS;
+                        }
                     }
                 }
             }
@@ -501,18 +547,35 @@ var TSOS;
             // Return the filenames of all directory blocks that are used
             var filenames = [];
             // Don't look in the MBR
-            for (var i = 1; i < _Disk.numOfSectors * _Disk.numOfBlocks; i++) {
-                var dirBlock = JSON.parse(sessionStorage.getItem(sessionStorage.key(i)));
-                // Don't look in blocks not in use
-                if (dirBlock.availableBit == "1") {
-                    var size = this.getSize(dirBlock.pointer);
-                    var info = {
-                        data: dirBlock.data,
-                        size: size + "bytes"
-                    };
-                    filenames.push(info);
+            // Firefox doesn't order session storage, so have to generate appropriate tsbID
+            for (var sectorNum = 0; sectorNum < _Disk.numOfSectors; sectorNum++) {
+                for (var blockNum = 1; blockNum < _Disk.numOfBlocks; blockNum++) {
+                    var tsbID = "0" + ":" + sectorNum + ":" + blockNum;
+                    var dirBlock = JSON.parse(sessionStorage.getItem(tsbID));
+                    // Don't look in blocks not in use
+                    if (dirBlock.availableBit == "1") {
+                        var size = this.getSize(dirBlock.pointer);
+                        var info = {
+                            data: dirBlock.data,
+                            size: size + "bytes"
+                        };
+                        filenames.push(info);
+                    }
                 }
             }
+            // for(var i=1; i<_Disk.numOfSectors*_Disk.numOfBlocks; i++){
+            // var tsbID = "1" + ":" + sectorNum + ":" + blockNum;
+            // let dirBlock = JSON.parse(sessionStorage.getItem(sessionStorage.key(i)));
+            // // Don't look in blocks not in use
+            // if(dirBlock.availableBit == "1"){
+            //     let size = this.getSize(dirBlock.pointer);
+            //     let info = {
+            //         data: dirBlock.data,
+            //         size: size + "bytes"
+            //     }
+            //     filenames.push(info);
+            // }
+            // }
             // Convert all hex filenames to human-readable form
             for (var i = 0; i < filenames.length; i++) {
                 var dataPtr = 4;
