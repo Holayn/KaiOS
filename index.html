@@ -52,8 +52,7 @@
 		
 		var isChrome = !!window.chrome && !!window.chrome.webstore;
 		if(!isChrome){
-			// alert("Run this OS in Chrome. What is wrong with you? C'mon, dude. Since Chrome actually works, my OS only works in Chrome. Duh.");
-			// location.reload();
+			alert("Run this OS in Chrome. What is wrong with you? C'mon, dude. Since Chrome actually works and Firefox is a broken browser, proceed with caution when using my OS. There may be small bugs here and there thanks to Firefox.");
 		}
 		
 		</script>
@@ -122,7 +121,7 @@
 				<br>
 				<div class="container-fluid">
 					<div class="row">
-						<div class="col-md-3" style="min-width: 400px;">
+						<div class="col-md-3" style="min-width: 100px; max-width: 350px">
 							<div id="divCPU" class="panel text-center">
 								<label>
 									<div class="label-header">CPU</div>
@@ -191,11 +190,11 @@
 							</div>
 							<br>
 						</div>
-						<div class="col-md-5" style="width: 575px; max-width: 875px; min-width: 875px; max-height: 600px;">
-							<div id="divConsole" class="panel text-center" style="min-width: 840px; max-width: 540px;">
+						<div class="col-md-5" style="width: 575px; max-width: 550px; min-width: 580px; max-height: 600px;">
+							<div id="divConsole" class="panel text-center" style="min-width: 550px; max-width: 550px;">
 								<canvas id="display"
-								width="800px"
-								height="500px"
+								width="500px"
+								height="550px"
 								tabindex="3"
 								style="margin-top:25px; margin-bottom:25px;">
 								</canvas>

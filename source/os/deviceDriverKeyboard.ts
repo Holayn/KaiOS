@@ -138,6 +138,14 @@ module TSOS {
                 chr = String.fromCharCode(keyCode);
                 _KernelInputQueue.enqueue(chr);
             }
+            else if (keyCode == 9){     //tab
+                chr = String.fromCharCode(keyCode);
+                _KernelInputQueue.enqueue(chr);
+            }
+            else if (keyCode == 173){ // fuck firefox, thinks dashes are 173, not 189
+                chr = String.fromCharCode(189);
+                _KernelInputQueue.enqueue(chr);
+            }
         }
     }
 }
