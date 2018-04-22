@@ -144,7 +144,7 @@ var TSOS;
                 _KernelInputQueue.enqueue(chr);
             }
             else if (keyCode == 173) {
-                chr = String.fromCharCode(189);
+                chr = String.fromCharCode(45);
                 _KernelInputQueue.enqueue(chr);
             }
         };
