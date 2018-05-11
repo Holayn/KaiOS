@@ -1,0 +1,280 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+		<!--<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=yes">-->
+		<meta name="author"             content="Alan G. Labouseur" />
+		<link rel="stylesheet" href="tsos.css" type="text/css" media="screen" />
+		<link rel="stylesheet" href="bootstrap.css" type="text/css" />
+		<title>
+		KaiOS - a browser-based virtual Operating System in TypeScript
+		</title>
+
+		<!-- Globals CONSTANTS and _Variables. Must included be first. -->
+		<script type="text/javascript" src="distrib/globals.js"></script>
+
+		<!-- Host (Virtual Machine / Hardware Simulation) Routines -->
+		<script type="text/javascript" src="distrib/host/control.js"></script>
+		<script type="text/javascript" src="distrib/host/devices.js"></script>
+		<script type="text/javascript" src="distrib/host/cpu.js"></script>
+		<script type="text/javascript" src="distrib/host/memory.js"></script>
+		<script type="text/javascript" src="distrib/host/memoryAccessor.js"></script>
+		<script type="text/javascript" src="distrib/host/disk.js"></script>
+
+		<!-- Virtual OS Routines: Make sure Kernel code is last, since it needs those above it. -->
+		<script type="text/javascript" src="distrib/os/interrupt.js"></script>
+		<script type="text/javascript" src="distrib/os/canvastext.js"></script>
+		<script type="text/javascript" src="distrib/os/console.js"></script>
+		<script type="text/javascript" src="distrib/os/deviceDriver.js"></script>
+		<script type="text/javascript" src="distrib/os/deviceDriverKeyboard.js"></script>
+		<script type="text/javascript" src="distrib/os/deviceDriverDisk.js"></script>
+		<script type="text/javascript" src="distrib/os/queue.js"></script>
+		<script type="text/javascript" src="distrib/os/shell.js"></script>
+		<script type="text/javascript" src="distrib/os/shellCommand.js"></script>
+		<script type="text/javascript" src="distrib/os/userCommand.js"></script>
+		<script type="text/javascript" src="distrib/os/kernel.js"></script>
+		<script type="text/javascript" src="distrib/os/processControlBlock.js"></script>
+		<script type="text/javascript" src="distrib/os/memoryManager.js"></script>
+		<script type="text/javascript" src="distrib/os/processManager.js"></script>
+		<script type="text/javascript" src="distrib/os/scheduler.js"></script>
+		<script type="text/javascript" src="distrib/os/swapper.js"></script>
+
+		<!-- Other Routines -->
+		<script type="text/javascript" src="distrib/utils.js"></script>
+		<script type="text/javascript" src="jquery-3.2.1.min.js"></script>
+		<script type="text/javascript" src="bootstrap.js"></script>
+		<!-- Uncomment the line below to enable GLaDOS testing. -->
+		<!-- <script type="text/javascript" src="http://alanclasses.github.io/TSOS/test/glados-ip4.js"></script>   -->
+		<link rel="stylesheet" type="text.css" alt="placeholder for rotate" />
+
+		<!-- Detects if you're not using Chrome -->
+		<script>
+		
+		var isChrome = !!window.chrome && !!window.chrome.webstore;
+		if(!isChrome){
+			alert("Run this OS in Chrome. What is wrong with you? C'mon, dude. Since Chrome actually works and Firefox is a broken browser, proceed with caution when using my OS. There may be small bugs here and there thanks to Firefox.");
+		}
+		
+		</script>
+
+	</head>
+
+	<body onload="onDocumentLoad()">
+		<div class="container-fluid">
+			<div id="header">
+				<h1 class="display-1 text-center">KaiOS</h1>
+			</div>
+			<div class="background" id="background">
+				<div class="container-fluid">
+					<div class="row">
+						<div id="divButtonBar" class="col-md-3" style="min-width: 400px;">
+							<input type="button"
+							id = "btnStartOS"
+							name="brnStartOS"
+							class="btn btn-success"
+							value="Start"
+							tabindex="0"
+							onclick="TSOS.Control.hostBtnStartOS_click(this);">
+
+							<input type="button"
+							id = "btnHaltOS"
+							name="brnHaltOS"
+							class="btn btn-danger"
+							disabled="disabled"
+							value="Halt"
+							tabindex="1"
+							onclick="TSOS.Control.hostBtnHaltOS_click(this);">
+
+							<input type="button"
+							id = "btnReset"
+							name="brnReset"
+							class="btn btn-warning"
+							disabled="disabled"
+							value="Reset"
+							tabindex="2"
+							onclick="TSOS.Control.hostBtnReset_click(this);">
+
+							<input type="button"
+							id = "btnSingleStep"
+							name="btnSingleStep"
+							class="btn btn-primary"
+							disabled="disabled"
+							value="Single Step"
+							tabindex="2"
+							onclick="TSOS.Control.hostBtnSingleStep_click(this);">
+							<input type="button"
+							id = "btnNextStep"
+							name="btnNextStep"
+							class="btn"
+							disabled="disabled"
+							value=">"
+							tabindex="2"
+							onclick="TSOS.Control.hostBtnNextStep_click(this);">
+						</div>
+						<div id="divTaskBar">
+							<nav id="taskBar">
+								<h2>&nbsp;</h2>
+							</nav>
+						</div>
+					</div>
+				</div>
+				<br>
+				<div class="container-fluid toprow">
+					<div class="row">
+						<div class="col-md-3" style="max-width: 350px;">
+							<div id="divCPU" class="panel text-center">
+								<label>
+									<div class="label-header">CPU</div>
+									<table name    ="tableCPU"
+										id      ="tableCPU"
+										bgcolor ="white"
+										style   ="color: black"
+										class   ="table table-bordered">
+										<thead>
+											<tr>
+												<td>PC</td>
+												<td>IR</td>
+												<td>Acc</td>
+												<td>X</td>
+												<td>Y</td>
+												<td>ZF</td>
+											</tr>
+										</thead>
+										<tbody>
+											<tr>
+												<td>0</td>
+												<td>0</td>
+												<td>0</td>
+												<td>0</td>
+												<td>0</td>
+												<td>0</td>
+											</tr>
+										</tbody>
+									</table>
+								</label>
+							</div>
+							<br>
+							<div id="divMemory" class="panel text-center">
+								<label class="text-center">
+									<div class="label-header">Memory</div>
+									<table name    ="tableMemory"
+										id      ="tableMemory"
+										bgcolor ="white"
+										style   ="color: black; height: 100px; overflow-y: scroll; display: block; width: 100%; min-width: 300px;"
+										class   ="table table-bordered table-striped table-sm">
+									</table>
+								</label>
+							</div>
+							<br>
+							<div id="divUserProgramInput" class="panel text-center">
+								<label>
+									<div class="label-header">User Program Input<br><small><a href="https://github.com/Holayn/KaiCompiler" target="_blank">Code Gen</a></small></div>
+									<textarea name="taProgramInput"
+									id  ="taProgramInput"
+									rows="8"
+									cols="48"
+									>A9 03 8D 41 00 A9 01 8D 40 00 AC 40 00 A2 01 FF EE 40 00 AE 40 00 EC 41 00 D0 EF A9 44 8D 42 00 A9 4F 8D 43 00 A9 4E 8D 44 00 A9 45 8D 45 00 A9 00 8D 46 00 A2 02 A0 42 FF 00</textarea>
+								</label>
+							</div>
+							<br>
+							<div id="divDisk" class="panel text-center">
+								<label class="text-center">
+									<div class="label-header">Disk</div>
+									<table name    ="tableDisk"
+										id      ="tableDisk"
+										bgcolor ="white"
+										style   ="color: black; height: 250px; overflow: scroll; display: block; width: 100%; min-width: 800px;"
+										class   ="table table-bordered table-striped table-sm">
+									</table>
+								</label>
+							</div>
+							<br>
+						</div>
+						<div class="col-md-5" style="width: 575px; max-width: 560px; min-width: 580px; max-height: 600px;">
+							<div id="divConsole" class="panel text-center" style="min-width: 565px; max-width: 565px;">
+								<canvas id="display"
+								width="550px"
+								height="500px"
+								tabindex="3"
+								style="margin-top:25px; margin-bottom:25px;">
+								</canvas>
+							</div>
+							<br>
+						</div>
+						<div class="col-md-3" style="min-width: 450px;">
+							<div id="divLog" class="panel text-center" style="min-width: 450px;">
+								<label class="text-center">
+									<div class="label-header">Host Log</div>
+									<textarea name="taHostLog"
+									id  ="taHostLog"
+									rows="15"
+									cols="48"
+									></textarea>
+								</label>
+							</div>
+							<br>
+							<div id="divReady" class="panel text-center">
+								<label>
+									<div class="label-header">Ready Queue Display<br><small id="scheduleName"></small></div>
+									<table name    ="tableReady"
+										id      ="tableReady"
+										bgcolor ="white"
+										style   ="color: black"
+										class   ="table table-bordered">
+										<thead>
+											<tr>
+											<td>PID</td>
+											<td style="text-align: center; width: 100px">State</td>
+											<td style="text-align: center; width: 40px">PC</td>
+											<td style="text-align: center; width: 40px">IR</td>
+											<td style="text-align: center; width: 40px">Acc</td>
+											<td style="text-align: center; width: 40px">X</td>
+											<td style="text-align: center; width: 40px">Y</td>
+											<td style="text-align: center; width: 40px">Z</td>
+											</tr>
+										</thead>
+									</table>
+								</label>
+							</div>
+							<br>
+							<a class="btn btn-primary" data-toggle="collapse" href="#collapseSexy" role="button" aria-expanded="false" aria-controls="collapseSexy">Toggle Sexy Display</a>
+							<div class="collapse multi-collapse" id="collapseSexy">
+								<br>
+								<div id="beautiful" class="panel">
+									<div class="panel-header">Sexy Display</div>
+									<div id="sexy">&nbsp;</div>
+								</div>	
+							</div>
+						</div>
+					</div>
+					<br>
+					<div class="row">
+						<div class="col-md-3">
+							<!-- <div id="divDisk" class="panel text-center">
+								<label class="text-center">
+									<div class="label-header">Disk</div>
+									<table name    ="tableDisk"
+										id      ="tableDisk"
+										bgcolor ="white"
+										style   ="color: black; height: 250px; overflow: scroll; display: block; width: 100%; min-width: 800px;"
+										class   ="table table-bordered table-striped table-sm">
+									</table>
+								</label>
+							</div> -->
+						</div>
+						<div class="col-md-5" style="width: 575px; max-width: 875px; min-width: 875px;">
+						</div>
+						<div class="col-md-3">
+						</div>
+					</div>
+				</div>
+				<p class="footerText" style="clear:both;">
+					<br>
+					Kai Wong
+					<br>
+					Code Generator: https://github.com/Holayn/KaiCompiler
+				</p>
+			</div>
+		</div>
+	</body>
+</html>
