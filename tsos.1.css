@@ -112,6 +112,11 @@ textarea {
 
 #taHostLog {
   height: 10rem;
+  background-color: white;
+}
+
+#taProgramInput {
+  background-color: white;
 }
 
 #sexydisplay {
