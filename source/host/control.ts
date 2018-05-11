@@ -81,7 +81,7 @@ module TSOS {
             
             //Updating the taskbar
             var dateTime = new Date().toLocaleString();
-            document.getElementById("taskBar").innerHTML = "<h2>" + dateTime + " | " + _UserStatus + "</h2>";
+            document.getElementById("taskBar").innerHTML = "<h6>" + dateTime + " | " + _UserStatus + "</h6>";
 
             // TODO in the future: Optionally update a log database or some streaming service.
         }

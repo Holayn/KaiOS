@@ -1,11 +1,16 @@
 /* TSOS.css */
 
-body {
+/* body {
   background-size: cover;
   font-family: Helvetica, Verdana, Arial, sans-serif;
   font-size: 10   pt;
   font-weight: normal;
   font-style: normal;
+} */
+
+html {
+	font-family: "Roboto", sans serif;
+	font-weight: 300;
 }
 
 h1 {
@@ -129,7 +134,7 @@ nav {
   font-family: Courier;
 }
 #header {
-  position: relative;
+  /* position: relative; */
 }
 #header:after {
   content : "";
@@ -237,4 +242,8 @@ label .label-header{
 #tableDisk tr {
   max-width: 500px;
   overflow: scroll;
+}
+
+.toprow {
+  min-width: 1430px;
 }
