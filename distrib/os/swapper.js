@@ -2,9 +2,7 @@
    swapper.ts
 
    This is the client OS implementation of a swapper.
-   This is responsible for keeping track of all the processes in the OS,
-   as well as creating, saving, and exiting them.
-   PROJECT 2: NOT UPDATING PCB BECAUSE WE NEVER DO A CONTEXT SWITCH.
+   This is responsible for performing process swapping operations to and from disk.
    ------------ */
 var TSOS;
 (function (TSOS) {
@@ -97,7 +95,7 @@ var TSOS;
         Swapper.prototype.rollOut = function (pcb) {
             var tsb = pcb.TSB;
             console.log("Performing roll out");
-            // Get partition from memory...what partition? Let's do a random partition...RNG BOYZ
+            // Get partition from memory...what partition? Let's do a random partition...RNG BOYZ Randomization is also efficient
             var unluckyPartition = Math.floor(Math.random() * _MemoryManager.partitions.length);
             console.log("UNLUCKY PARTITION #: " + unluckyPartition + ". YOU LOSE TO RNG BUDDY LOL.");
             // Look for the PCB with that partition, we need to tell it the bad news (that it's going to disk aka jail)

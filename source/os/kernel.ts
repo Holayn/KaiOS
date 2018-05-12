@@ -127,6 +127,10 @@ module TSOS {
                         _Scheduler.watch();
                         // Update the wait times and turnaround times for all processes
                         _ProcessManager.processStats();
+                        // Update the memory display
+                        Control.hostMemory();
+                        // Update the processes display
+                        Control.hostProcesses();
                     }
                     this.krnTrace("Idle");
                 }
@@ -136,6 +140,10 @@ module TSOS {
                     _Scheduler.watch();
                     // Update the wait times and turnaround times for all processes
                     _ProcessManager.processStats();
+                    // Update the memory display
+                    Control.hostMemory();
+                    // Update the processes display
+                    Control.hostProcesses();
                 }
             } else {                        // If there are no interrupts and there is nothing being executed then just be idle. 
                 _NextStep = false;          // Handles the case for if the user presses next step in single step mode when nothing is executing
@@ -149,12 +157,10 @@ module TSOS {
             if(this.bsod){
                 Control.crazySpin();
             }
-            // Update the processes display
-            Control.hostProcesses();
             // Update the CPU display
             Control.hostCPU();
             // Update the memory display
-            Control.hostMemory();
+            // Control.hostMemory();
         }
 
         //
@@ -193,6 +199,8 @@ module TSOS {
                     // Reset the scheduler's counter
                     _Scheduler.unwatch();
                     _ProcessManager.exitProcess(params);
+                    // Update the processes display
+                    Control.hostProcesses();
                     break;
                 case CONTEXT_SWITCH:                  // Placeholder for context switching. We only update the PCB when there is a context switch!!!
                     _Scheduler.contextSwitch();
