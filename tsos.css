@@ -46,7 +46,6 @@ h6 {
   position: relative;
   overflow-x: hidden;
   overflow-y: hidden;
-  height: 75vh;
 }
 
 @-webkit-keyframes rotate {
