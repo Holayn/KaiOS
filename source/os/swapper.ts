@@ -20,7 +20,7 @@
             console.log("creating new swap file " + filename);
             _krnDiskDriver.krnDiskCreate(filename);
             let length = opcodes.length;
-            while(length < _MemoryManager.globalLimit + (44)){
+            while(length < _MemoryManager.globalLimit){
                 opcodes.push("00");
                 length++;
             }

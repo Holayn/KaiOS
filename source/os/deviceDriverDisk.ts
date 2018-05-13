@@ -61,6 +61,54 @@
                 return false;
             }
 
+            public krnDiskWriteSwap(filename: String, opcodes: Array<String>) {
+                // Look for filename in directrory structure
+                let hexArr = this.stringToASCII(filename);
+                // Firefox doesn't order session storage, so have to generate appropriate tsbID
+                // Don't look in MBR
+                // for(var i=1; i<_Disk.numOfSectors*_Disk.numOfBlocks; i++){
+                for(var sectorNum=0; sectorNum<_Disk.numOfSectors; sectorNum++){
+                    for(var blockNum=0; blockNum<_Disk.numOfBlocks; blockNum++){
+                        if(sectorNum == 0 && blockNum == 0){
+                            // ignore first block in first sector, it is the MBR
+                            continue;
+                        }
+                        var tsbID = "0" + ":" + sectorNum + ":" + blockNum;
+                        let dirBlock = JSON.parse(sessionStorage.getItem(tsbID));
+                        let matchingFileName = true;
+                        // Don't look in blocks not in use
+                        if(dirBlock.availableBit == "1"){
+                            for(var k=4, j=0; j<hexArr.length; k++, j++){
+                                if(hexArr[j] != dirBlock.data[k]){
+                                    matchingFileName = false
+                                }
+                            }
+                            // If reach end of hexArr but dirBlock data still more?
+                            if(dirBlock.data[hexArr.length + DATE_LENGTH] != "00"){
+                                matchingFileName = false;
+                            }
+                            // We found the filename
+                            if(matchingFileName){
+                                // Allocates enough free space for the file
+                                // we make data block to hold opcodes as well.
+                                let datBlock = JSON.parse(sessionStorage.getItem(dirBlock.pointer));
+                                datBlock.availableBit = "0";
+                                sessionStorage.setItem(dirBlock.pointer, JSON.stringify(datBlock));
+                                console.log("allocating enough space for " + opcodes.length);
+                                let enoughFreeSpace: boolean = this.allocateDiskSpace(opcodes, dirBlock.pointer);
+                                if(!enoughFreeSpace){
+                                    return FULL_DISK_SPACE;
+                                }
+                                // We have enough allocated space. Get the first datablock, keep writing until no more string.
+                                this.writeDiskData(dirBlock.pointer, opcodes);
+                                return FILE_SUCCESS;
+                            }
+                        }
+                    }
+                }
+                return FILE_NAME_NO_EXIST;
+            }
+
             // Performs a create given a file name
             public krnDiskCreate(filename: String) {
                 // Check for existing filename
@@ -206,10 +254,13 @@
                 // What if data block writing to already pointing to stuff? Then we need to traverse it, making sure there is enough space to hold our new file.
                 // Continuously allocate new blocks until we gucci
                 while(stringLength > _Disk.dataSize){
+                    console.log(datBlockTSB);
                     // If pointer 0:0:0, then we need to find free blocks
                     // Else if it is already pointing to something, we're good already
-                    if(datBlock.pointer != "0:0:0"){
+                    if(datBlock.pointer != "0:0:0" && datBlock.availableBit == "1"){
                         stringLength -= _Disk.dataSize;
+                        // datBlock.availableBit = "1";
+                        // sessionStorage.setItem(datBlockTSB, JSON.stringify(datBlock));
                         // Update pointers
                         datBlockTSB = datBlock.pointer;
                         datBlock = JSON.parse(sessionStorage.getItem(datBlock.pointer));
@@ -223,6 +274,7 @@
                         let numBlocks = Math.ceil(stringLength / _Disk.dataSize);
                         // Go find that number of free blocks
                         let freeBlocks = this.findFreeDataBlocks(numBlocks); // array of tsbs that are free
+                        console.log("allocating unused " + freeBlocks);
                         if(freeBlocks != null){
                             // Once we get those n blocks, mark them as used, then set their pointers accordingly.
                             // Set the current block's pointer to the first block in the array, then recursively set pointers
