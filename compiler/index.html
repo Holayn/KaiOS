@@ -1,0 +1,895 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>Kompailer</title>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <link rel="stylesheet" type="text/css" href="dist/styles/compiler.css" />
+	<!-- <link rel="stylesheet" href="dist/styles/bootstrap.min.css"> -->
+	<!--Import Google Icon Font-->
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<!--Import materialize.css-->
+	<link type="text/css" rel="stylesheet" href="dist/styles/materialize.min.css"  media="screen,projection"/>
+	<link href="dist/styles/jquery-linedtextarea.css" type="text/css" rel="stylesheet" />
+    <link rel="shortcut icon" href="dist/images/code.png">
+    <link rel="stylesheet" href="dist/styles/Treant/Treant.css" type="text/css"/>
+</head>
+<body onload="">
+	<!--Import jQuery before materialize.js-->
+	<script type="text/javascript" src="dist/styles/jquery-3.3.1.min.js"></script>
+	<script type="text/javascript" src="dist/styles/js/materialize.min.js"></script>
+    <script type="text/javascript" src="dist/styles/js/jquery-linedtextarea.js"></script>
+	<script>
+		// for code input 
+		$(function() {
+			$(".lined").linedtextarea(
+			);
+		});
+		// for modal
+		$(document).ready(function(){
+			// the "href" attribute of the modal trigger must specify the modal ID that wants to be triggered
+			$('.modal').modal();
+		});
+		// for tooltip
+		$(document).ready(function(){
+			$('.tooltipped').tooltip({delay: 0});
+		});
+	</script>
+	<main>
+		<header>
+			<div class="container">
+				<h1 class="center-align">Kompailer</h1>
+			</div>
+		</header>
+		<div class="container">
+			<div class="center-align" style="margin-bottom: 10px">
+				<b>Lexer: <i class="material-icons statusIcon" id="lexerStatus" style="color: black">panorama_fish_eye</i></b>
+				<b>Parser: <i class="material-icons statusIcon" id="parserStatus" style="color: black">panorama_fish_eye</i></b>
+				<b>Semantic Analysis: <i class="material-icons statusIcon" id="saStatus" style="color: black">panorama_fish_eye</i></b>
+				<b>Code Generation: <i class="material-icons statusIcon" id="cgStatus" style="color: black">panorama_fish_eye</i></b>
+			</div>
+			<div class="row">
+				<div class="col s6">
+					<div class="card-panel input">
+						<h5 class="light">Editor</h5>
+						<textarea class="lined" id="taSourceCode" autofocus></textarea>
+						<br>
+						<!-- <div class="fixed-action-btn horizontal click-to-toggle togglebutton"> -->
+						<div class="fixed-action-btn click-to-toggle togglebutton">
+							<a class="btn-floating btn blue lighten-2">
+								<i class="material-icons">navigate_next</i>
+							</a>
+							<ul style="left: 0; top: 65%; width: 100%">
+								<li>
+									<a href="#grammarModal" class="waves-effect waves-light blue lighten-3 btn-floating modal-trigger subfloatgrammar"/>Language Grammar</a>
+								</li>
+								<li>
+									<a href="#casesModal" class="waves-effect waves-light blue lighten-3 btn-floating modal-trigger subfloattest"/>Test Cases</a>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+				<div class="col s6">
+					<div class="card-panel log">
+						<h5 class="light">Log</h5>
+						<textarea id="taOutput" readonly disabled></textarea>
+						<a class="btn-floating btn waves-effect waves-light red right-align verbose tooltipped" id="verbose" data-position="bottom" data-delay="50" data-tooltip="Toggle Verbose Mode" onclick="btnVerbose_click();"><i class="material-icons">hearing</i></a>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="center-align">
+					<button type="button" id="btnCompile" value="Compile" class="waves-effect waves-light btn-large pulse" onclick="btnCompile_click();"/>Compile</button>
+				</div>
+			</div>	
+			<div class="loader" id="loader" style="visibility: hidden">Loading...</div>
+			<br>
+            <hr>
+			<br>
+            <div class="card-panel">
+				<!-- <button data-clipboard-target="#taCodeOutput" onclick="copyText()" type="button" class="waves-effect waves-light btn">Copy</button> -->
+                <textarea id="taCodeOutput" readonly></textarea>
+			</div>
+			<br>
+			<div class="row">
+				<div class="col s6">
+					<ul class="tabs">
+						<li class="tab col s3"><a class="active" href="#cst">CST</a></li>
+						<li class="tab col s3"><a href="#ast">AST</a></li>
+						<li class="tab col s3"><a href="#scopeTree">Scope</a></li>
+					</ul>
+				</div>
+				<div class="col s6"></div>
+			</div>
+			<div class="row">
+				<div class="col s6">
+					<div id="cst" class="card-panel log">
+                        <h5 class="light">CST<a id="btnCST" value="cst" href="#visual-cst" class="waves-effect waves-light btn right" style="bottom: 5px"/>View Visual CST</a></h5>
+						<textarea id="taCST" readonly disabled></textarea>
+					</div>
+					<div id="ast" class="card-panel log">
+						<h5 class="light">AST<a id="btnAST" value="ast" href="#visual-ast" class="waves-effect waves-light btn right" style="bottom: 5px"/>View Visual AST</a></h5>
+						<textarea id="taAST" readonly disabled></textarea>
+					</div>
+					<div id="scopeTree" class="card-panel log">
+						<h5 class="light">Scope Tree</h5>
+						<textarea id="taScope" readonly disabled></textarea>
+					</div>
+				</div>
+				<div class="col s6">
+					<div class="card-panel log" style="overflow-y: scroll">
+						<h5 class="light">Symbol Table</h5>
+						<table id="symbolTable" class="striped">
+							<thead>
+								<tr>
+									<th>Program</th>
+									<th>Key</th>
+									<th>Type</th>
+									<th>Scope</th>
+									<th>Scope Level</th>
+									<th>Line Number</th>
+									<th>Col Number</th>
+								</tr>
+							</thead>
+							<tbody>
+									<tr></tr>
+
+							</tbody>
+						</table>
+					</div>
+				</div>
+            </div>
+			<div class="row">
+                <div id="visual-cst" class="card-panel log">
+                    <h5 class="light">Visual CST Representation</h5>
+                    <div id="tree-cst" style="width: 100%; height: 500px"></div>
+                </div>
+            </div>
+            <div class="row">
+                <div id="visual-ast" class="card-panel log">
+                    <h5 class="light">Visual AST Representation</h5>
+                    <div id="tree-ast" style="width: 100%; height: 500px"></div>
+                </div>
+            </div>
+		</div>
+
+		<!-- Modal Structure -->
+		<div id="grammarModal" class="modal">
+			<div class="modal-content center-align">
+				<img class="responsive-img center-align" src="dist/images/grammar.PNG">
+			</div>
+			<div class="modal-footer">
+				<a class="modal-action modal-close waves-effect waves-green btn-flat">Close</a>
+			</div>
+        </div>
+        <div id="cstModal" class="modal">
+            <div class="modal-content center-align">
+                <div id="tree-cst"></div>
+            </div>
+            <div class="modal-footer">
+                <a class="modal-action modal-close waves-effect waves-green btn-flat">Close</a>
+            </div>
+        </div>
+		<div id="casesModal" class="modal bottom-sheet">
+			<div class="modal-content center-align">
+				<ul class="collapsible center-align" data-collapsible="accordion">
+					<li>
+						<div class="collapsible-header"><i class="material-icons">brightness_5</i>Valid Cases</div>
+						<div class="collapsible-body">
+							<div class="collection">
+								<a href="#!" onclick="TSC.Testcases.load(this);" class="collection-item modal-action modal-close">Simple 1</a>
+								<a href="#!" onclick="TSC.Testcases.load(this);" class="collection-item modal-action modal-close">Simple 2</a>
+								<a href="#!" onclick="TSC.Testcases.load(this);" class="collection-item modal-action modal-close">Regular</a>
+                                <a href="#!" onclick="TSC.Testcases.load(this);" class="collection-item modal-action modal-close">Multiple</a>
+                                <a href="#!" onclick="TSC.Testcases.load(this);" class="collection-item modal-action modal-close">All Productions thx Tien</a>
+                                <a href="#!" onclick="TSC.Testcases.load(this);" class="collection-item modal-action modal-close">Crazy One Liner (Lex Pass)</a>
+                                <a href="#!" onclick="TSC.Testcases.load(this);" class="collection-item modal-action modal-close">Crazy One Liner Pt. 2 Thx Tien</a>
+                                <a href="#!" onclick="TSC.Testcases.load(this);" class="collection-item modal-action modal-close">WhileStatement</a>
+								<a href="#!" onclick="TSC.Testcases.load(this);" class="collection-item modal-action modal-close">IfStatement</a>
+								<a href="#!" onclick="TSC.Testcases.load(this);" class="collection-item modal-action modal-close">Infinite Loop and Max Memory</a>
+								<a href="#!" onclick="TSC.Testcases.load(this);" class="collection-item modal-action modal-close">Boolean Expressions</a>
+								<a href="#!" onclick="TSC.Testcases.load(this);" class="collection-item modal-action modal-close">Variable Addition</a>
+								<a href="#!" onclick="TSC.Testcases.load(this);" class="collection-item modal-action modal-close">Addition Checking and Long Addition</a>
+							</div>
+						</div>
+					</li>
+					<li>
+						<div class="collapsible-header"><i class="material-icons">warning</i>Warning Cases</div>
+						<div class="collapsible-body">
+							<div class="collection">
+								<a href="#!" onclick="TSC.Testcases.load(this);" class="collection-item modal-action modal-close">Missing EOP</a>
+								<a href="#!" onclick="TSC.Testcases.load(this);" class="collection-item modal-action modal-close">Semantic Warnings</a>
+							</div>
+						</div>
+					</li>
+					<li>
+						<div class="collapsible-header"><i class="material-icons">new_releases</i>Lex Error Cases</div>
+						<div class="collapsible-body">
+							<div class="collection">
+								<a href="#!" onclick="TSC.Testcases.load(this);" class="collection-item modal-action modal-close">Alan</a>
+								<a href="#!" onclick="TSC.Testcases.load(this);" class="collection-item modal-action modal-close">Invalid String 1</a>
+								<a href="#!" onclick="TSC.Testcases.load(this);" class="collection-item modal-action modal-close">Invalid String 2</a>
+								<a href="#!" onclick="TSC.Testcases.load(this);" class="collection-item modal-action modal-close">Invalid String 3</a>
+								<a href="#!" onclick="TSC.Testcases.load(this);" class="collection-item modal-action modal-close">Invalid String 4</a>
+								<a href="#!" onclick="TSC.Testcases.load(this);" class="collection-item modal-action modal-close">Invalid Print</a>
+								<a href="#!" onclick="TSC.Testcases.load(this);" class="collection-item modal-action modal-close">Missing End Comment Brace</a>
+							</div>
+						</div>
+                    </li>
+                    <li>
+						<div class="collapsible-header"><i class="material-icons">new_releases</i>Parse Error Cases</div>
+						<div class="collapsible-body">
+							<div class="collection">
+								<a href="#!" onclick="TSC.Testcases.load(this);" class="collection-item modal-action modal-close">Invalid Expr</a>
+								<a href="#!" onclick="TSC.Testcases.load(this);" class="collection-item modal-action modal-close">Invalid VarDecl</a>
+								<a href="#!" onclick="TSC.Testcases.load(this);" class="collection-item modal-action modal-close">Invalid Print Pt. 2</a>
+								<a href="#!" onclick="TSC.Testcases.load(this);" class="collection-item modal-action modal-close">Incomplete BooleanExpr</a>
+								<a href="#!" onclick="TSC.Testcases.load(this);" class="collection-item modal-action modal-close">Incomplete IntExpr</a>
+							</div>
+						</div>
+					</li>
+					<li>
+						<div class="collapsible-header"><i class="material-icons">new_releases</i>Semantic Analysis Error Cases</div>
+						<div class="collapsible-body">
+							<div class="collection">
+								<a href="#!" onclick="TSC.Testcases.load(this);" class="collection-item modal-action modal-close">Undeclared Variable</a>
+								<a href="#!" onclick="TSC.Testcases.load(this);" class="collection-item modal-action modal-close">Duplicate Variable</a>
+								<a href="#!" onclick="TSC.Testcases.load(this);" class="collection-item modal-action modal-close">Type Mismatch</a>
+								<a href="#!" onclick="TSC.Testcases.load(this);" class="collection-item modal-action modal-close">Incorrect Type Comparisons</a>
+								<a href="#!" onclick="TSC.Testcases.load(this);" class="collection-item modal-action modal-close">Incorrect Integer Expression</a>
+								<a href="#!" onclick="TSC.Testcases.load(this);" class="collection-item modal-action modal-close">Tien Test</a>
+								<a href="#!" onclick="TSC.Testcases.load(this);" class="collection-item modal-action modal-close">Tien Boolean Hell</a>
+							</div>
+						</div>
+					</li>
+					<li>
+						<div class="collapsible-header"><i class="material-icons">new_releases</i>Code Gen Error Cases</div>
+						<div class="collapsible-body">
+							<div class="collection">
+								<a href="#!" onclick="TSC.Testcases.load(this);" class="collection-item modal-action modal-close">Boolean Hell</a>
+								<a href="#!" onclick="TSC.Testcases.load(this);" class="collection-item modal-action modal-close">Max Memory</a>
+							</div>
+						</div>
+					</li>
+				</ul>
+            </div>
+			<div class="modal-footer">
+				<a class="modal-action modal-close waves-effect waves-green btn-flat">Close</a>
+			</div>
+		</div>
+	</main>
+
+	<footer class="page-footer blue">
+		<div class="container">
+			<div class="row">
+			<div class="col l6 s12">
+                <h5 class="white-text">A Compiler by Kai Wong</h5>
+				<!-- <h5 class="white-text">Footer Content</h5> -->
+				<!-- <p class="grey-text text-lighten-4">You can use rows and columns here to organize your footer content.</p> -->
+			</div>
+			<div class="col l4 offset-l2 s12">
+				<!-- <h5 class="white-text">Links</h5> -->
+				<ul>
+				</ul>
+			</div>
+			</div>
+		</div>
+		<div class="footer-copyright">
+			<div class="container">
+			© 2018 Kai Wong
+			<a class="grey-text text-lighten-4 right" target="_blank" href="https://github.com/Holayn">GitHub</a>
+			</div>
+		</div>
+	</footer>
+
+
+    <!-- Client-side code down here, per the YSlow advice. 
+		 (http://developer.yahoo.com/performance/rules.html#js_bottom) -->
+	<script src="dist/clipboard.min.js"></script>
+	<script type="text/javascript" src="dist/scripts/utils.js"></script>	
+	<script type="text/javascript" src="dist/scripts/lexer.js"></script>	
+	<script type="text/javascript" src="dist/scripts/parser.js"></script>
+	<script type="text/javascript" src="dist/scripts/globals.js"></script>	
+	<script type="text/javascript" src="dist/scripts/token.js"></script>
+	<script type="text/javascript" src="dist/scripts/error.js"></script>	
+	<script type="text/javascript" src="dist/scripts/warning.js"></script>	
+	<script type="text/javascript" src="dist/scripts/testcases.js"></script>
+	<script type="text/javascript" src="dist/scripts/tree.js"></script>
+	<script type="text/javascript" src="dist/styles/Treant/vendor/raphael.js"></script>
+    <script type="text/javascript" src="dist/styles/Treant/Treant.js"></script>
+    <script type="text/javascript" src="dist/scripts/semanticAnalyzer.js"></script>
+	<script type="text/javascript" src="dist/scripts/scope.js"></script>
+	<script type="text/javascript" src="dist/scripts/codeGen.js"></script>
+	<script type="text/javascript">
+
+		document.getElementById("loader").style.visibility = "hidden";
+		var verboseOn = true;
+
+		function init() {
+            // Clear the log and the CST.
+			document.getElementById("taOutput").value = "";
+			document.getElementById("taCST").value = "";
+			document.getElementById("taAST").value = "";
+			document.getElementById("taCodeOutput").innerHTML = "";
+			document.getElementById("taScope").value = "";
+			// Clear symbol table
+			var table = document.getElementById("symbolTable");
+			// Leave header in place
+			var rowCount = table.rows.length;
+			for (var i = rowCount - 1; i > 1; i--) {
+				table.deleteRow(i);
+			}
+	        // Set the initial values for our globals.
+	        tokens = "";
+	        tokenIndex = 0;
+	        currentToken = ' ';
+			errorCount = 0;        
+			// Clear visual CST
+			var cst_visual = new Treant({
+				chart: {
+					container: "#tree-cst"
+				},
+				nodeStructure: {}
+            });
+            var ast_visual = new Treant({
+				chart: {
+					container: "#tree-ast"
+				},
+				nodeStructure: {}
+			});
+			// show loader
+			document.getElementById("loader").style.visibility = "visible";
+		}
+		
+		function btnVerbose_click() {
+			var element = document.getElementById('verbose');
+			if(element.style.backgroundColor == 'lightgrey'){
+				element.setAttribute('style', 'background-color: red !important');
+			}
+			else{
+				element.setAttribute('style', 'background-color: lightgrey !important');
+			}
+			if(verboseOn){
+				verboseOn = false;
+			}
+			else{
+				verboseOn = true;
+			}
+			
+		}
+
+	    function btnCompile_click() {        
+	        // This is executed as a result of the user pressing the 
+	        // "compile" button between the two text areas, above.  
+	        // Note the <input> element's event handler: onclick="btnCompile_click();
+            init();
+			// Compile the source code
+			setTimeout(function(){ 
+				compile(); // hide loader. need timeout so it actually shows
+				document.getElementById("loader").style.visibility = "hidden"; 
+				var textarea = document.getElementById('taOutput');
+				textarea.scrollTop = textarea.scrollHeight;
+			}, 50);
+			
+            // compile();
+			
+			// Scroll to bottom of the log
+			// var textarea = document.getElementById('taOutput');
+			// textarea.scrollTop = textarea.scrollHeight;
+	    }
+    
+	    function putMessage(msg) {
+	        document.getElementById("taOutput").value += msg + "\n";
+        }
+        
+        function compile() {
+            // Lex the source code
+            // Construct new lexer
+            let lexer = new TSC.Lexer();
+            // Lex program
+            var isLexComplete = false; // flag for completion of lex
+            var programCounter = 1; // counter for number of programs compiled
+            var lexAnalysis; // object returned by lexer
+			var programDetected = false; // flag for program detection
+			var prevProgramError = false; // flag to keep track if previous program in sequence of programs had error
+			
+			// Base Treant.js CST config
+			// Declaring it here and passing it to calls of parse will allow
+			// the tree to support compilation of multiple programs
+			var treantCST = {
+				chart: {
+					container: "#tree-cst"
+				},
+				
+				nodeStructure: {
+					text: { name: "Root" },
+					children: [
+					]
+				}
+            };
+            var treantAST = {
+				chart: {
+					container: "#tree-ast"
+				},
+				
+				nodeStructure: {
+					text: { name: "Root" },
+					children: [
+					]
+				}
+			};
+			
+			// used for maintaining compiler status checks at top of page
+			var parseResult;
+			var analyzeRes;
+			var codeGenRes;
+			var changeStatus = true;
+			var parseHadError = false;
+			var lexHadError = false;
+			var lexHadWarning = false;
+			var analyzeHadWarning = false;
+			var analyzeHadError = false;
+			var genHadError = false;
+
+            // We're compiling programs in sequence.
+            // For every program, lex, parse, perform semantic analysis, etc...
+            while(!isLexComplete){
+				lexAnalysis = lexer.lex(prevProgramError);
+				if(lexAnalysis.warnings.length != 0){
+					lexHadWarning = true;
+				}
+				// Attempt to lex . . 
+				// If we get an error, report it
+				// Then, try to lex again by having lexer look for next EOP token, then lexing from there
+				// If no error, parse. Then lex next program
+				// If reach end of source code and no tokens, throw error
+				if(lexAnalysis.errors.length != 0){
+					programDetected = true; // we know a program was detected, aka user actually typed code besides comments
+					putMessage("______________________________");
+					putMessage("Compiling Program " + programCounter + " . . .\n");
+					logLex(lexAnalysis, programCounter);
+					programCounter++;
+					prevProgramError = true;
+					putMessage("Compilation stopped due to Lexer errors . . .");
+					lexHadError = true;
+				}
+				// No tokens were found but lex completed, meaning that there is no more input to lex
+				else if(lexAnalysis.tokens.length == 0){
+					isLexComplete = true;
+				}
+				else{
+					programDetected = true; // we know a program was detected, aka user actually typed code besides comments
+					putMessage("______________________________");
+					putMessage("Compiling Program " + programCounter + " . . .\n");
+					logLex(lexAnalysis, programCounter);
+					prevProgramError = false;
+					// change icon
+					document.getElementById("lexerStatus").innerHTML = "check";
+					document.getElementById("lexerStatus").style = "color: green";
+					parseResult = parse(lexAnalysis, treantCST, programCounter);
+					// Do not continue to semantic analysis if parse error
+					if(!parseResult.error){
+						analyzeRes = analyze(parseResult, treantAST, programCounter); // perform semantic analysis on the cst from the parse
+						if(analyzeRes.warnings.length != 0){
+							analyzeHadWarning = true;
+						}
+						// Do not continue to code gen if semantic error
+						if(!analyzeRes.error){
+							codeGenRes = codeGen(analyzeRes, programCounter);
+							if(codeGenRes){
+								genHadError = true;
+							}
+						}
+						else{
+							analyzeHadError = true;
+						}
+					}
+					else{
+						parseHadError = true;
+					}
+					programCounter++;
+				}
+				if(lexAnalysis.complete){
+					isLexComplete = true;
+				}
+				// If the user tried to compile without typing any code besides comments, throw error
+				if(!programDetected){
+					putMessage("Why are you trying to compile zero code? Cheese and crackers, you dimwit. Go eat a sock.");
+					// change icon
+					document.getElementById("lexerStatus").innerHTML = "panorama_fish_eye";
+					document.getElementById("lexerStatus").style = "color: black";
+				}
+			}
+			// Code to properly display results of each phase of compiler at top of page
+			document.getElementById("parserStatus").innerHTML = "panorama_fish_eye";
+			document.getElementById("parserStatus").style = "color: black";
+			document.getElementById("saStatus").innerHTML = "panorama_fish_eye";
+			document.getElementById("saStatus").style = "color: black";
+			document.getElementById("cgStatus").innerHTML = "panorama_fish_eye";
+			document.getElementById("cgStatus").style = "color: black";
+
+			if(lexHadError){
+				// change icon
+				document.getElementById("lexerStatus").innerHTML = "clear";
+				document.getElementById("lexerStatus").style = "color: red";
+				return;
+			}
+			else{
+				if(lexHadWarning){
+					document.getElementById("lexerStatus").innerHTML = "check";
+					document.getElementById("lexerStatus").style = "color: gold";
+				}
+				else{
+					document.getElementById("lexerStatus").innerHTML = "check";
+					document.getElementById("lexerStatus").style = "color: green";
+				}
+			}
+			if(parseHadError){
+				document.getElementById("parserStatus").innerHTML = "clear";
+				document.getElementById("parserStatus").style = "color: red";
+				return;
+			}
+			else{
+				if(parseResult != null){
+					document.getElementById("parserStatus").innerHTML = "check";
+					document.getElementById("parserStatus").style = "color: green";
+				}
+			}
+			if(analyzeHadError){
+				document.getElementById("saStatus").innerHTML = "clear";
+				document.getElementById("saStatus").style = "color: red";
+				return;
+			}
+			else{
+				if(analyzeHadWarning){
+					document.getElementById("saStatus").innerHTML = "check";
+					document.getElementById("saStatus").style = "color: gold";
+				}
+				else{
+					if(analyzeRes != null){
+						document.getElementById("saStatus").innerHTML = "check";
+						document.getElementById("saStatus").style = "color: green";
+					}
+				}
+			}
+			if(genHadError){
+				document.getElementById("cgStatus").innerHTML = "clear";
+				document.getElementById("cgStatus").style = "color: red";
+				return;
+			}
+			else{
+				if(codeGenRes != null){
+					document.getElementById("cgStatus").innerHTML = "check";
+					document.getElementById("cgStatus").style = "color: green";
+				}
+			}
+			
+		}
+		
+		// Fills log with messages from lexer
+		function logLex(lexAnalysis, programCounter) {
+			putMessage("Lexical Analysis:");
+			// For all tokens, print out their type and value..only if verbose mode is on
+			if(verboseOn){
+				for(var i=0; i<lexAnalysis.tokens.length; i++){
+					putMessage("LEXER -> | " + lexAnalysis.tokens[i].type + " [ " + lexAnalysis.tokens[i].value + " ] on line " + lexAnalysis.tokens[i].lineNumber + " col " + lexAnalysis.tokens[i].colNumber);
+				}
+			}
+			// Print any warnings and errors
+			for(var i=0; i<lexAnalysis.warnings.length; i++){
+				if(lexAnalysis.warnings[i].type == TSC.WarningType.MissingEOP){
+					M.toast({html: 'Program ' + programCounter + ': Lex warning! - ' + lexAnalysis.warnings[i].type, classes: 'toastcolor'});
+					// Materialize.toast('Program ' + programCounter + ': Lex warning! - ' + lexAnalysis.warnings[i].type, 4000, 'toastcolor');
+					putMessage("LEXER -> | WARNING: No EOP [$] detected at end-of-file. Adding to end-of-file...");
+					// Insert an EOP into the tokens array
+					lexAnalysis.tokens.push(new TSC.Token(TSC.TokenType.TEop, "$", lexAnalysis.line, lexAnalysis.col));
+				}
+			}
+			for(var i=0; i<lexAnalysis.errors.length; i++){
+				if(lexAnalysis.errors[i].type == TSC.ErrorType.InvalidToken){
+					M.toast({html: 'Program ' + programCounter + ': Lex error! - ' + lexAnalysis.errors[i].type, classes: 'toastcolor'});
+					// Materialize.toast('Program ' + programCounter + ': Lex error! - ' + lexAnalysis.errors[i].type, 4000, 'toastcolor');
+					putMessage("LEXER -> | ERROR: Unrecognized or Invalid Token [ " + lexAnalysis.errors[i].value + " ] on line " + lexAnalysis.errors[i].lineNumber + " col " + lexAnalysis.errors[i].colNumber);
+				}
+				else if(lexAnalysis.errors[i].type == TSC.ErrorType.MissingCommentEnd){
+					M.toast({html: 'Program ' + programCounter + ': Lex error! - ' + lexAnalysis.errors[i].type, classes: 'toastcolor'});
+					// Materialize.toast('Program ' + programCounter + ': Lex error! - ' + lexAnalysis.errors[i].type, 4000, 'toastcolor');
+					putMessage("LEXER -> | ERROR: Missing ending comment brace (*/) for comment starting on line  " + lexAnalysis.errors[i].lineNumber + " col " + lexAnalysis.errors[i].colNumber);
+				}
+				else if(lexAnalysis.errors[i].type == TSC.ErrorType.InvalidCharacterInString){
+					M.toast({html: 'Program ' + programCounter + ': Lex error! - ' + lexAnalysis.errors[i].type, classes: 'toastcolor'});
+					// Materialize.toast('Program ' + programCounter + ': Lex error! - ' + lexAnalysis.errors[i].type, 4000, 'toastcolor');
+					putMessage("LEXER -> | ERROR: Invalid character in String [ " + lexAnalysis.errors[i].value + " ] on line " + lexAnalysis.errors[i].lineNumber + " col " + lexAnalysis.errors[i].colNumber);
+				}
+				else if(lexAnalysis.errors[i].type == TSC.ErrorType.MissingStringEndQuote){
+					M.toast({html: 'Program ' + programCounter + ': Lex error! - ' + lexAnalysis.errors[i].type, classes: 'toastcolor'});
+					// Materialize.toast('Program ' + programCounter + ': Lex error! - ' + lexAnalysis.errors[i].type, 4000, 'toastcolor');
+					putMessage("LEXER -> | ERROR: Missing ending quote for String literal starting on line  " + lexAnalysis.errors[i].lineNumber + " col " + lexAnalysis.errors[i].colNumber);
+				}
+			}
+			putMessage("\n");
+			putMessage("Lexical Analysis complete! " + lexAnalysis.warnings.length + " WARNING(S) and " + lexAnalysis.errors.length + " ERROR(S)");
+			putMessage("-------------------------");
+		}
+		
+		// Takes tokens from lexical analysis and passes them to parser
+		// Also passes Treant CST config so parser can construct CST or add on to existing CST
+		function parse(lexAnalysis, treantCST, programCounter) {
+			putMessage("Parsing...");
+			putMessage("\n");
+			// Put tokens into parser for validation
+			let parser = new TSC.Parser(lexAnalysis.tokens);
+			// Gets log and cst generated by parser
+			var res = parser.parse();
+			// Display log in log
+			if(verboseOn){
+				for(var i=0; i<res.log.length; i++){
+					putMessage("PARSER -> | " + res.log[i]);
+				}
+			}
+			// Parse fail, do not print CST
+			if(res.error){
+				putMessage("\n");
+                putMessage("Parse failed due to error.");
+				putMessage("CST generation failed due to parse error.");
+				putMessage("Compilation stopped due to parser error . . .");
+				M.toast({html: 'Program ' + programCounter + ': Parse error!', classes: 'toastcolor'});
+				// Materialize.toast('Program ' + programCounter + ': Parse error!', 4000, 'toastcolor');
+			}
+			else{
+				putMessage("\n");
+				putMessage("Parse completed successfully! 0 ERRORS");
+				putMessage("-------------------------");
+				// Traverses the CST generated by the parser and displays in CST field
+				var cst = res.cst.traverseTreeCST(treantCST, programCounter);
+				for(var i=0; i<cst.tree.length; i++){
+					document.getElementById("taCST").value += cst.tree[i] + "\n";
+                }
+                // Display CST visually with Treant.js
+                var cst_visual = new Treant(cst.treant);
+            }
+            // Return the results of the parser so the cst can be used by the semantic analyzer
+            return res;
+        }
+
+        // Calls the semantic analyzer
+        function analyze(parseResult, treantAST, programCounter) {
+            putMessage("Performing Semantic Analysis...\n");
+            let semanticAnalyzer = new TSC.SemanticAnalyzer();
+			var res = semanticAnalyzer.analyze(parseResult);
+			// Display AST regardless of error
+			var ast = res.ast.traverseTreeAST(treantAST, programCounter);
+			// Display AST in AST field
+			for(var i=0; i<ast.tree.length; i++){
+				document.getElementById("taAST").value += ast.tree[i] + "\n";
+			}
+			// Display AST visually with Treant.js
+			var ast_visual = new Treant(ast.treant);
+			// Print log messages if verbose on
+			if(verboseOn){
+				for(var i=0; i<res.log.length; i++){
+					putMessage("S.ANALYZE -> | " + res.log[i]);
+				}
+			}
+			// Print warnings if no errors
+			putMessage("\n");
+			if(!res.error){
+				for(var i=0; i<res.warnings.length; i++){
+					var warningMsg = res.warnings[i];
+					switch(warningMsg.type){
+						case TSC.WarningType.UninitializedVariable:
+							M.toast({html: 'Program ' + programCounter + ': Semantic warning! - ' + warningMsg.type, classes: 'toastcolor'});
+							// Materialize.toast('Program ' + programCounter + ': Semantic warning! - ' + warningMsg.type, 4000, 'toastcolor');	
+							putMessage("S.ANALYZE -> | WARNING - Variable [" + warningMsg.value + "] on line " + warningMsg.lineNumber + " col " + warningMsg.colNumber + " has been declared but is not initialized properly.");
+							break;
+						case TSC.WarningType.UnusedVariable:
+							M.toast({html: 'Program ' + programCounter + ': Semantic warning! - ' + warningMsg.type, classes: 'toastcolor'});
+							// Materialize.toast('Program ' + programCounter + ': Semantic warning! - ' + warningMsg.type, 4000, 'toastcolor');
+							putMessage("S.ANALYZE -> | WARNING - Variable [" + warningMsg.value + "] on line " + warningMsg.lineNumber + " col " + warningMsg.colNumber + " has been initialized but is not used.");
+							break;
+						case TSC.WarningType.UsedUninitialized:
+							M.toast({html: 'Program ' + programCounter + ': Semantic warning! - ' + warningMsg.type, classes: 'toastcolor'});
+							// Materialize.toast('Program ' + programCounter + ': Semantic warning! - ' + warningMsg.type, 4000, 'toastcolor');
+							putMessage("S.ANALYZE -> | WARNING - Variable [" + warningMsg.value + "] on line " + warningMsg.lineNumber + " col " + warningMsg.colNumber + " has been used but is not initialized.");
+							break;
+						case TSC.WarningType.UsedBeforeInit:
+							M.toast({html: 'Program ' + programCounter + ': Semantic warning! - ' + warningMsg.type, classes: 'toastcolor'});
+							// Materialize.toast('Program ' + programCounter + ': Semantic warning! - ' + warningMsg.type, 4000, 'toastcolor');
+							putMessage("S.ANALYZE -> | WARNING - Variable [" + warningMsg.value + "] on line " + warningMsg.lineNumber + " col " + warningMsg.colNumber + " has been used before being initialized.");
+							break;
+					}
+				}
+			}
+			if(res.error){
+				// Print only the first error because some of the errors may not be valid if there were errors before it
+				// for(var i=0; i<res.errors.length; i++){
+				// 	var errorMsg = res.errors[i];
+				var errorMsg = res.errors[0];
+				switch(errorMsg.type){
+					case TSC.ErrorType.DuplicateVariable:
+						M.toast({html: 'Program ' + programCounter + ': Semantic error! - ' + errorMsg.type, classes: 'toastcolor'});
+						// Materialize.toast('Program ' + programCounter + ': Semantic error! - ' + errorMsg.type, 4000, 'toastcolor');
+						putMessage("S.ANALYZE -> | ERROR - Variable [" + errorMsg.value.value + "] on line " + errorMsg.lineNumber + " col " + errorMsg.colNumber + " has already been declared in current scope at line " + errorMsg.firstDeclareLine + " col " + errorMsg.firstDeclareCol);
+						break;
+					case TSC.ErrorType.UndeclaredVariable:
+						M.toast({html: 'Program ' + programCounter + ': Semantic error! - ' + errorMsg.type, classes: 'toastcolor'});
+						// Materialize.toast('Program ' + programCounter + ': Semantic error! - ' + errorMsg.type, 4000, 'toastcolor');
+						putMessage("S.ANALYZE -> | ERROR - Variable [" + errorMsg.value.value + "] on line " + errorMsg.lineNumber + " col " + errorMsg.colNumber + " has not been previously declared.");
+						break;
+					case TSC.ErrorType.TypeMismatch:
+						M.toast({html: 'Program ' + programCounter + ': Semantic error! - ' + errorMsg.type, classes: 'toastcolor'});
+						// Materialize.toast('Program ' + programCounter + ': Semantic error! - ' + errorMsg.type, 4000, 'toastcolor');	
+						putMessage("S.ANALYZE -> | ERROR - The variable [" + errorMsg.value.value + "] declared on line " + errorMsg.lineNumber + " col " + errorMsg.colNumber + " is of type " + errorMsg.idType.value + " and does not match the assignment type of " + errorMsg.targetType);
+						break;
+					case TSC.ErrorType.IncorrectTypeComparison:
+						M.toast({html: 'Program ' + programCounter + ': Semantic error! - ' + errorMsg.type, classes: 'toastcolor'});
+						// Materialize.toast('Program ' + programCounter + ': Semantic error! - ' + errorMsg.type, 4000, 'toastcolor');
+						putMessage("S.ANALYZE -> | ERROR - The [" + errorMsg.value + "] on line " + errorMsg.lineNumber + " col " + errorMsg.colNumber + " is of type " + errorMsg.idType + " and is incompatibly compared to a type of " + errorMsg.targetType);
+						break;
+					case TSC.ErrorType.IncorrectIntegerExpression:
+						M.toast({html: 'Program ' + programCounter + ': Semantic error! - ' + errorMsg.type, classes: 'toastcolor'});
+						// Materialize.toast('Program ' + programCounter + ': Semantic error! - ' + errorMsg.type, 4000, 'toastcolor');
+						putMessage("S.ANALYZE -> | ERROR - The [" + errorMsg.value + "] on line " + errorMsg.lineNumber + " col " + errorMsg.colNumber + " is of type " + errorMsg.targetType + " which cannot be added to digits of type " + TSC.VariableType.Int);
+						break;
+				}
+				// }
+				putMessage("\n");
+				putMessage("Semantic Analysis failed due to error.");
+				putMessage("Symbol table and scope tree not produced due to semantic error.");
+				putMessage("Compilation stopped due to semantic error . . .");
+			}
+			else{
+				// Display symbols in Symbol Table
+				var symbols = res.symbols;
+				for(var i=0; i<symbols.length; i++){
+					var table = document.getElementById("symbolTable");
+					var row = table.insertRow(-1);
+					var program = row.insertCell(0);
+					program.innerHTML = programCounter;
+					var key = row.insertCell(1);
+					key.innerHTML = symbols[i].key;
+					var type = row.insertCell(2);
+					type.innerHTML = symbols[i].type;
+					var scope = row.insertCell(3);
+					scope.innerHTML = symbols[i].scope;
+					var scopeLevel = row.insertCell(4);
+					scopeLevel.innerHTML = symbols[i].scopeLevel;
+					var lineNumber = row.insertCell(5);
+					lineNumber.innerHTML = symbols[i].line;
+					var colNumber = row.insertCell(6);
+					colNumber.innerHTML = symbols[i].col;
+				}
+				// Fill out scope tree
+				var scopeTreeArr = semanticAnalyzer.printScopeTree(res.scopeTree.root);
+				document.getElementById("taScope").value += "Program " + programCounter + "\n";
+				// Display scope tree in scope tree field
+				for(var i=0; i<scopeTreeArr.length; i++){
+					document.getElementById("taScope").value += scopeTreeArr[i] + "\n";
+				}
+				putMessage("\n");
+				putMessage("Semantic Analysis complete! " + res.warnings.length + " WARNING(S), " + res.errors.length + " ERROR(S)");
+			}
+			putMessage("-------------------------");
+			// putMessage("\n");
+            // putMessage("Semantic Analysis complete! " + res.warnings.length + " WARNING(S), " + res.errors.length + " ERROR(S)");
+            // Return the result of the semantic analyzer so that it can be used by the code generator
+            return res;
+		}
+
+		// Produces op codes from AST
+		function codeGen(analyzeRes, programCounter) {
+			putMessage("\n");
+			putMessage("Performing code generation...\n");
+            let codeGenerator = new TSC.CodeGenerator();
+			var res = codeGenerator.generateCode(analyzeRes);
+			// check for error
+			if(codeGenerator.hasError){
+				switch(codeGenerator.getError().type){
+					case TSC.ErrorType.NoMoreStackMemory:
+						M.toast({html: 'Program ' + programCounter + ': Code generation error! - NoMoreStackMemory', classes: 'toastcolor'});
+						putMessage("Error occurred in code generation: cannot fit program into 256 bytes due to static stack overflow. Please shorten the input program.");
+						break;
+					case TSC.ErrorType.NoMoreHeapMemory:
+						M.toast({html: 'Program ' + programCounter + ': Code generation error! - NoMoreHeapMemory', classes: 'toastcolor'});
+						putMessage("Error occurred in code generation: cannot fit program into 256 bytes due to the heap running out of space. Please shorten the input program.");
+						break;
+					case TSC.ErrorType.NoMoreCodeMemory:
+						M.toast({html: 'Program ' + programCounter + ': Code generation error! - NoMoreCodeMemory', classes: 'toastcolor'});
+						putMessage("Error occurred in code generation: cannot fit program into 256 bytes. Please shorten the input program.");
+						break;
+					case TSC.ErrorType.NestedBoolean:
+						M.toast({html: 'Program ' + programCounter + ': Code generation error! - NestedBoolean', classes: 'toastcolor'});
+						putMessage("Error occurred in code generation: nested boolean expressions are not supported. Please no.");
+						break;
+				}
+				putMessage("Code generation completed with 1 error(s)...\n");
+				return codeGenerator.hasError;
+			}
+            // put generated code into box
+			var generatedCode = res;
+			document.getElementById("taCodeOutput").innerHTML += "Program " + programCounter + ":\n";
+            for(var i=0; i<generatedCode.length; i++){
+                document.getElementById("taCodeOutput").innerHTML += generatedCode[i];
+                if(i != generatedCode.length-1){
+                    document.getElementById("taCodeOutput").innerHTML += " ";
+                }
+			}
+			document.getElementById("taCodeOutput").innerHTML += "\n";
+			// put code gen log messages into log box
+			if(verboseOn){
+				for(var i=0; i<codeGenerator.getLog().length; i++){
+					putMessage("C.GEN -> | " + codeGenerator.getLog()[i]);
+				}
+			}
+			putMessage("\n");
+			putMessage("Code generation completed with 0 error(s)...\n");
+			putMessage("-------------------------");
+			return codeGenerator.hasError;
+		}
+		
+    
+	</script>
+	<!-- https://stackoverflow.com/questions/6637341/use-tab-to-indent-in-textarea with my own edits -->
+	<script type="text/javascript">
+		$(document).ready(function(){
+			$('.fixed-action-btn').floatingActionButton({
+				hoverEnabled: false,
+				direction: 'left'
+			});
+		});
+		$(document).ready(function(){
+			$('.tabs').tabs();
+		});
+		$(document).ready(function(){
+			$('.collapsible').collapsible();
+		});
+		// hacking this so code input is focused, for some reason HTML5 autofocus on textarea not working for me...
+		setTimeout(function(){ document.getElementById("taSourceCode").focus() }, 10);
+		$(document).delegate('#taSourceCode', 'keydown', function(e) {
+			var keyCode = e.keyCode || e.which;
+
+			if (keyCode == 9) {
+				e.preventDefault();
+				var start = this.selectionStart;
+				var end = this.selectionEnd;
+
+				// set textarea value to: text before caret + tab + text after caret
+				// insert 4 spaces
+				$(this).val($(this).val().substring(0, start)
+							+ "\x20" + "\x20" + "\x20" + "\x20"
+							+ $(this).val().substring(end));
+
+				// put caret at right position again
+				this.selectionStart =
+				this.selectionEnd = start + 4;
+			}
+			
+			// if enter, copy number of leading spaces in previous line
+			if (keyCode == 13) {
+				e.preventDefault();
+				var lines = $('textarea').val().split('\n');
+				// get line position of caret
+				var caretLine = 0;
+				var text = $('textarea').val();
+				for(var i=0; i<this.selectionEnd; i++){
+					if(text.charAt(i) == "\n"){
+						caretLine++;
+					}
+				}
+				// get number of leading spaces in previous line
+				var numSpaces = lines[caretLine].search(/\S/);
+				// add spaces to new line
+				var spaces = "";
+				for(var i=0; i<numSpaces; i++){
+					spaces += "\x20";
+				}
+				var start = this.selectionStart;
+				var end = this.selectionEnd;
+				$(this).val($(this).val().substring(0, start) + "\n" + spaces + $(this).val().substring(end));
+				this.selectionStart =
+				this.selectionEnd = start + numSpaces + 1;
+			}
+		});
+	</script>
+</body>
+</html>
