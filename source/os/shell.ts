@@ -559,7 +559,6 @@ module TSOS {
                     return;
                 }
                 if(args.length == 1){
-                    console.log(args)
                     if(!args[0].match(/^[0-9]\d*$/)){
                         _StdOut.putText("Usage: load <?priority>  Please supply a valid priority number (0 is highest, 1 is default).");
                         return;
@@ -722,7 +721,6 @@ module TSOS {
                 if(status == FILE_NAME_NO_EXIST){
                     _StdOut.putText("The file: " + args[0] + " does not exist.");
                 }
-                console.log(status);
                 // Print out file
                 _StdOut.putText(status.fileData.join(""));
             }
@@ -733,7 +731,6 @@ module TSOS {
 
         // Writes to a file
         public shellWriteFile(args) {
-            console.log(args)
             if(args.length >= 2){
                 // If user entered spaces, concatenate the arguments
                 let string = "";

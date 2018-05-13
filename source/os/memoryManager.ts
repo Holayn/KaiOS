@@ -57,7 +57,6 @@
         // Make sure to update the memory display
         public clearMemoryPartition(partition): void {
             // if(!this.canClearMemory(partition))
-            console.log("Clearing memory partition " + partition);
             var base = this.partitions[partition].base;
             var limit = this.partitions[partition].limit + this.partitions[partition].base;
             for(var i=base; i<limit; i++){

@@ -28,8 +28,6 @@ var TSOS;
         MemoryAccessor.prototype.readMemory = function (addr) {
             if (this.inBounds(addr)) {
                 var partition = _ProcessManager.running.Partition;
-                // console.log(_MemoryManager.partitions[partition].base);
-                // console.log(addr);
                 return _Memory.memoryArray[_MemoryManager.partitions[partition].base + addr].toString();
             }
             else {

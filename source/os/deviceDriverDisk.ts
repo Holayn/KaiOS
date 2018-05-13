@@ -94,7 +94,6 @@
                                 let datBlock = JSON.parse(sessionStorage.getItem(dirBlock.pointer));
                                 datBlock.availableBit = "0";
                                 sessionStorage.setItem(dirBlock.pointer, JSON.stringify(datBlock));
-                                console.log("allocating enough space for " + opcodes.length);
                                 let enoughFreeSpace: boolean = this.allocateDiskSpace(opcodes, dirBlock.pointer);
                                 if(!enoughFreeSpace){
                                     return FULL_DISK_SPACE;
@@ -254,7 +253,6 @@
                 // What if data block writing to already pointing to stuff? Then we need to traverse it, making sure there is enough space to hold our new file.
                 // Continuously allocate new blocks until we gucci
                 while(stringLength > _Disk.dataSize){
-                    console.log(datBlockTSB);
                     // If pointer 0:0:0, then we need to find free blocks
                     // Else if it is already pointing to something, we're good already
                     if(datBlock.pointer != "0:0:0" && datBlock.availableBit == "1"){
@@ -274,7 +272,6 @@
                         let numBlocks = Math.ceil(stringLength / _Disk.dataSize);
                         // Go find that number of free blocks
                         let freeBlocks = this.findFreeDataBlocks(numBlocks); // array of tsbs that are free
-                        console.log("allocating unused " + freeBlocks);
                         if(freeBlocks != null){
                             // Once we get those n blocks, mark them as used, then set their pointers accordingly.
                             // Set the current block's pointer to the first block in the array, then recursively set pointers

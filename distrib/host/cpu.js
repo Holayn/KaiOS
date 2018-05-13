@@ -150,16 +150,16 @@ var TSOS;
                             var branch = parseInt(_MemoryAccessor.readMemory(this.PC + 1), 16);
                             // Then, set the program counter to the number of bytes.
                             // If it goes beyond the limit, then loop back around to the BASE.
-                            console.log("PC: " + this.PC);
-                            console.log("Branch: " + branch);
+                            // console.log("PC: " + this.PC);
+                            // console.log("Branch: " + branch);
                             // We have to loop back around based on the partition size.
                             // Ofc in our project, the size will always be 256
                             // But I want to implement it anyways
                             var partition = _MemoryManager.getCurrentPartition();
                             // Memory accessor does translation
                             this.PC = _MemoryAccessor.bneLoop(this.PC, branch);
-                            console.log("PC IS NOW " + this.PC);
-                            console.log("branched");
+                            // console.log("PC IS NOW " + this.PC);
+                            // console.log("branched");
                         }
                         else {
                             this.PC = this.PC + 2;
@@ -203,7 +203,7 @@ var TSOS;
                         _KernelInterruptQueue.enqueue(new TSOS.Interrupt(PROCESS_EXIT, false));
                         _KernelInterruptQueue.enqueue(new TSOS.Interrupt(INVALID_OP, 0));
                 }
-                console.log(opCode + " " + this.PC + " " + this.Acc + " " + this.Xreg + " " + this.Yreg + " " + this.Zflag);
+                // console.log(opCode + " " + this.PC + " " + this.Acc + " " + this.Xreg + " " + this.Yreg + " " + this.Zflag);
             }
         };
         return Cpu;

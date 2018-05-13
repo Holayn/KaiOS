@@ -79,7 +79,6 @@ var TSOS;
         // We also need to update the CPU and memory display
         // Display stats depending on whether true or false is passed in
         ProcessManager.prototype.exitProcess = function (displayStats) {
-            console.log("EXITING PROCESS");
             // Reset the scheduler's counter
             _Scheduler.unwatch();
             _CPU.init();
@@ -102,8 +101,6 @@ var TSOS;
             var filename = "$SWAP" + this.running.Pid;
             // Remove the program from disk by deleting the swap file
             _krnDiskDriver.krnDiskDelete(filename);
-            // // Update processes display
-            // Control.hostProcesses();
             // Clear out running process
             this.running = null;
         };
@@ -118,7 +115,6 @@ var TSOS;
                     theChosenPcb = pcb;
                     // If it is swapped out to disk, remove it from disk as well.
                     if (theChosenPcb.Swapped) {
-                        console.log("EXITED A PROCESS THAT IS IN THE READY QUEUE BUT IS SWAPPED OUT");
                         TSOS.Control.hostLog("Exiting process " + pid, "os");
                         // _krnDiskDriver.krnDiskDeleteData(theChosenPcb.TSB);
                         // Find swap file in directory structure
@@ -148,8 +144,8 @@ var TSOS;
                 // Update host log
                 TSOS.Control.hostLog("Exiting process " + pid, "os");
                 _MemoryManager.clearMemoryPartition(theChosenPcb.Partition);
-                // // Update processes display
-                // Control.hostProcesses();
+                // Update processes display
+                TSOS.Control.hostProcesses();
                 return true;
             }
         };
@@ -192,8 +188,8 @@ var TSOS;
             }
             // Set the PCB status to running
             this.running.State = "Running";
-            // // Update the display for the PCB
-            // Control.hostProcesses();
+            // Update the display for the PCB
+            TSOS.Control.hostProcesses();
             // Update the CPU display as well
             TSOS.Control.hostCPU();
             // Update the memory as well

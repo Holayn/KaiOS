@@ -21,6 +21,11 @@ h1 {
 
 h6 {
   font-weight: 100 !important;
+  margin-top: -.5rem !important;
+}
+
+.taskbar {
+  height: 50px;
 }
 
 #header {
@@ -153,12 +158,16 @@ main {
   font-family: Courier;
 }
 
+#tableDisk {
+  font-family: Courier;
+}
+
 td {
   width: 500px; /* lol */
   text-align: center;
 }
 
-tr { line-height: 5px; }
+tr { line-height: 1px; }
 
 a {
   
