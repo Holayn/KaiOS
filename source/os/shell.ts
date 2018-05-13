@@ -695,7 +695,7 @@ module TSOS {
                     _StdOut.putText("File name length too long! Must be " + MAX_FILE_LENGTH + " characters or less.");
                     return;
                 }
-                if(!args[0].match(/^.[a-z]+$/i)){
+                if(!args[0].match(/^[a-z]+$/i)){
                     _StdOut.putText("Filenames may only be characters.");
                     return;
                 }
@@ -739,6 +739,11 @@ module TSOS {
                 let string = "";
                 for(var i=1; i<args.length; i++){
                     string += args[i] + " ";
+                }
+                // Check to make sure the user has put quotes
+                if(string.charAt(0) != "\"" || string.charAt(string.length - 2) != "\""){
+                    _StdOut.putText("Usage: write <filename> \"<text>\"  Please supply a filename and text surrounded by quotes.");
+                    return;
                 }
                 string = string.trim();
                 // Enforce what can be written to file. Only characters and spaces!
