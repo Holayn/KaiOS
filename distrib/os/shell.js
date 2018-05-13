@@ -585,7 +585,7 @@ var TSOS;
                     _StdOut.putText("File name length too long! Must be " + MAX_FILE_LENGTH + " characters or less.");
                     return;
                 }
-                if (!args[0].match(/^.[a-z]*$/i)) {
+                if (!args[0].match(/^.[a-z]+$/i)) {
                     _StdOut.putText("Filenames may only be characters.");
                     return;
                 }
@@ -607,11 +607,13 @@ var TSOS;
         // Reads a file
         Shell.prototype.shellReadFile = function (args) {
             if (args.length == 1) {
-                // TODO: Enforce what can be written to file.
                 var status_2 = _krnDiskDriver.krnDiskRead(args[0]);
                 if (status_2 == FILE_NAME_NO_EXIST) {
                     _StdOut.putText("The file: " + args[0] + " does not exist.");
                 }
+                console.log(status_2);
+                // Print out file
+                _StdOut.putText(status_2.fileData.join(""));
             }
             else {
                 _StdOut.putText("Usage: read <filename>  Please supply a filename.");
@@ -650,7 +652,6 @@ var TSOS;
         // Deletes a file
         Shell.prototype.shellDeleteFile = function (args) {
             if (args.length == 1) {
-                // TODO: Enforce file name constraints
                 var status_4 = _krnDiskDriver.krnDiskDelete(args[0]);
                 if (status_4 == FILE_SUCCESS) {
                     _StdOut.putText("The file: " + args[0] + " has been successfully deleted.");

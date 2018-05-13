@@ -45,8 +45,7 @@ var TSOS;
             }
             else {
                 // We also have to make sure the program is not too large. A program is limited by the partition size.
-                // Returns the TSB of the process in disk
-                var tsb = _Swapper.putProcessToDisk(opcodes);
+                var tsb = _Swapper.putProcessToDisk(opcodes, _Pid);
                 // See if there is space on the disk for the process
                 if (tsb != null) {
                     // There is space on the disk for the process, so create a new PCB
@@ -59,9 +58,9 @@ var TSOS;
                     else {
                         pcb.Priority = 1;
                     }
-                    // Set the PCB's TSB for the TSB it is stored in
+                    // Set the PCB's process as swapped out to disk
                     pcb.Swapped = true;
-                    pcb.TSB = tsb;
+                    // pcb.TSB = tsb;
                     pcb.State = "Swapped";
                     // Put the new PCB onto the resident queue where it waits for CPU time
                     this.residentQueue.enqueue(pcb);
@@ -69,7 +68,7 @@ var TSOS;
                     _Pid++;
                 }
                 else {
-                    _StdOut.putText("Loading of program failed! Not memory available.");
+                    _StdOut.putText("Loading of program failed! Not enough memory available.");
                 }
             }
         };
@@ -99,6 +98,10 @@ var TSOS;
                 _StdOut.advanceLine();
                 _OsShell.putPrompt();
             }
+            // Also check if swap file exists for process, delete it if there is
+            var filename = "$SWAP" + this.running.Pid;
+            // Remove the program from disk by deleting the swap file
+            _krnDiskDriver.krnDiskDelete(filename);
             // // Update processes display
             // Control.hostProcesses();
             // Clear out running process
@@ -117,7 +120,11 @@ var TSOS;
                     if (theChosenPcb.Swapped) {
                         console.log("EXITED A PROCESS THAT IS IN THE READY QUEUE BUT IS SWAPPED OUT");
                         TSOS.Control.hostLog("Exiting process " + pid, "os");
-                        _krnDiskDriver.krnDiskDeleteData(theChosenPcb.TSB);
+                        // _krnDiskDriver.krnDiskDeleteData(theChosenPcb.TSB);
+                        // Find swap file in directory structure
+                        var filename = "$SWAP" + theChosenPcb.Pid;
+                        // Remove the program from disk by deleting the swap file
+                        _krnDiskDriver.krnDiskDelete(filename);
                         return true;
                     }
                 }

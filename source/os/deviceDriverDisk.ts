@@ -31,23 +31,30 @@
 
             private checkForExistingFile(filename: String): boolean {
                 let hexArr = this.stringToASCII(filename);
-                for(var i=1; i<_Disk.numOfSectors*_Disk.numOfBlocks; i++){
-                    let dirBlock = JSON.parse(sessionStorage.getItem(sessionStorage.key(i)));
-                    let matchingFileName = true;
-                    // Don't look in blocks not in use
-                    if(dirBlock.availableBit == "1"){
-                        for(var k=4, j=0; j<hexArr.length; k++, j++){
-                            if(hexArr[j] != dirBlock.data[k]){
-                                matchingFileName = false
+                for(var sectorNum=0; sectorNum<_Disk.numOfSectors; sectorNum++){
+                    for(var blockNum=0; blockNum<_Disk.numOfBlocks; blockNum++){
+                        if(sectorNum == 0 && blockNum == 0){
+                            // ignore first block in first sector, it is the MBR
+                            continue;
+                        }
+                        var tsbID = "0" + ":" + sectorNum + ":" + blockNum;
+                        let dirBlock = JSON.parse(sessionStorage.getItem(tsbID));
+                        let matchingFileName = true;
+                        // Don't look in blocks not in use
+                        if(dirBlock.availableBit == "1"){
+                            for(var k=4, j=0; j<hexArr.length; k++, j++){
+                                if(hexArr[j] != dirBlock.data[k]){
+                                    matchingFileName = false
+                                }
                             }
-                        }
-                        // If reach end of hexArr but dirBlock data still more?
-                        if(dirBlock.data[hexArr.length + DATE_LENGTH] != "00"){
-                            matchingFileName = false;
-                        }
-                        // We found the filename
-                        if(matchingFileName){
-                            return true;
+                            // If reach end of hexArr but dirBlock data still more?
+                            if(dirBlock.data[hexArr.length + DATE_LENGTH] != "00"){
+                                matchingFileName = false;
+                            }
+                            // We found the filename
+                            if(matchingFileName){
+                                return true;
+                            }
                         }
                     }
                 }
@@ -65,7 +72,11 @@
                 // Firefox doesn't order session storage, so have to generate appropriate tsbID
                 // for(var i=1; i<_Disk.numOfSectors*_Disk.numOfBlocks; i++){
                 for(var sectorNum=0; sectorNum<_Disk.numOfSectors; sectorNum++){
-                    for(var blockNum=1; blockNum<_Disk.numOfBlocks; blockNum++){
+                    for(var blockNum=0; blockNum<_Disk.numOfBlocks; blockNum++){
+                        if(sectorNum == 0 && blockNum == 0){
+                            // ignore first block in first sector, it is the MBR
+                            continue;
+                        }
                         var tsbID = "0" + ":" + sectorNum + ":" + blockNum;
                         let dirBlock = JSON.parse(sessionStorage.getItem(tsbID));
                         // If the block is available...
@@ -249,7 +260,11 @@
                 // Don't look in MBR
                 // for(var i=1; i<_Disk.numOfSectors*_Disk.numOfBlocks; i++){
                 for(var sectorNum=0; sectorNum<_Disk.numOfSectors; sectorNum++){
-                    for(var blockNum=1; blockNum<_Disk.numOfBlocks; blockNum++){
+                    for(var blockNum=0; blockNum<_Disk.numOfBlocks; blockNum++){
+                        if(sectorNum == 0 && blockNum == 0){
+                            // ignore first block in first sector, it is the MBR
+                            continue;
+                        }
                         var tsbID = "0" + ":" + sectorNum + ":" + blockNum;
                         let dirBlock = JSON.parse(sessionStorage.getItem(tsbID));
                         let matchingFileName = true;
@@ -402,7 +417,11 @@
                 // Don't look in MBR
                 // for(var i=1; i<_Disk.numOfSectors*_Disk.numOfBlocks; i++){
                 for(var sectorNum=0; sectorNum<_Disk.numOfSectors; sectorNum++){
-                    for(var blockNum=1; blockNum<_Disk.numOfBlocks; blockNum++){
+                    for(var blockNum=0; blockNum<_Disk.numOfBlocks; blockNum++){
+                        if(sectorNum == 0 && blockNum == 0){
+                            // ignore first block in first sector, it is the MBR
+                            continue;
+                        }
                         var tsbID = "0" + ":" + sectorNum + ":" + blockNum;
                         let dirBlock = JSON.parse(sessionStorage.getItem(tsbID));
                         let matchingFileName = true;
@@ -435,10 +454,10 @@
                                         break;
                                     }
                                 }
-                                // Print out file
-                                _StdOut.putText(fileData.join(""));
+                                // // Print out file
+                                // _StdOut.putText(fileData.join(""));
                                 // Return success
-                                return;
+                                return {"data" : data, "fileData" : fileData};
                             }
                         }
                     }
@@ -457,7 +476,11 @@
                 // Firefox doesn't order session storage, so have to generate appropriate tsbID
                 // for(var i=1; i<_Disk.numOfSectors*_Disk.numOfBlocks; i++){
                 for(var sectorNum=0; sectorNum<_Disk.numOfSectors; sectorNum++){
-                    for(var blockNum=1; blockNum<_Disk.numOfBlocks; blockNum++){
+                    for(var blockNum=0; blockNum<_Disk.numOfBlocks; blockNum++){
+                        if(sectorNum == 0 && blockNum == 0){
+                            // ignore first block in first sector, it is the MBR
+                            continue;
+                        }
                         var tsbID = "0" + ":" + sectorNum + ":" + blockNum;
                         let dirBlock = JSON.parse(sessionStorage.getItem(tsbID));
                         let matchingFileName = true;
@@ -557,7 +580,11 @@
                 // Don't look in the MBR
                 // Firefox doesn't order session storage, so have to generate appropriate tsbID
                 for(var sectorNum=0; sectorNum<_Disk.numOfSectors; sectorNum++){
-                    for(var blockNum=1; blockNum<_Disk.numOfBlocks; blockNum++){
+                    for(var blockNum=0; blockNum<_Disk.numOfBlocks; blockNum++){
+                        if(sectorNum == 0 && blockNum == 0){
+                            // ignore first block in first sector, it is the MBR
+                            continue;
+                        }
                         var tsbID = "0" + ":" + sectorNum + ":" + blockNum;
                         let dirBlock = JSON.parse(sessionStorage.getItem(tsbID));
                         // Don't look in blocks not in use

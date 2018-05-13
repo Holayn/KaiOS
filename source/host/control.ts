@@ -388,7 +388,7 @@ module TSOS {
             _SingleStepMode = !_SingleStepMode;
             if(_SingleStepMode){
                 (<HTMLButtonElement>document.getElementById("btnSingleStep")).style['background-color'] = "#42f450";
-                (<HTMLButtonElement>document.getElementById("btnNextStep")).style['background-color'] = "green";
+                (<HTMLButtonElement>document.getElementById("btnNextStep")).style['background-color'] = "green !important";
                 (<HTMLButtonElement>document.getElementById("btnNextStep")).disabled = false;
             }
             else{

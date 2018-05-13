@@ -356,7 +356,7 @@ var TSOS;
             _SingleStepMode = !_SingleStepMode;
             if (_SingleStepMode) {
                 document.getElementById("btnSingleStep").style['background-color'] = "#42f450";
-                document.getElementById("btnNextStep").style['background-color'] = "green";
+                document.getElementById("btnNextStep").style['background-color'] = "green !important";
                 document.getElementById("btnNextStep").disabled = false;
             }
             else {

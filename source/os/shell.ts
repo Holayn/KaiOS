@@ -695,7 +695,7 @@ module TSOS {
                     _StdOut.putText("File name length too long! Must be " + MAX_FILE_LENGTH + " characters or less.");
                     return;
                 }
-                if(!args[0].match(/^.[a-z]*$/i)){
+                if(!args[0].match(/^.[a-z]+$/i)){
                     _StdOut.putText("Filenames may only be characters.");
                     return;
                 }
@@ -718,11 +718,13 @@ module TSOS {
         // Reads a file
         public shellReadFile(args) {
             if(args.length == 1){
-                // TODO: Enforce what can be written to file.
                 let status = _krnDiskDriver.krnDiskRead(args[0]);
                 if(status == FILE_NAME_NO_EXIST){
                     _StdOut.putText("The file: " + args[0] + " does not exist.");
                 }
+                console.log(status);
+                // Print out file
+                _StdOut.putText(status.fileData.join(""));
             }
             else{
                 _StdOut.putText("Usage: read <filename>  Please supply a filename.");
@@ -763,7 +765,6 @@ module TSOS {
         // Deletes a file
         public shellDeleteFile(args) {
             if(args.length == 1){
-                // TODO: Enforce file name constraints
                 let status = _krnDiskDriver.krnDiskDelete(args[0]);
                 if(status == FILE_SUCCESS){
                     _StdOut.putText("The file: " + args[0] + " has been successfully deleted.");

@@ -11,43 +11,65 @@
 
         /**
          * Calls the disk device driver to find enough space to store the program
-         * Returns the first TSB of the newly allocated data block
+         * Returns the filename of the swapfile
          * @param opcodes the hex array of opcodes
          */
-        public putProcessToDisk(opcodes): String {
-            // First, find a free data block to hold the opcodes
-            let tsb = _krnDiskDriver.findFreeDataBlock();
-            // Now, call the device driver's allocate disk space to see if need more data blocks to hold the opcodes
-            // This will allocate those blocks as being used and update pointers
-            // We need to allocate enough blocks to hold a largest program
-            // Imagine a scenario where the disk is full. A process taking 2 blocks of memory is rolled into memory, and a process that would take
-            // 4 blocks of memory is rolled out. Where would we put it? We're screwed! So we need to always allocate enough blocks to hold the largest program possible
-            // To achieve this, we cheat by just extending the opcodes to have 256 bytes in total
+        public putProcessToDisk(opcodes, pid): String {
+            // Create file name for process... make it $SWAPPID
+            let filename = "$SWAP" + pid;
+            console.log("creating new swap file " + filename);
+            _krnDiskDriver.krnDiskCreate(filename);
             let length = opcodes.length;
-            while(length < _MemoryManager.globalLimit){
+            while(length < _MemoryManager.globalLimit + (44)){
                 opcodes.push("00");
                 length++;
             }
-            let enoughFreeSpace = _krnDiskDriver.allocateDiskSpace(opcodes, tsb);
-            if(!enoughFreeSpace){
-                return null;
-            }
-            else{
-                // Write the opcodes to disk
-                _krnDiskDriver.writeDiskData(tsb, opcodes);
-                return tsb;
-            }
+            console.log(length);
+            _krnDiskDriver.krnDiskWriteSwap(filename, opcodes);
+            return filename;
+            // // Create a swap file and get the TSB to where the data will start in disk
+            // let datBlockTSB = _krnDiskDriver.krnDiskCreateSwapFile(filename);
+            // // console.log("DATBLOCKTSBSWAP" + datBlockTSB);
+            // if(datBlockTSB != FULL_DISK_SPACE){
+            //     // Now write to disk.
+            //     // We need to allocate enough blocks to hold a largest program
+            //     // Imagine a scenario where the disk is full. A process taking 2 blocks of memory is rolled into memory, and a process that would take
+            //     // 4 blocks of memory is rolled out. Where would we put it? We're screwed! So we need to always allocate enough blocks to hold the largest program possible
+            //     // To achieve this, we cheat by just extending the opcodes to have 256 bytes in total
+            //     let length = opcodes.length;
+            //     while(length < _MemoryManager.globalLimit){
+            //         opcodes.push("00");
+            //         length++;
+            //     }
+            //     console.log(length);
+            //     let enoughFreeSpace = _krnDiskDriver.allocateDiskSpace(opcodes, datBlockTSB);
+            //     if(!enoughFreeSpace){
+            //         return null;
+            //     }
+            //     else{
+            //         // Write the opcodes to disk
+            //         _krnDiskDriver.writeDiskData(datBlockTSB, opcodes);
+            //         return datBlockTSB;
+            //     }
+            // }
+            // else{
+            //     return null;
+            // }
         }
 
         /**
-         * Performs a roll-in of a process from disk to main memory given its TSB
+         * Performs a roll-in of a process from disk to main memory
          * @param pcb the PCB of the process in disk
          */
         public rollIn(pcb) {
             console.log("Performing roll in");
-            let tsb = pcb.TSB;
-            // Get the program stored in disk
-            let data = _krnDiskDriver.krnDiskReadData(tsb);
+            // Find swap file in directory structure
+            let filename = "$SWAP" + pcb.Pid;
+            // let tsb = pcb.TSB;
+            // Get the TSB of the program stored in disk
+            let data = _krnDiskDriver.krnDiskRead(filename).data;
+            // let tsb = _krnDiskDriver.krnFindSwapFile(filename);
+            // let data = _krnDiskDriver.krnDiskReadData(tsb);
             // Trim off extra data since we now allocate 5 blocks (300 bytes) for a program, which is more than what a memory partition can hold
             let extraData = Math.ceil(_MemoryManager.globalLimit / _Disk.dataSize) * _Disk.dataSize;
             for(var i=0; i<extraData-_MemoryManager.globalLimit; i++){
@@ -60,7 +82,8 @@
                 // Update the PCB's partition to the one it got placed in
                 pcb.Partition = partition;
                 // Remove the program from disk
-                _krnDiskDriver.krnDiskDeleteProcess(tsb);
+                _krnDiskDriver.krnDiskDelete(filename);
+                // _krnDiskDriver.krnDiskDeleteProcess(tsb);
                 // Update disk display
                 Control.hostDisk();
                 // Update memory display 
@@ -96,7 +119,11 @@
          * @param pcb the process control block of program in disk
          */
         public rollOut(pcb) {
-            let tsb = pcb.TSB;
+            // Find swap file in directory structure
+            let filename = "$SWAP" + pcb.Pid;
+            // let tsb = pcb.TSB;
+            // Get the TSB of the program stored in disk
+            // let tsb = _krnDiskDriver.krnFindSwapFile(filename);
             console.log("Performing roll out");
             // Get partition from memory...what partition? Let's do a random partition...RNG BOYZ Randomization is also efficient
             let unluckyPartition = Math.floor(Math.random() * _MemoryManager.partitions.length); 
@@ -109,7 +136,8 @@
                 // Free the partition
                 _MemoryManager.clearMemoryPartition(unluckyPartition);
                 // Get data from disk
-                let data = _krnDiskDriver.krnDiskReadData(tsb);
+                let data = _krnDiskDriver.krnDiskRead(filename).data;
+                // let data = _krnDiskDriver.krnDiskReadData(tsb);
                 // Trim off extra bytes
                 let extraData = Math.ceil(_MemoryManager.globalLimit / _Disk.dataSize) * _Disk.dataSize;
                 for(var i=0; i<extraData-_MemoryManager.globalLimit; i++){
@@ -123,8 +151,10 @@
                     pcb.Partition = partition;
                     pcb.Swapped = false;
                     pcb.State = "Ready";
-                    // Remove the program from disk
-                    _krnDiskDriver.krnDiskDeleteProcess(tsb);
+                    // Remove the program from disk by deleting the swap file
+                    console.log("deleting old swap file" + filename);
+                    _krnDiskDriver.krnDiskDelete(filename);
+                    // _krnDiskDriver.krnDiskDeleteProcess(tsb);
                     // Update disk display
                     Control.hostDisk();
                 }
@@ -132,8 +162,11 @@
                     return;
                 }
                 // Put the data from memory into disk and get the TSB of where it was written
-                let memoryToDiskTSB = this.putProcessToDisk(memoryData);
+                console.log("putting new swap file to disk");
+                console.log(memoryData.length);
+                let memoryToDiskTSB = this.putProcessToDisk(memoryData, unluckyPCB.Pid);
                 if(memoryToDiskTSB != null){
+                    console.log("put new swap file in disk");
                     // Success!
                     // Update the PCB to show that it is in disk
                     unluckyPCB.Partition = IN_DISK;
@@ -141,6 +174,8 @@
                     unluckyPCB.State = "Swapped";
                     unluckyPCB.TSB = memoryToDiskTSB;
                     Control.hostLog("Performed roll out and roll in", "os");
+                    // update processes display
+                    Control.hostProcesses();
                     return;
                 }
                 else{
