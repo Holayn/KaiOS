@@ -122,6 +122,8 @@ module TSOS {
                 if(_SingleStepMode){
                     if(_NextStep){
                         _CPU.cycle();
+                        // Update the CPU display
+                        Control.hostCPU();
                         _NextStep = false;
                         // Big brother scheduler is watching you...and your CPU cycles
                         _Scheduler.watch();
@@ -136,6 +138,8 @@ module TSOS {
                 }
                 else{
                     _CPU.cycle();
+                    // Update the CPU display
+                    Control.hostCPU();
                     // Big brother scheduler is watching you...and your CPU cycles
                     _Scheduler.watch();
                     // Update the wait times and turnaround times for all processes
@@ -158,7 +162,7 @@ module TSOS {
                 Control.crazySpin();
             }
             // Update the CPU display
-            Control.hostCPU();
+            // Control.hostCPU();
             // Update the memory display
             // Control.hostMemory();
         }
@@ -201,6 +205,8 @@ module TSOS {
                     _ProcessManager.exitProcess(params);
                     // Update the processes display
                     Control.hostProcesses();
+                    // Update the CPU display
+                    Control.hostCPU();
                     break;
                 case CONTEXT_SWITCH:                  // Placeholder for context switching. We only update the PCB when there is a context switch!!!
                     _Scheduler.contextSwitch();

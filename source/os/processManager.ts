@@ -154,6 +154,8 @@
                 _MemoryManager.clearMemoryPartition(theChosenPcb.Partition);
                 // Update processes display
                 Control.hostProcesses();
+                // Update the CPU display
+                Control.hostCPU();
                 return true;
             }
         }

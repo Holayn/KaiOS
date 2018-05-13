@@ -146,6 +146,8 @@ var TSOS;
                 _MemoryManager.clearMemoryPartition(theChosenPcb.Partition);
                 // Update processes display
                 TSOS.Control.hostProcesses();
+                // Update the CPU display
+                TSOS.Control.hostCPU();
                 return true;
             }
         };
