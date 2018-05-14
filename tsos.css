@@ -77,7 +77,7 @@ h6 {
   margin-left: 5%;
   /* margin-right: 20%; */
   min-height: 1500px;
-  opacity : 0.1;
+  opacity : 0.05;
   z-index: -1;
   background: #909193 url(distrib/images/spiral.jpg);
   background-size: cover;
