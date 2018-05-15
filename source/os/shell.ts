@@ -717,6 +717,11 @@ module TSOS {
         // Reads a file
         public shellReadFile(args) {
             if(args.length == 1){
+                // make sure user can't read swap files
+                if(args[0].includes("$")){
+                    _StdOut.putText("Oman u do not wanna do dat");
+                    return;
+                }
                 let status = _krnDiskDriver.krnDiskRead(args[0]);
                 if(status == FILE_NAME_NO_EXIST){
                     _StdOut.putText("The file: " + args[0] + " does not exist.");
@@ -732,6 +737,11 @@ module TSOS {
         // Writes to a file
         public shellWriteFile(args) {
             if(args.length >= 2){
+                // make sure user can't write to swap files
+                if(args[0].includes("$")){
+                    _StdOut.putText("Oman u do not wanna do dat");
+                    return;
+                }
                 // If user entered spaces, concatenate the arguments
                 let string = "";
                 for(var i=1; i<args.length; i++){
@@ -767,6 +777,11 @@ module TSOS {
         // Deletes a file
         public shellDeleteFile(args) {
             if(args.length == 1){
+                // make sure user can't delete swap files
+                if(args[0].includes("$")){
+                    _StdOut.putText("Oman u do not wanna do dat");
+                    return;
+                }
                 let status = _krnDiskDriver.krnDiskDelete(args[0]);
                 if(status == FILE_SUCCESS){
                     _StdOut.putText("The file: " + args[0] + " has been successfully deleted.");
@@ -825,6 +840,10 @@ module TSOS {
                 if(args.length == 1){
                     if(args[0] == "-l"){
                         for(var f of filenames){
+                            // don't show swap files
+                            if(f['name'].includes("$SWAP")){
+                                continue;
+                            }
                             _StdOut.putText(f['name'] + " - creation date: " + f['month'] + "/" + f['day'] + "/" + f['year'] + ". size: " + f['size']);
                             _StdOut.advanceLine();
                         }
@@ -832,6 +851,10 @@ module TSOS {
                 }
                 else{
                     for(var f of filenames){
+                        // don't show swap files
+                        if(f['name'].includes("$SWAP")){
+                            continue;
+                        }
                         // Don't show hidden files
                         if(f['name'].charAt(0) != "."){
                             _StdOut.putText(f['name']);

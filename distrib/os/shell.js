@@ -606,6 +606,11 @@ var TSOS;
         // Reads a file
         Shell.prototype.shellReadFile = function (args) {
             if (args.length == 1) {
+                // make sure user can't read swap files
+                if (args[0].includes("$")) {
+                    _StdOut.putText("Oman u do not wanna do dat");
+                    return;
+                }
                 var status_2 = _krnDiskDriver.krnDiskRead(args[0]);
                 if (status_2 == FILE_NAME_NO_EXIST) {
                     _StdOut.putText("The file: " + args[0] + " does not exist.");
@@ -620,6 +625,11 @@ var TSOS;
         // Writes to a file
         Shell.prototype.shellWriteFile = function (args) {
             if (args.length >= 2) {
+                // make sure user can't write to swap files
+                if (args[0].includes("$")) {
+                    _StdOut.putText("Oman u do not wanna do dat");
+                    return;
+                }
                 // If user entered spaces, concatenate the arguments
                 var string = "";
                 for (var i = 1; i < args.length; i++) {
@@ -654,6 +664,11 @@ var TSOS;
         // Deletes a file
         Shell.prototype.shellDeleteFile = function (args) {
             if (args.length == 1) {
+                // make sure user can't delete swap files
+                if (args[0].includes("$")) {
+                    _StdOut.putText("Oman u do not wanna do dat");
+                    return;
+                }
                 var status_4 = _krnDiskDriver.krnDiskDelete(args[0]);
                 if (status_4 == FILE_SUCCESS) {
                     _StdOut.putText("The file: " + args[0] + " has been successfully deleted.");
@@ -711,6 +726,10 @@ var TSOS;
                     if (args[0] == "-l") {
                         for (var _i = 0, filenames_1 = filenames; _i < filenames_1.length; _i++) {
                             var f = filenames_1[_i];
+                            // don't show swap files
+                            if (f['name'].includes("$SWAP")) {
+                                continue;
+                            }
                             _StdOut.putText(f['name'] + " - creation date: " + f['month'] + "/" + f['day'] + "/" + f['year'] + ". size: " + f['size']);
                             _StdOut.advanceLine();
                         }
@@ -719,6 +738,10 @@ var TSOS;
                 else {
                     for (var _a = 0, filenames_2 = filenames; _a < filenames_2.length; _a++) {
                         var f = filenames_2[_a];
+                        // don't show swap files
+                        if (f['name'].includes("$SWAP")) {
+                            continue;
+                        }
                         // Don't show hidden files
                         if (f['name'].charAt(0) != ".") {
                             _StdOut.putText(f['name']);
