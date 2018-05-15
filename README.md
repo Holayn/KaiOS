@@ -1,4 +1,4 @@
-# Kai's Operating Systems Repo. :^) :^) :^)
+# Kai's Operating System
 
 This is my Operating Systems project written in TypeScript and HTML5.
 See http://www.labouseur.com/courses/os/ for details.
